@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="a">
+      <change beforePath="$PROJECT_DIR$/323613791709429761.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/323613791709429761.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/868707349886566440.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/868707349886566440.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/930241584841240616.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/930241584841240616.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/JMusicBot_jar/JMusicBot.jar" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$MAVEN_REPOSITORY$/com/jagrosh/jda-utilities-examples/3.0.5/jda-utilities-examples-3.0.5-sources.jar!/com/jagrosh/jdautilities/examples/command/AboutCommand.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectId" id="24th8MFkrykiAQ6eQm0rPY4PfGw" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2908046" />
+    <property name="settings.editor.selected.configurable" value="CodeWithMe" />
+  </component>
+  <component name="ReaderModeSettings">
+    <option name="enabled" value="false" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Run" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="com.jagrosh.jmusicbot.JMusicBot" />
+      <module name="JMusicBot" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="" />
+      <created>1644455634332</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1644455634332</updated>
+      <workItem from="1644455640279" duration="2596000" />
+      <workItem from="1644465005424" duration="3837000" />
+      <workItem from="1644469862989" duration="970000" />
+      <workItem from="1644531853627" duration="30000" />
+      <workItem from="1644533833912" duration="4900000" />
+      <workItem from="1644593939489" duration="3914000" />
+      <workItem from="1644628395973" duration="9293000" />
+      <workItem from="1644684284002" duration="3252000" />
+      <workItem from="1644690681586" duration="303000" />
+    </task>
+    <task id="LOCAL-00001" summary="a">
+      <created>1644690778045</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1644690778045</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="a" />
+    <option name="LAST_COMMIT_MESSAGE" value="a" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
