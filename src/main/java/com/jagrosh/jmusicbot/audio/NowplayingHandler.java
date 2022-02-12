@@ -54,12 +54,21 @@ public class NowplayingHandler
     
     public void setLastNPMessage(Message m)
     {
+        clearLastNPMessage((m.getGuild()));
         lastNP.put(m.getGuild().getIdLong(), new Pair<>(m.getTextChannel().getIdLong(), m.getIdLong()));
     }
     
     public void clearLastNPMessage(Guild guild)
     {
+        Pair<Long,Long> lastmessage = lastNP.get(guild.getIdLong());
+        if (lastmessage != null)
+        {
+            TextChannel music = bot.getJDA().getTextChannelById(lastmessage.getKey());
+            music.deleteMessageById(lastmessage.getValue());
+        }
         lastNP.remove(guild.getIdLong());
+
+
     }
     
     private void updateAll()
@@ -147,7 +156,11 @@ public class NowplayingHandler
         // update channel topic if applicable
         updateTopic(guildId, handler, false);
     }
-    
+
+    public Pair<Long, Long> getLastNP(Guild guild) {
+        return lastNP.get(guild.getIdLong());
+    }
+
     public void onMessageDelete(Guild guild, long messageId)
     {
         Pair<Long,Long> pair = lastNP.get(guild.getIdLong());

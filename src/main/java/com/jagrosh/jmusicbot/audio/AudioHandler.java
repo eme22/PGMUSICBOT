@@ -38,7 +38,10 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -98,6 +101,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         queue.clear();
         defaultQueue.clear();
         audioPlayer.stopTrack();
+        manager.getBot().getNowplayingHandler().clearLastNPMessage(manager.getBot().getJDA().getGuildById(guildId));
         //current = null;
     }
     
@@ -189,8 +193,39 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     @Override
     public void onTrackStart(AudioPlayer player, AudioTrack track) 
     {
-        votes.clear();
-        manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, track, this);
+        try {
+
+
+            votes.clear();
+            manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, track, this);
+
+            Message m = getNowPlaying(manager.getBot().getJDA());
+            Guild guild = manager.getBot().getJDA().getGuildById(guildId);
+            if(m==null)
+            {
+                TextChannel chn = manager.getBot().getSettingsManager().getSettings(guild).getTextChannel(guild);
+                chn.sendMessage(getNoMusicPlaying(manager.getBot().getJDA()));
+                manager.getBot().getNowplayingHandler().clearLastNPMessage(guild);
+            }
+            else
+            {
+                manager.getBot().getNowplayingHandler().clearLastNPMessage(guild);
+                TextChannel chn = manager.getBot().getSettingsManager().getSettings(guild).getTextChannel(guild);
+                chn.sendMessage(m).queue(msg -> {
+                    msg.addReaction("U+23EF").queue();
+                    msg.addReaction("U+23ED").queue();
+                    msg.addReaction("U+1F507").queue();
+                    msg.addReaction("U+1F4C3").queue();
+                    msg.addReaction("U+1F3B5").queue();
+
+                    manager.getBot().getNowplayingHandler().setLastNPMessage(msg);
+                });
+            }
+        }
+        catch (Exception exception){
+            Logger log = LoggerFactory.getLogger("MusicBot");
+            log.error("Error: "+ exception.getMessage(), exception);
+        }
     }
 
     

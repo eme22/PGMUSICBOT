@@ -38,8 +38,10 @@ public class Settings implements GuildSettingsProvider
     private RepeatMode repeatMode;
     private String prefix;
     private double skipRatio;
+    protected long helloID;
+    protected long goodByeID;
 
-    public Settings(SettingsManager manager, String textId, String voiceId, String roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio)
+    public Settings(SettingsManager manager, String textId, String voiceId, String roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio, String helloID, String goodByeID)
     {
         this.manager = manager;
         try
@@ -71,9 +73,25 @@ public class Settings implements GuildSettingsProvider
         this.repeatMode = repeatMode;
         this.prefix = prefix;
         this.skipRatio = skipRatio;
+        try
+        {
+            this.helloID = Long.parseLong(helloID);
+        }
+        catch(NumberFormatException e)
+        {
+            this.helloID = 0;
+        }
+        try
+        {
+            this.goodByeID = Long.parseLong(goodByeID);
+        }
+        catch(NumberFormatException e)
+        {
+            this.helloID = 0;
+        }
     }
     
-    public Settings(SettingsManager manager, long textId, long voiceId, long roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio)
+    public Settings(SettingsManager manager, long textId, long voiceId, long roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio, long helloID, long goodByeID)
     {
         this.manager = manager;
         this.textId = textId;
@@ -84,6 +102,8 @@ public class Settings implements GuildSettingsProvider
         this.repeatMode = repeatMode;
         this.prefix = prefix;
         this.skipRatio = skipRatio;
+        this.helloID = helloID;
+        this.goodByeID = goodByeID;
     }
     
     // Getters
@@ -127,6 +147,14 @@ public class Settings implements GuildSettingsProvider
         return skipRatio;
     }
 
+    public TextChannel getHelloChannel(Guild guild)
+    {
+        return guild == null ? null : guild.getTextChannelById(helloID);
+    }
+
+    public TextChannel getGoodbyeChannel(Guild guild) {
+        return guild == null ? null : guild.getTextChannelById(goodByeID);}
+
     @Override
     public Collection<String> getPrefixes()
     {
@@ -145,7 +173,17 @@ public class Settings implements GuildSettingsProvider
         this.voiceId = vc == null ? 0 : vc.getIdLong();
         this.manager.writeSettings();
     }
-    
+
+    public void setHelloID(TextChannel helloID) {
+        this.helloID = helloID == null ? 0 : helloID.getIdLong();
+        this.manager.writeSettings();
+    }
+
+    public void setGoodByeID(TextChannel goodByeID) {
+        this.goodByeID = goodByeID == null ? 0 : goodByeID.getIdLong();
+        this.manager.writeSettings();
+    }
+
     public void setDJRole(Role role)
     {
         this.roleId = role == null ? 0 : role.getIdLong();
@@ -181,4 +219,19 @@ public class Settings implements GuildSettingsProvider
         this.skipRatio = skipRatio;
         this.manager.writeSettings();
     }
+
+    public void clearServerData(Guild guild) {
+        this.textId = 0;
+        this.voiceId = 0;
+        this.roleId = 0;
+        this.volume = 0;
+        this.defaultPlaylist = null;
+        this.repeatMode = null;
+        this.prefix = null;
+        this.skipRatio = 0;
+        this.helloID = 0;
+        this.goodByeID = 0;
+        this.manager.deleteSettings(guild.getId());
+    }
+
 }

@@ -55,7 +55,9 @@ public class SettingsManager implements GuildSettingsManager
                         o.has("default_playlist")? o.getString("default_playlist")           : null,
                         o.has("repeat_mode")     ? o.getEnum(RepeatMode.class, "repeat_mode"): RepeatMode.OFF,
                         o.has("prefix")          ? o.getString("prefix")                     : null,
-                        o.has("skip_ratio")      ? o.getDouble("skip_ratio")                 : SKIP_RATIO));
+                        o.has("skip_ratio")      ? o.getDouble("skip_ratio")                 : SKIP_RATIO,
+                        o.has("bienvenidas_channel_id") ? o.getString("bienvenidas_channel_id")            : null,
+                        o.has("despedidas_channel_id") ? o.getString("despedidas_channel_id")            : null));
             });
         } catch(IOException | JSONException e) {
             LoggerFactory.getLogger("Settings").warn("Failed to load server settings (this is normal if no settings have been set yet): "+e);
@@ -81,7 +83,7 @@ public class SettingsManager implements GuildSettingsManager
     
     private Settings createDefaultSettings()
     {
-        return new Settings(this, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO);
+        return new Settings(this, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO, 0, 0);
     }
     
     protected void writeSettings()
@@ -106,6 +108,49 @@ public class SettingsManager implements GuildSettingsManager
                 o.put("prefix", s.getPrefix());
             if(s.getSkipRatio() != SKIP_RATIO)
                 o.put("skip_ratio", s.getSkipRatio());
+            if(s.helloID!=0)
+                o.put("bienvenidas_channel_id", Long.toString(s.helloID));
+            if(s.goodByeID!=0)
+                o.put("despedidas_channel_id", Long.toString(s.goodByeID));
+
+            obj.put(Long.toString(key), o);
+        });
+        try {
+            Files.write(OtherUtil.getPath("serversettings.json"), obj.toString(4).getBytes());
+        } catch(IOException ex){
+            LoggerFactory.getLogger("Settings").warn("Failed to write to file: "+ex);
+        }
+    }
+
+    protected void deleteSettings(String guild)
+    {
+        JSONObject obj = new JSONObject();
+        settings.keySet().stream().forEach(key -> {
+            if (key == Long.parseLong(guild))
+                return;
+            JSONObject o = new JSONObject();
+            Settings s = settings.get(key);
+            if(s.textId!=0)
+                o.put("text_channel_id", Long.toString(s.textId));
+            if(s.voiceId!=0)
+                o.put("voice_channel_id", Long.toString(s.voiceId));
+            if(s.roleId!=0)
+                o.put("dj_role_id", Long.toString(s.roleId));
+            if(s.getVolume()!=100)
+                o.put("volume",s.getVolume());
+            if(s.getDefaultPlaylist() != null)
+                o.put("default_playlist", s.getDefaultPlaylist());
+            if(s.getRepeatMode()!=RepeatMode.OFF)
+                o.put("repeat_mode", s.getRepeatMode());
+            if(s.getPrefix() != null)
+                o.put("prefix", s.getPrefix());
+            if(s.getSkipRatio() != SKIP_RATIO)
+                o.put("skip_ratio", s.getSkipRatio());
+            if(s.helloID!=0)
+                o.put("bienvenidas_channel_id", Long.toString(s.helloID));
+            if(s.goodByeID!=0)
+                o.put("despedidas_channel_id", Long.toString(s.goodByeID));
+
             obj.put(Long.toString(key), o);
         });
         try {

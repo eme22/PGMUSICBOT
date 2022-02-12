@@ -33,7 +33,7 @@ public class SetdjCmd extends AdminCommand
     public SetdjCmd(Bot bot)
     {
         this.name = "setdj";
-        this.help = "sets the DJ role for certain music commands";
+        this.help = "actualiza el rol de DJ";
         this.arguments = "<rolename|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
     }

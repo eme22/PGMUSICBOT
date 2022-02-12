@@ -49,7 +49,14 @@ public class NowplayingCmd extends MusicCommand
         }
         else
         {
-            event.reply(m, msg -> bot.getNowplayingHandler().setLastNPMessage(msg));
+            event.reply(m, msg -> {
+                msg.addReaction("U+23EF").queue();
+                msg.addReaction("U+23ED").queue();
+                msg.addReaction("U+1F507").queue();
+                msg.addReaction("U+1F4C3").queue();
+                msg.addReaction("U+1F3B5").queue();
+                bot.getNowplayingHandler().setLastNPMessage(msg);
+            });
         }
     }
 }
