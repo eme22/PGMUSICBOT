@@ -18,10 +18,8 @@ package com.jagrosh.jmusicbot;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
 import com.jagrosh.jmusicbot.audio.RequestMetadata;
-import com.jagrosh.jmusicbot.commands.music.LyricsCmd;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import gui.ava.html.Html2Image;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -35,13 +33,19 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -403,7 +407,7 @@ public class Listener extends ListenerAdapter
                     String userimage = member.getAvatarUrl();
                     if (userimage == null)
                         userimage = member.getDefaultAvatarUrl();
-                    File converted = new File(""+member.getId()+".png");
+                    File converted = new File("temp",member.getId()+".png");
                     if (converted.exists())
                         converted.delete();
                     bienvenida(member.getId(), bienvenida, member.getName(),  userimage);
@@ -441,7 +445,7 @@ public class Listener extends ListenerAdapter
                     String userimage = member.getAvatarUrl();
                     if (userimage == null)
                         userimage = member.getDefaultAvatarUrl();
-                    File converted = new File(member.getId()+".png");
+                    File converted = new File("temp",member.getId()+".png");
                     if (converted.exists())
                         converted.delete();
                     despedida(member.getId(), despedida, member.getName(),  userimage);
@@ -488,9 +492,15 @@ public class Listener extends ListenerAdapter
 
         //String html = "<body lang=PT-BR style='tab-interval:35.4pt'><img src='http://nxcache.nexon.net/all/v1.5.2/img/gnt/games-dropdown/maplestory.jpg'></body>";
 
-        final Html2Image html2Image = Html2Image.fromHtml(html);
-        html2Image.getImageRenderer().setHeight(1400).setWidth(800).saveImage(""+userid+".png");
-        html2Image.getHtmlImageMap().saveImageMapDocument(""+userid+".html", ""+userid+".png");
+        try {
+            writeToFile(html,userid);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //final Html2Image html2Image = Html2Image.fromHtml(html);
+        //html2Image.getImageRenderer().setHeight(1400).setWidth(800).saveImage(""+userid+".png");
+        //html2Image.getHtmlImageMap().saveImageMapDocument(""+userid+".html", ""+userid+".png");
     }
 
     private static void despedida(String userid, String path, String name, String userimage) {
@@ -531,10 +541,36 @@ public class Listener extends ListenerAdapter
 
         //String html = "<body lang=PT-BR style='tab-interval:35.4pt'><img src='http://nxcache.nexon.net/all/v1.5.2/img/gnt/games-dropdown/maplestory.jpg'></body>";
 
+        try {
+            writeToFile(html,userid);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        final Html2Image html2Image = Html2Image.fromHtml(html);
-        html2Image.getImageRenderer().setHeight(1000).setWidth(500).saveImage(userid+".png");
-        html2Image.getHtmlImageMap().saveImageMapDocument(userid+".html", userid+".png");
+        // Html2Image html2Image = Html2Image.fromHtml(html);
+        //html2Image.getImageRenderer().setHeight(1000).setWidth(500).saveImage(userid+".png");
+        //html2Image.getHtmlImageMap().saveImageMapDocument(userid+".html", userid+".png");
+    }
+
+    private static void writeToFile(String html, String name) throws IOException {
+        JLabel label = new JLabel(html);
+        label.setSize(200, 120);
+
+        BufferedImage image = new BufferedImage(
+                label.getWidth(), label.getHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+
+        {
+            // paint the html to an image
+            Graphics g = image.getGraphics();
+            g.setColor(Color.BLACK);
+            label.paint(g);
+            g.dispose();
+        }
+
+        // get the byte array of the image (as jpeg)
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", new File("temp",name+".png"));
     }
 
     
