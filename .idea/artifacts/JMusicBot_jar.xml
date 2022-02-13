@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="JMusicBot:jar">
+  <artifact type="jar" name="JMusicBot:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/JMusicBot_jar</output-path>
     <root id="archive" name="JMusicBot.jar">
       <element id="module-output" name="JMusicBot" />

@@ -21,7 +21,6 @@ import com.jagrosh.jmusicbot.audio.RequestMetadata;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -38,17 +37,12 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static com.jagrosh.jmusicbot.utils.OtherUtil.createImage;
 import static com.jagrosh.jmusicbot.utils.OtherUtil.numtoString;
 
 /**
@@ -77,7 +71,7 @@ public class Listener extends ListenerAdapter
             log.warn("This bot is not on any guilds! Use the following link to add the bot to your guilds!");
             log.warn(event.getJDA().getInviteUrl(JMusicBot.RECOMMENDED_PERMS));
         }
-        credit(event.getJDA());
+        //credit(event.getJDA());
         event.getJDA().getGuilds().forEach((guild) -> 
         {
             try
@@ -403,14 +397,24 @@ public class Listener extends ListenerAdapter
                 if(bienvenidas != null)
                 {
                     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                    String bienvenida = classloader.getResource("images/bienvenida.png").getFile();
-                    String userimage = member.getAvatarUrl();
-                    if (userimage == null)
-                        userimage = member.getDefaultAvatarUrl();
-                    File converted = new File("temp",member.getId()+".png");
+                    File bienvenida = new File(classloader.getResource("images/bienvenida.png").getFile());
+                    String userImageString = member.getAvatarUrl();
+                    URL userImage;
+                    if (userImageString == null)
+                        userImage = new URL(member.getDefaultAvatarUrl());
+                    else
+                        userImage = new URL(member.getAvatarUrl());
+
+                    File parent = new File("temp");
+                    if(!parent.exists()) {
+                        parent.mkdirs();
+                    }
+
+                    File converted = new File(parent, member.getId()+".png");
                     if (converted.exists())
                         converted.delete();
-                    bienvenida(member.getId(), bienvenida, member.getName(),  userimage);
+
+                    createImage( "BIENVENIDO", member.getName(), String.valueOf(member.getId()), bienvenida, userImage);
                     if (!converted.exists()){
                         Logger log = LoggerFactory.getLogger("MusicBot");
                         log.error("Image not created");
@@ -419,9 +423,9 @@ public class Listener extends ListenerAdapter
 
                     StringBuilder builder = new StringBuilder();
                     //builder.setThumbnail("attachment://bienvenida.png");
-                    builder.append("En que andas " + member.getAsMention() + "te damos la bienvenida a " + guild.getName() + " , Discord creado por el pueblo y para el pueblo.\nPARA INGRESAR A LOS OTROS CANALES, POR FAVOR LEE LAS"+ guild.getTextChannelsByName("\uD835\uDE4D\uD835\uDE40\uD835\uDE42\uD835\uDE47\uD835\uDE3C\uD835\uDE4E", true).get(0).getAsMention() + " Y VERIFÍCATE.");
-                    bienvenidas.sendMessage(builder.toString()).queue();
-                    bienvenidas.sendFile(converted).queue();
+                    builder.append("En que andas " + member.getAsMention() + "te damos la bienvenida a " + guild.getName() + " , Discord creado por el pueblo y para el pueblo.\nPARA INGRESAR A LOS OTROS CANALES, POR FAVOR LEE LAS "+ guild.getTextChannelById("869307625169367130").getAsMention() + " Y VERIFÍCATE.");
+                    bienvenidas.sendMessage(builder.toString()).addFile(converted).complete();
+                    converted.delete();
                 }
             }
             catch(Exception exception) {
@@ -441,149 +445,42 @@ public class Listener extends ListenerAdapter
                 if(despedidas!=null)
                 {
                     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                    String despedida = classloader.getResource("images/despedida.png").getFile();
-                    String userimage = member.getAvatarUrl();
-                    if (userimage == null)
-                        userimage = member.getDefaultAvatarUrl();
-                    File converted = new File("temp",member.getId()+".png");
+                    File despedida = new File(classloader.getResource("images/despedida.png").getFile());
+
+                    String userImageString = member.getAvatarUrl();
+                    URL userImage;
+                    if (userImageString == null)
+                        userImage = new URL(member.getDefaultAvatarUrl());
+                    else
+                        userImage = new URL(member.getAvatarUrl());
+
+                    File parent = new File("temp");
+                    if(!parent.exists()) {
+                        parent.mkdirs();
+                    }
+
+                    File converted = new File(parent, member.getId()+".png");
                     if (converted.exists())
                         converted.delete();
-                    despedida(member.getId(), despedida, member.getName(),  userimage);
+
+                    createImage( "SE VA", member.getName(), String.valueOf(member.getId()), despedida, userImage);
                     if (!converted.exists()){
                         Logger log = LoggerFactory.getLogger("MusicBot");
                         log.error("Image not created");
                     }
 
+
                     StringBuilder builder = new StringBuilder();
                     //builder.setThumbnail("attachment://bienvenida.png");
-                    builder.append( member.getAsMention() + "Se ha escapado de nuestras manos!!!");
-                    despedidas.sendMessage(builder.toString()).queue();
-                    despedidas.sendFile(converted).queue();
+                    builder.append("Se ha escapado de nuestras manos");
+                    despedidas.sendMessage(builder.toString()).addFile(converted).complete();
+                    converted.delete();
+
                 }
             }
             catch(Exception exception) {
                 Logger log = LoggerFactory.getLogger("MusicBot");
                 log.error("Error: "+ exception.getMessage(), exception);
             }
-    }
-
-
-    private static void bienvenida(String userid, String path, String name, String userimage) {
-
-        String html = "<body>\n" +
-                "\t<div style=\"background-image:url('file:"+path+"'); justify-content: flex-start; background-position: 0% 0%; background-size: 100px 100px; background-repeat: no-repeat; width: 63em;\n" +
-                "  height: 31em;\">\n" +
-                "\t\t<div style=\"justify-content: left; text-align:left; margin-left: 420px; margin-top: 20px;\">\n" +
-                "\t\t\t<img style=\"vertical-align: middle; width: 200px; height: 200px; border-radius: 50%;\" src='"+ userimage +"'>\n" +
-                "\t\t</div>\n" +
-                "\t\n" +
-                "\t\t<h1 style=\"text-align:middle; font-size: 60px; font-family: Arial, Helvetica, sans-serif; margin-left: 350px;\">\n" +
-                "\t\t\tBienvenido!!!\n" +
-                "\t\t</h1>\n" +
-                "\t\t<h1 style=\"text-align:middle;  font-size: 60px;font-family: Arial, Helvetica, sans-serif; margin-left: 350px;\">\n" +
-                "\t\t\t"+name+"\n" +
-                "\t\t</h1>\n" +
-                "\t\t<h2 style=\"text-align:middle; font-size: 30px; font-family: Arial, Helvetica, sans-serif; margin-left: 240px;\">\n" +
-                "\t\t\tUn nuevo revolucionario ha llegado!!!\n" +
-                "\t\t</h2>\n" +
-                "\t</div>\n" +
-                "\t\n" +
-                "</body>";
-
-        //String html = "<body lang=PT-BR style='tab-interval:35.4pt'><img src='http://nxcache.nexon.net/all/v1.5.2/img/gnt/games-dropdown/maplestory.jpg'></body>";
-
-        try {
-            writeToFile(html,userid);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //final Html2Image html2Image = Html2Image.fromHtml(html);
-        //html2Image.getImageRenderer().setHeight(1400).setWidth(800).saveImage(""+userid+".png");
-        //html2Image.getHtmlImageMap().saveImageMapDocument(""+userid+".html", ""+userid+".png");
-    }
-
-    private static void despedida(String userid, String path, String name, String userimage) {
-
-        String html = "<body>\n" +
-                "\t<div style=\"background-image:url('file:"+path+"'); justify-content: flex-start; background-position: 0% 0%; background-size: 100px 100px; background-repeat: no-repeat; width: 63em;\n" +
-                "  height: 31em;\">\n" +
-                "\t\t<div style=\"justify-content: left; text-align:left; margin-left: 420px; margin-top: 20px;\">\n" +
-                "\t\t\t<img style=\"vertical-align: middle; width: 200px; height: 200px; border-radius: 50%;\" src='"+ userimage +"'>\n" +
-                "\t\t</div>\n" +
-                "\t\n" +
-                "\t\t<h1 style=\"text-align:middle;  font-size: 60px;font-family: Arial, Helvetica, sans-serif; margin-left: 350px;\">\n" +
-                "\t\t\t"+name+"\n" +
-                "\t\t</h1>\n" +
-                "\t\t<h2 style=\"text-align:middle; font-size: 30px; font-family: Arial, Helvetica, sans-serif; margin-left: 240px;\">\n" +
-                "\t\t\tSe ha ido, Fuera perra de mierda!!!\n" +
-                "\t\t</h2>\n" +
-                "\t</div>\n" +
-                "\t\n" +
-                "</body>";
-        /*
-        String html = "<body>\n" +
-                "\t<div style=\"background-image:url('file:"+path+"'); background-position: 0% 50%; background-size: 20% 50%; background-repeat: no-repeat;\">\n" +
-                "\t\t<div style=\"justify-content: left; text-align:left; margin-left: 170px;\">\n" +
-                "\t\t\t<img style=\"vertical-align: middle; width: 150px; height: 150px; border-radius: 50%;\" src='"+ userimage +"'>\n" +
-                "\t\t</div>\n" +
-                "\t\n" +
-                "\t\t<h1 style=\"text-align:left; font-family: Arial, Helvetica, sans-serif; margin-left: 150px;\">\n" +
-                "\t\t\t"+name+"\n" +
-                "\t\t</h1>\n" +
-                "\t\t<h2 style=\"text-align:left; font-family: Arial, Helvetica, sans-serif; margin-left: 20px;\">\n" +
-                "\t\t\tSe ha ido, Fuera perra de mierda!!!\n" +
-                "\t\t</h2>\n" +
-                "\t</div>\n" +
-                "\t\n" +
-                "</body>";
-        */
-
-        //String html = "<body lang=PT-BR style='tab-interval:35.4pt'><img src='http://nxcache.nexon.net/all/v1.5.2/img/gnt/games-dropdown/maplestory.jpg'></body>";
-
-        try {
-            writeToFile(html,userid);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Html2Image html2Image = Html2Image.fromHtml(html);
-        //html2Image.getImageRenderer().setHeight(1000).setWidth(500).saveImage(userid+".png");
-        //html2Image.getHtmlImageMap().saveImageMapDocument(userid+".html", userid+".png");
-    }
-
-    private static void writeToFile(String html, String name) throws IOException {
-        JLabel label = new JLabel(html);
-        label.setSize(200, 120);
-
-        BufferedImage image = new BufferedImage(
-                label.getWidth(), label.getHeight(),
-                BufferedImage.TYPE_INT_ARGB);
-
-        {
-            // paint the html to an image
-            Graphics g = image.getGraphics();
-            g.setColor(Color.BLACK);
-            label.paint(g);
-            g.dispose();
-        }
-
-        // get the byte array of the image (as jpeg)
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", new File("temp",name+".png"));
-    }
-
-    
-    // make sure people aren't adding clones to dbots
-    private void credit(JDA jda)
-    {
-        //Guild dbots = jda.getGuildById(110373943822540800L);
-        //if(dbots==null)
-        //    return;
-        //if(bot.getConfig().getDBots())
-        //    return;
-        //jda.getTextChannelById(119222314964353025L)
-        //        .sendMessage("This account is running JMusicBot. Please do not list bot clones on this server, <@"+bot.getConfig().getOwnerId()+">.").complete();
-        //dbots.leave().queue();
     }
 }

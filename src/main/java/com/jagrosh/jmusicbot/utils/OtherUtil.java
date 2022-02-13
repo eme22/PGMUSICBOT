@@ -17,6 +17,11 @@ package com.jagrosh.jmusicbot.utils;
 
 import com.jagrosh.jmusicbot.JMusicBot;
 import com.jagrosh.jmusicbot.entities.Prompt;
+
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -29,6 +34,8 @@ import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -219,5 +226,85 @@ public class OtherUtil
             case 8: return ":eight:";
             case 9: return ":nine:";
         }
+    }
+
+    public static void createImage(String message, String name, String id, File background, URL userImage) throws IOException {
+
+        try {
+            int width = 1000, height = 500;
+
+            BufferedImage userPic = ImageIO.read(userImage);
+            userPic = createAvatar(userPic);
+
+
+            BufferedImage background2 = ImageIO.read(background);
+
+            BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D ig2 = bi.createGraphics();
+
+            ig2.drawImage(background2, 0,0, width, height, null );
+            ig2.drawImage(userPic, 370, 25, null);
+
+
+            Font font1 = new Font("Arial", Font.BOLD, 60);
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("trans.ttf");
+            Font font2 = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(90f);
+            ig2.setFont(font1);
+            FontMetrics fontMetrics = ig2.getFontMetrics();
+            int stringWidth = fontMetrics.stringWidth(message);
+            ig2.setPaint(Color.black);
+            ig2.drawString(message, Math.round((width - stringWidth) / 2), 370);
+            ig2.setFont(font2);
+            stringWidth = fontMetrics.stringWidth(name);
+            ig2.drawString(name, Math.round((width - stringWidth) / 3.5), 470);
+            ig2.dispose();
+
+            File parent = new File("temp");
+            if(!parent.exists()) {
+                parent.mkdirs();
+            }
+            ImageIO.write(bi, "png", new File("temp",id+".png"));
+
+        } catch (IOException | FontFormatException ie) {
+            ie.printStackTrace();
+        }
+    }
+
+    private static BufferedImage createAvatar(BufferedImage image) {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        BufferedImage output = new BufferedImage(w + 10, h + 10, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2 = output.createGraphics();
+
+        // This is what we want, but it only does hard-clipping, i.e. aliasing
+        // g2.setClip(new RoundRectangle2D ...)
+
+        // so instead fake soft-clipping by first drawing the desired clip shape
+        // in fully opaque white with antialiasing enabled...
+        g2.setComposite(AlphaComposite.Src);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(Color.WHITE);
+        //g2.fill(new RoundRectangle2D.Float(0, 0, w, h, 180, 180));
+        g2.fill(new Ellipse2D.Float(0, 0, w, h));
+
+        // ... then compositing the image on top,
+        // using the white shape from above as alpha source
+        g2.setComposite(AlphaComposite.SrcAtop);
+        g2.drawImage(image, 0, 0, null);
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(10));
+        g2.drawOval(0, 0, w , h);
+        g2.dispose();
+
+        Image tmp = output.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+        output = new BufferedImage(300, 300, BufferedImage.TYPE_INT_ARGB);
+
+        g2 = output.createGraphics();
+        g2.drawImage(tmp, 0, 0, null);
+        g2.dispose();
+
+
+        return output;
     }
 }

@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="a">
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/JMusicBot_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/JMusicBot_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/Listener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/utils/OtherUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +55,7 @@
     <configuration name="Run" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="com.jagrosh.jmusicbot.JMusicBot" />
       <module name="JMusicBot" />
+      <option name="VM_PARAMETERS" value="-Dnogui=true" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -75,7 +77,8 @@
       <workItem from="1644593939489" duration="3914000" />
       <workItem from="1644628395973" duration="9293000" />
       <workItem from="1644684284002" duration="3252000" />
-      <workItem from="1644690681586" duration="1399000" />
+      <workItem from="1644690681586" duration="2022000" />
+      <workItem from="1644715471800" duration="13442000" />
     </task>
     <task id="LOCAL-00001" summary="a">
       <created>1644690778045</created>
@@ -91,7 +94,14 @@
       <option name="project" value="LOCAL" />
       <updated>1644691046627</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="a">
+      <created>1644692344635</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1644692344635</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
