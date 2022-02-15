@@ -5,89 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="a">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/Bolo_ear_exploded.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/404.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/META-INF/application.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/hello.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/konata.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/javax.websocket-api-1.1.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/javax.websocket-client-api-1.1.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Socket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/JMusicBot_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/JMusicBot_jar.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/test.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/test.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/BotConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/BotConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/JMusicBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/audio/AloneInVoiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AloneInVoiceHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/audio/AudioHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AudioHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/audio/NowplayingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/NowplayingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/audio/PlayerManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/PlayerManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/audio/QueuedTrack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/QueuedTrack.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/audio/RequestMetadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/RequestMetadata.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/audio/TransformativeAudioSourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/TransformativeAudioSourceManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/AdminCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/AdminCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/DJCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/DJCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/MusicCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/MusicCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/OwnerCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/OwnerCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/admin/ClearDataCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/ClearDataCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/admin/ClearMessagesCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/ClearMessagesCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/admin/PrefixCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PrefixCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/admin/SetdjCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetdjCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/admin/SettcCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SettcCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/admin/SetvcCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetvcCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/admin/SkipratioCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SkipratioCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/ForceRemoveCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/ForceRemoveCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/ForceskipCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/ForceskipCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/MoveTrackCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/MoveTrackCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/PauseCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/PauseCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/PlaynextCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/PlaynextCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/RepeatCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/RepeatCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/SkiptoCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/SkiptoCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/StopCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/StopCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/dj/VolumeCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/dj/VolumeCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/general/SettingsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/SettingsCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/LyricsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/LyricsCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/NowplayingCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/NowplayingCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/PlayCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/PlayCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/PlaylistsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/PlaylistsCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/QueueCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/QueueCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/RemoveCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/RemoveCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/SCSearchCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/SCSearchCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/SearchCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/SearchCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/ShuffleCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/ShuffleCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/music/SkipCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/SkipCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/AutoplaylistCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/AutoplaylistCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/DebugCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/DebugCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/EvalCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/EvalCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/PlaylistCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/PlaylistCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetavatarCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/SetavatarCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetgameCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/SetgameCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetnameCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/SetnameCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/SetstatusCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/SetstatusCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/commands/owner/ShutdownCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/owner/ShutdownCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/entities/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Pair.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/entities/Prompt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Prompt.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/gui/ConsolePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/gui/ConsolePanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/gui/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/gui/GUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/gui/TextAreaOutputStream.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/gui/TextAreaOutputStream.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/playlist/PlaylistLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/playlist/PlaylistLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/queue/FairQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/queue/FairQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/queue/Queueable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/queue/Queueable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/settings/RepeatMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/RepeatMode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/settings/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/settings/SettingsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/utils/FormatUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/FormatUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/jagrosh/jmusicbot/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/images/bienvenida.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/bienvenida.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/reference.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/reference.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/jagrosh/jmusicbot/FairQueueTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/eme22/bolo/FairQueueTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -207,7 +126,7 @@
       <workItem from="1644861467680" duration="181000" />
       <workItem from="1644861701852" duration="280000" />
       <workItem from="1644862004363" duration="33000" />
-      <workItem from="1644934184281" duration="2865000" />
+      <workItem from="1644934184281" duration="3250000" />
     </task>
     <task id="LOCAL-00001" summary="a">
       <created>1644690778045</created>
@@ -237,7 +156,14 @@
       <option name="project" value="LOCAL" />
       <updated>1644729177956</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="a">
+      <created>1644937274165</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1644937274165</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
