@@ -5,8 +5,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="a">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/test.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/test.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/AddImageChannel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/AddMemeCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/CloneAndDeleteChannel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/CloneChannelCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/DeleteImageChannel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PollCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/RemoveMemeCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetAdminCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/AvatarCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeListCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/ShowImageChannelsCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Poll.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/BotConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/BotConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AudioHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AudioHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/AdminCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/AdminCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/DJCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/DJCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/SettingsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/SettingsCmd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/QueueCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/QueueCmd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/RemoveCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/RemoveCmd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Pair.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/RepeatMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/RepeatMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/despedida.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/despedida.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/reference.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/reference.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +48,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="HTML File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -35,6 +67,9 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="jar://$MAVEN_REPOSITORY$/com/jagrosh/jda-utilities-examples/3.0.5/jda-utilities-examples-3.0.5-sources.jar!/com/jagrosh/jdautilities/examples/command/AboutCommand.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="1" />
   </component>
   <component name="ProjectId" id="24th8MFkrykiAQ6eQm0rPY4PfGw" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -59,7 +94,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2908046" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="ReaderModeSettings">
     <option name="enabled" value="false" />
@@ -68,6 +103,13 @@
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\MSB19\IdeaProjects\PGMUSICBOT\src\main\resources\images" />
     </key>
+    <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="com.eme22.bolo.commands.admin" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.eme22.bolo.commands.admin" />
+      <recent name="com.eme22.bolo.commands.general" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="Run" type="Application" factoryName="Application">
@@ -75,19 +117,6 @@
       <module name="Bolo" />
       <option name="PROGRAM_PARAMETERS" value="wait" />
       <option name="VM_PARAMETERS" value="-Dnogui=true -Dserver.port=5000" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="Bolo" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="Bolo" />
-      <option name="filePath" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -126,7 +155,25 @@
       <workItem from="1644861467680" duration="181000" />
       <workItem from="1644861701852" duration="280000" />
       <workItem from="1644862004363" duration="33000" />
-      <workItem from="1644934184281" duration="3250000" />
+      <workItem from="1644934184281" duration="3397000" />
+      <workItem from="1645025325950" duration="1218000" />
+      <workItem from="1645152866743" duration="277000" />
+      <workItem from="1645468628707" duration="4281000" />
+      <workItem from="1645474197517" duration="4015000" />
+      <workItem from="1645489470539" duration="1186000" />
+      <workItem from="1645491108808" duration="11717000" />
+      <workItem from="1645545662219" duration="6854000" />
+      <workItem from="1645553028902" duration="552000" />
+      <workItem from="1645553660258" duration="1150000" />
+      <workItem from="1645572226278" duration="10744000" />
+      <workItem from="1645631667989" duration="157000" />
+      <workItem from="1645723715821" duration="4221000" />
+      <workItem from="1645751274460" duration="6446000" />
+      <workItem from="1645766524222" duration="2384000" />
+      <workItem from="1645769117740" duration="434000" />
+      <workItem from="1645769629707" duration="177000" />
+      <workItem from="1645769974912" duration="88000" />
+      <workItem from="1645804621973" duration="20968000" />
     </task>
     <task id="LOCAL-00001" summary="a">
       <created>1644690778045</created>
@@ -163,7 +210,14 @@
       <option name="project" value="LOCAL" />
       <updated>1644937274165</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="a">
+      <created>1644937568941</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1644937568941</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,6 +237,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/out/bolo2022/a/bolo2022" />
+    </ignored-roots>
     <MESSAGE value="a" />
     <option name="LAST_COMMIT_MESSAGE" value="a" />
   </component>

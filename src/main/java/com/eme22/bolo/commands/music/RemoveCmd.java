@@ -73,7 +73,7 @@ public class RemoveCmd extends MusicCommand
         Settings settings = event.getClient().getSettingsFor(event.getGuild());
         boolean isDJ = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if(!isDJ)
-            isDJ = event.getMember().getRoles().contains(settings.getRole(event.getGuild()));
+            isDJ = event.getMember().getRoles().contains(settings.getDJRole(event.getGuild()));
         QueuedTrack qt = handler.getQueue().get(pos-1);
         if(qt.getIdentifier()==event.getAuthor().getIdLong())
         {

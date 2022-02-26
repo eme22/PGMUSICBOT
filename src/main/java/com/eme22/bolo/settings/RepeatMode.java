@@ -15,14 +15,24 @@
  */
 package com.eme22.bolo.settings;
 
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import java.io.IOException;
+
 /**
  *
  * @author Michaili K
  */
 public enum RepeatMode
 {
+    @SerializedName("0")
     OFF(null, "Off"),
+    @SerializedName("1")
     ALL("\uD83D\uDD01", "All"), // 🔁
+    @SerializedName("2")
     SINGLE("\uD83D\uDD02", "Single"); // 🔂
 
     private final String emoji;
@@ -43,4 +53,8 @@ public enum RepeatMode
     {
         return userFriendlyName;
     }
+
+
 }
+
+

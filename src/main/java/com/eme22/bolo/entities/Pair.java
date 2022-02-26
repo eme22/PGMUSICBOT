@@ -15,6 +15,8 @@
  */
 package com.eme22.bolo.entities;
 
+import java.io.Serializable;
+
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
@@ -41,4 +43,13 @@ public class Pair<K,V>
     {
         return value;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair user = (Pair) o;
+        return key.equals( user.getKey()) && value.equals(user.getValue());
+    }
+
 }

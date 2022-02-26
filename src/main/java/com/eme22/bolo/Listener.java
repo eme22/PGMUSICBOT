@@ -18,10 +18,8 @@ package com.eme22.bolo;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.audio.RequestMetadata;
-import com.eme22.bolo.commands.music.QueueCmd;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.OtherUtil;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.menu.Paginator;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -35,9 +33,9 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.api.events.message.GenericMessageEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageEmbedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -45,13 +43,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,7 +60,7 @@ import static com.eme22.bolo.commands.music.QueueCmd.getQueueTitle;
 public class Listener extends ListenerAdapter
 {
     private final Bot bot;
-    private Paginator.Builder builder;
+    private final Paginator.Builder builder;
 
     public Listener(Bot bot)
     {
@@ -123,11 +119,51 @@ public class Listener extends ListenerAdapter
                         owner.openPrivateChannel().queue(pc -> pc.sendMessage(msg).queue());
                     }
                 }
-                catch(Exception ex) {} // ignored
+                catch(Exception ignored) {} // ignored
             }, 0, 24, TimeUnit.HOURS);
         }
     }
-    
+
+    @Override
+    public void onGuildMessageEmbed(@NotNull GuildMessageEmbedEvent event) {
+        ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild()).getOnlyImageChannels(event.getGuild());
+
+        if (bannedTextChannels.contains(event.getChannel())) {
+            List<MessageEmbed> message = event.getMessageEmbeds();
+
+            AtomicBoolean deletable = new AtomicBoolean(true);
+
+
+            message.forEach( messageEmbed -> {
+                if (messageEmbed.getImage() != null || messageEmbed.getVideoInfo() != null)
+                    deletable.set(false);
+            });
+
+            if (deletable.get())
+                event.getChannel().deleteMessageById(event.getMessageId()).complete();
+        }
+    }
+
+    @Override
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event)
+    {
+        ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild()).getOnlyImageChannels(event.getGuild());
+
+        if (bannedTextChannels.contains(event.getChannel())) {
+            Message message = event.getMessage();
+
+            if(message.getContentRaw().contains("delimagechannel"))
+                return;
+
+            if (message.getContentRaw().contains("https://"))
+                return;
+
+            if (message.getAttachments().isEmpty())
+                message.delete().complete();
+
+        }
+    }
+
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) 
     {
@@ -152,7 +188,7 @@ public class Listener extends ListenerAdapter
     }
 
     @Override
-    public void onShutdown(ShutdownEvent event) 
+    public void onShutdown(@NotNull ShutdownEvent event)
     {
         bot.shutdown();
     }
@@ -192,7 +228,7 @@ public class Listener extends ListenerAdapter
         MessageBuilder mb = new MessageBuilder();
         for (int i = 1; i <= calculatedPages; i++) {
             StringBuilder sb = new StringBuilder();
-            sb.append("Seleccione el canal para "+title+": \n");
+            sb.append("Seleccione el canal para ").append(title).append(": \n");
             for (int j = (i - 1) * 10; j < Math.min(i * 10, channels.size()); j++) {
                 sb.append(OtherUtil.numtoString(j)).append(" ").append(channels.get(j).getName()).append("\n");
             }
@@ -298,17 +334,9 @@ public class Listener extends ListenerAdapter
                 if (reaction.equals("⏯")) {
 
                     AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-                    if(handler.getPlayer().isPaused())
-                    {
-                        handler.getPlayer().setPaused(false);
-                        event.getTextChannel().sendMessage("Resumido **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**.");
-                    }
-                    else
-                    {
-                        handler.getPlayer().setPaused(true);
-                        event.getTextChannel().sendMessage("Paused **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**. Type `"+bot.getConfig().getPrefix()+"play` to unpause!");
-
-                    }
+                    //event.getTextChannel().sendMessage("Resumido **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**.");
+                    //event.getTextChannel().sendMessage("Paused **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**. Type `"+bot.getConfig().getPrefix()+"play` to unpause!");
+                    handler.getPlayer().setPaused(!handler.getPlayer().isPaused());
                     event.getReaction().removeReaction(event.getUser()).complete();
                 }
 
@@ -357,14 +385,14 @@ public class Listener extends ListenerAdapter
                                     index = content.lastIndexOf(" ", 2000);
                                 if(index == -1)
                                     index = 2000;
-                                event.getTextChannel().sendMessage(eb.setDescription(content.substring(0, index).trim()).build()).complete();
+                                event.getTextChannel().sendMessageEmbeds(eb.setDescription(content.substring(0, index).trim()).build()).complete();
                                 content = content.substring(index).trim();
                                 eb.setAuthor(null).setTitle(null, null);
                             }
-                            event.getTextChannel().sendMessage(eb.setDescription(content).build()).complete();
+                            event.getTextChannel().sendMessageEmbeds(eb.setDescription(content).build()).complete();
                         }
                         else
-                            event.getTextChannel().sendMessage(eb.setDescription(lyrics.getContent()).build()).complete();
+                            event.getTextChannel().sendMessageEmbeds(eb.setDescription(lyrics.getContent()).build()).complete();
                     });
                     event.getReaction().removeReaction(event.getUser()).complete();
                 }
@@ -399,7 +427,9 @@ public class Listener extends ListenerAdapter
                             .setItems(songs)
                     ;
                     builder.build().paginate(event.getChannel(), pagenum);
+                    event.getReaction().removeReaction(event.getUser()).complete();
                 }
+
             }
         }
         catch (NullPointerException ignore){}
@@ -428,9 +458,7 @@ public class Listener extends ListenerAdapter
         String channam = chans[channel].split(":")[2].substring(1);
 
         TextChannel chan = message.getGuild().getTextChannelsByName(channam, true).get(0);
-        if (chan == null)
-            return null;
-        else return chan;
+        return chan;
     }
 
     private static Set<String> getKeys(Map<String, Integer> map, Integer value) {
@@ -474,7 +502,7 @@ public class Listener extends ListenerAdapter
                     if (converted.exists())
                         converted.delete();
 
-                    OtherUtil.createImage( "BIENVENIDO", member.getName(), String.valueOf(member.getId()), bienvenida, userImage);
+                    OtherUtil.createImage( "BIENVENIDO", member.getName(), member.getId(), bienvenida, userImage);
                     if (!converted.exists()){
                         Logger log = LoggerFactory.getLogger("MusicBot");
                         log.error("Image not created");
@@ -542,4 +570,5 @@ public class Listener extends ListenerAdapter
                 log.error("Error: "+ exception.getMessage(), exception);
             }
     }
+
 }

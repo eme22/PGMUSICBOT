@@ -16,34 +16,47 @@
 package com.eme22.bolo.utils;
 
 import com.eme22.bolo.Bolo;
+import com.eme22.bolo.entities.Pair;
 import com.eme22.bolo.entities.Prompt;
-
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import okhttp3.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.kohsuke.github.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.List;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+@SuppressWarnings("unused")
 public class OtherUtil
 {
     public final static String NEW_VERSION_AVAILABLE = "There is a new version of JMusicBot available!\n"
@@ -51,7 +64,9 @@ public class OtherUtil
                     + "New Version: %s\n\n"
                     + "Please visit https://github.com/jagrosh/MusicBot/releases/latest to get the latest release.";
     private final static String WINDOWS_INVALID_PATH = "c:\\windows\\system32\\";
-    
+
+    private static final List<String> SHA = new ArrayList<>();
+
     /**
      * gets a Path from a String
      * also fixes the windows tendency to try to start in system32
@@ -70,7 +85,7 @@ public class OtherUtil
             {
                 result = Paths.get(new File(Bolo.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath() + File.separator + path);
             }
-            catch(URISyntaxException ex) {}
+            catch(URISyntaxException ignored) {}
         }
         return result;
     }
@@ -84,7 +99,7 @@ public class OtherUtil
      */
     public static String loadResource(Object clazz, String name)
     {
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(clazz.getClass().getResourceAsStream(name))))
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(clazz.getClass().getResourceAsStream(name)))))
         {
             StringBuilder sb = new StringBuilder();
             reader.lines().forEach(line -> sb.append("\r\n").append(line));
@@ -106,7 +121,7 @@ public class OtherUtil
     {
         if(url==null)
             return null;
-        try 
+        try
         {
             URL u = new URL(url);
             URLConnection urlConnection = u.openConnection();
@@ -260,16 +275,15 @@ public class OtherUtil
                 ig2.drawImage(userPic, 370, 25, null);
 
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("trans.ttf");
+
+            @SuppressWarnings("ConstantConditions")
             Font font2 = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(90f);
             Font font1 = font2.deriveFont(70f);
             ig2.setFont(font1);
-            FontMetrics fontMetrics = ig2.getFontMetrics();
-            int stringWidth = fontMetrics.stringWidth(message);
-            ig2.setPaint(Color.white);
-            ig2.drawString(message, Math.round((width - stringWidth) / 2), 370);
+            drawOutlinedAndCenteredString(message, width, height, ig2, 0, 370, Color.white);
             ig2.setFont(font2);
-            stringWidth = fontMetrics.stringWidth(name);
-            ig2.drawString(name, Math.round((width - stringWidth) / 3.3), 470);
+            ig2.setPaint(Color.white);
+            drawOutlinedAndCenteredString(name, width, height, ig2, 0, 470, Color.white);
             ig2.dispose();
 
             File parent = new File("temp");
@@ -282,6 +296,31 @@ public class OtherUtil
             ie.printStackTrace();
         }
     }
+
+    private static void drawOutlinedAndCenteredString(String s, int w, int h, @NotNull Graphics2D g, int fw, int fh, Color color) {
+        FontMetrics fm = g.getFontMetrics();
+        int x = (w - fm.stringWidth(s)) / 2;
+        x = fw == 0 ? x: fw;
+        int y = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) / 2);
+        y = fh == 0 ? y: fh;
+        g.setColor(Color.black);
+        g.drawString(s, x + 10, y);
+        g.drawString(s, x - 10, y);
+        g.drawString(s, x,y + 10);
+        g.drawString(s, x, y - 10);
+        g.setColor(color);
+        g.drawString(s, fw == 0 ? x: fw, fh == 0 ? y: fh);
+
+    }
+
+    private static void drawCenteredString(String s, int w, int h, Graphics2D g, int fw, int fh, Color color) {
+        FontMetrics fm = g.getFontMetrics();
+        int x = (w - fm.stringWidth(s)) / 2;
+        int y = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) / 2);
+        g.setColor(color);
+        g.drawString(s, fw == 0 ? x: fw, fh == 0 ? y: fh);
+    }
+
 
     private static BufferedImage createAvatar(BufferedImage image) {
         int w = image.getWidth();
@@ -319,5 +358,141 @@ public class OtherUtil
 
 
         return output;
+    }
+
+    public static void loadFileFromGit(File file) throws IOException, NoSuchAlgorithmException {
+
+        GitHub github = new GitHubBuilder().withOAuthToken("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").build();
+        GHRepository repo = github.getRepository("eme22/PGMUSICBOTSETTINGS");
+
+        Files.copy(repo.getTree("main").getEntry(file.getPath()).readAsBlob(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        MessageDigest md5Digest = MessageDigest.getInstance("SHA-256");
+        SHA.add(getFileChecksum(md5Digest, file));
+
+    }
+
+    public static void writeFileToGitHub(File file) throws IOException, NoSuchAlgorithmException {
+       MessageDigest md5Digest = MessageDigest.getInstance("SHA-256");
+        String checksum = getFileChecksum(md5Digest, file);
+
+        if (SHA.contains(checksum))
+            return;
+
+        GitHub github = new GitHubBuilder().withOAuthToken("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").build();
+        GHRepository repo = github.getRepository("eme22/PGMUSICBOTSETTINGS");
+        GHRef masterRef = repo.getRef("heads/main");
+        String masterTreeSha = repo.getTree("main").getSha();
+        String treeSha = repo.createTree()
+                .add(file.getName(), Files.readAllBytes(file.toPath()), true)
+                .create().getSha();
+
+        GHCommit commit = repo.createCommit()
+                .parent(masterTreeSha)
+                .tree(treeSha)
+                .message(LocalDateTime.now() + " Settings").create();
+
+        masterRef.updateTo(commit.getSHA1());
+    }
+
+    private static String getFileChecksum(MessageDigest digest, File file) throws IOException
+    {
+        //Get file input stream for reading the file content
+        FileInputStream fis = new FileInputStream(file);
+
+        //Create byte array to read data in chunks
+        byte[] byteArray = new byte[1024];
+        int bytesCount;
+
+        //Read file data and update in message digest
+        while ((bytesCount = fis.read(byteArray)) != -1) {
+            digest.update(byteArray, 0, bytesCount);
+        }
+
+        //close the stream; We don't need it now.
+        fis.close();
+
+        //Get the hash's bytes
+        byte[] bytes = digest.digest();
+
+        //This bytes[] has bytes in decimal format;
+        //Convert it to hexadecimal format
+        StringBuilder sb = new StringBuilder();
+        for (byte aByte : bytes) {
+            sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+        }
+
+        //return complete hash
+        return sb.toString();
+    }
+
+    public static boolean hasValue(JSONArray json, String value) {
+        for(int i = 0; i < json.length(); i++) {  // iterate through the JsonArray
+            // first I get the 'i' JsonElement as a JsonObject, then I get the key as a string and I compare it with the value
+            if(json.get(i).equals(value)) return true;
+        }
+        return false;
+    }
+
+    public static boolean hasValue(JSONArray json, Integer value) {
+        for(int i = 0; i < json.length(); i++) {  // iterate through the JsonArray
+            // first I get the 'i' JsonElement as a JsonObject, then I get the key as a string and I compare it with the value
+            if(json.get(i).equals(value)) return true;
+        }
+        return false;
+    }
+
+    public static boolean hasValue(JSONArray json, Long value) {
+        for(int i = 0; i < json.length(); i++) {  // iterate through the JsonArray
+            // first I get the 'i' JsonElement as a JsonObject, then I get the key as a string and I compare it with the value
+            if(json.get(i).equals(value)) return true;
+        }
+        return false;
+    }
+
+    public static boolean hasValue(JSONArray json, Map<String,String> value) {
+        for(int i = 0; i < json.length(); i++) {  // iterate through the JsonArray
+            // first I get the 'i' JsonElement as a JsonObject, then I get the key as a string and I compare it with the value
+            if(json.get(i).equals(value)) return true;
+        }
+        return false;
+    }
+
+    public static boolean hasValue(JSONArray json, Pair<String, String> value) {
+        for(int i = 0; i < json.length(); i++)
+            if(json.get(i).equals(value)) return true;
+        return false;
+    }
+
+    public static boolean hasValue(JSONArray json, JSONArray value) {
+        for(int i = 0; i < json.length(); i++)
+            if(json.get(i).equals(value)) return true;
+        return false;
+    }
+
+    public static boolean hasValue(ArrayList<Long> list, Long channel) {
+        for (Long aLong : list)
+            if (aLong.equals(channel)) return true;
+        return false;
+    }
+
+    public static boolean hasValue(ArrayList<Pair<String, String>> data, Pair<String, String> meme) {
+
+        for (Pair<String,String> num : data)
+            if (num.equals(meme)) return true;
+        return false;
+
+    }
+
+    public static boolean hasValue(HashSet<Long> list, Long channel) {
+        for (Long aLong : list)
+            if (aLong.equals(channel)) return true;
+        return false;
+    }
+
+    public static boolean hasValue(List<Map<String, String>> list, Map<String, String> meme) {
+        for (Map<String, String> data : list)
+            if (data.equals(meme)) return true;
+        return false;
     }
 }

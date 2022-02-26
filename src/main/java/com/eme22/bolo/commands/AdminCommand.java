@@ -15,8 +15,10 @@
  */
 package com.eme22.bolo.commands;
 
+import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.Command;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Role;
 
 /**
  *
@@ -30,9 +32,13 @@ public abstract class AdminCommand extends Command
         {
             if(event.getAuthor().getId().equals(event.getClient().getOwnerId()))
                 return true;
+            if (event.getAuthor().getId().equals(event.getGuild().getOwnerId()))
+                return true;
             if(event.getGuild()==null)
                 return true;
-            return event.getMember().hasPermission(Permission.MANAGE_SERVER);
+            Settings settings = event.getClient().getSettingsFor(event.getGuild());
+            Role admin = settings.getAdminRole(event.getGuild());
+            return admin!=null && (event.getMember().getRoles().contains(admin) || admin.getIdLong()==event.getGuild().getIdLong());
         });
         this.guildOnly = true;
     }

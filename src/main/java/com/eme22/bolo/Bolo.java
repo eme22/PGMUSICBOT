@@ -17,7 +17,7 @@ package com.eme22.bolo;
 
 import com.eme22.bolo.commands.admin.*;
 import com.eme22.bolo.commands.dj.*;
-import com.eme22.bolo.commands.general.SettingsCmd;
+import com.eme22.bolo.commands.general.*;
 import com.eme22.bolo.commands.music.*;
 import com.eme22.bolo.commands.owner.*;
 import com.eme22.bolo.entities.Prompt;
@@ -40,6 +40,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -71,7 +74,21 @@ public class Bolo
         
         // get and check latest version
         String version = OtherUtil.checkVersion(prompt);
-        
+
+        try {
+            OtherUtil.loadFileFromGit(new File("serversettings.json"));
+        } catch (IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                OtherUtil.writeFileToGitHub(new File("serversettings.json"));
+            } catch (IOException | NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }));
+
         // check for valid java version
         if(!System.getProperty("java.vm.name").contains("64"))
             prompt.alert(Prompt.Level.WARNING, "Java Version", "It appears that you may not be using a supported Java version. Please use 64-bit java.");
@@ -106,7 +123,11 @@ public class Bolo
                 .addCommands(aboutCommand,
                         new PingCommand(),
                         new SettingsCmd(bot),
-                        
+                        new AvatarCmd(bot),
+                        new MemeCmd(bot),
+                        new MemeListCmd(bot),
+                        new ShowImageChannelsCmd(bot),
+
                         new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
@@ -127,9 +148,18 @@ public class Bolo
                         new SkiptoCmd(bot),
                         new StopCmd(bot),
                         new VolumeCmd(bot),
-                        
+
                         new PrefixCmd(bot),
                         new SetdjCmd(bot),
+                        new AddMemeCmd(bot),
+                        new RemoveMemeCmd(bot),
+                        new AddImageChannel(bot),
+                        new DeleteImageChannel(bot),
+                        new SetWelcomeCmd(bot),
+                        new SetGoodByeCmd(bot),
+                        new CloneChannelCmd(bot),
+                        new CloneAndDeleteChannel(bot),
+                        new SetAdminCmd(bot),
                         new SkipratioCmd(bot),
                         new SettcCmd(bot),
                         new SetvcCmd(bot),
@@ -224,9 +254,10 @@ public class Bolo
 
         boolean wait = true;
 
-        for(int i = 0; i < args.length; i++) {
-            if (args[i].equalsIgnoreCase("wait")) {
+        for (String arg : args) {
+            if (arg.equalsIgnoreCase("wait")) {
                 wait = false;
+                break;
             }
         }
 

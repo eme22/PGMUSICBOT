@@ -27,6 +27,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
@@ -55,14 +57,20 @@ public class SettingsCmd extends Command
         TextChannel dchan = s.getGoodbyeChannel(event.getGuild());
         TextChannel tchan = s.getTextChannel(event.getGuild());
         VoiceChannel vchan = s.getVoiceChannel(event.getGuild());
-        Role role = s.getRole(event.getGuild());
+        Role djRole = s.getDJRole(event.getGuild());
+        Role adminrole =s.getAdminRole(event.getGuild());
+        ArrayList<TextChannel> onlyimages = s.getOnlyImageChannels(event.getGuild());
+
         EmbedBuilder ebuilder = new EmbedBuilder()
                 .setColor(event.getSelfMember().getColor())
                 .setDescription("Canal de Musica: " + (tchan == null ? "Cualquiera" : "**#" + tchan.getName() + "**")
                         + "\nCanal de Bienvenida: " + (wchan == null ? "Cualquiera" : "**#" + wchan.getName() + "**")
                         + "\nCanal de Despedidas: " + (dchan == null ? "Cualquiera" : "**#" + dchan.getName() + "**")
                         + "\nCanal de Voz: " + (vchan == null ? "Cualquiera" : vchan.getAsMention())
-                        + "\nRol de DJ: " + (role == null ? "Ninguno" : "**" + role.getName() + "**")
+                        + "\nRol de Admin: " + (adminrole == null ? "Ninguno" : "**" + adminrole.getName() + "**")
+                        + "\nRol de DJ: " + (djRole == null ? "Ninguno" : "**" + djRole.getName() + "**")
+                        + "\nCanales de solo imagenes: " + (onlyimages.isEmpty() ? "Ninguno" : "**"+ onlyimages.size() + "**")
+
                         + "\nPrefijo Personalizado: " + (s.getPrefix() == null ? "Ninguno" : "`" + s.getPrefix() + "`")
                         + "\nModo de Repeticion: " + (s.getRepeatMode() == RepeatMode.OFF
                                                 ? s.getRepeatMode().getUserFriendlyName()
@@ -72,7 +80,7 @@ public class SettingsCmd extends Command
                 .setFooter(event.getJDA().getGuilds().size() + " servers | "
                         + event.getJDA().getGuilds().stream().filter(g -> g.getSelfMember().getVoiceState().inVoiceChannel()).count()
                         + " conecciones de audio", null);
-        event.getChannel().sendMessage(builder.setEmbed(ebuilder.build()).build()).queue();
+        event.getChannel().sendMessage(builder.setEmbeds(ebuilder.build()).build()).queue();
     }
     
 }

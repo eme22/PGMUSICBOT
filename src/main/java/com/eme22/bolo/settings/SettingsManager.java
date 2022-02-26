@@ -16,21 +16,27 @@
 package com.eme22.bolo.settings;
 
 import com.eme22.bolo.utils.OtherUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.HashMap;
 import net.dv8tion.jda.api.entities.Guild;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class SettingsManager implements GuildSettingsManager
+public class SettingsManager implements GuildSettingsManager<Settings>
 {
     private final static double SKIP_RATIO = .55;
     private final HashMap<Long,Settings> settings;
@@ -38,29 +44,21 @@ public class SettingsManager implements GuildSettingsManager
     public SettingsManager()
     {
         this.settings = new HashMap<>();
-        try {
-            JSONObject loadedSettings = new JSONObject(new String(Files.readAllBytes(OtherUtil.getPath("serversettings.json"))));
-            loadedSettings.keySet().forEach((id) -> {
-                JSONObject o = loadedSettings.getJSONObject(id);
+      try {
+        Reader reader = Files.newBufferedReader(OtherUtil.getPath("serversettings.json"));
 
-                // Legacy version support: On versions 0.3.3 and older, the repeat mode was represented as a boolean.
-                if (!o.has("repeat_mode") && o.has("repeat") && o.getBoolean("repeat"))
-                    o.put("repeat_mode", RepeatMode.ALL);
+        Type type = new TypeToken<HashMap<Long,Settings>>(){}.getType();
+        HashMap<Long,Settings> settings = new Gson().fromJson(reader, type);
+
+        if (settings == null)
+            throw new IOException();
+
+        settings.forEach( (aLong, settings1) -> this.settings.put(aLong, new Settings(this, settings1.textId, settings1.voiceId, settings1.roleId, settings1.adminroleId, settings1.volume, settings1.defaultPlaylist, settings1.repeatMode, settings1.prefix, settings1.skipRatio, settings1.helloID, settings1.goodByeID, settings1.onlyImageChannels, settings1.memeImages)));
 
 
-                settings.put(Long.parseLong(id), new Settings(this,
-                        o.has("text_channel_id") ? o.getString("text_channel_id")            : null,
-                        o.has("voice_channel_id")? o.getString("voice_channel_id")           : null,
-                        o.has("dj_role_id")      ? o.getString("dj_role_id")                 : null,
-                        o.has("volume")          ? o.getInt("volume")                        : 100,
-                        o.has("default_playlist")? o.getString("default_playlist")           : null,
-                        o.has("repeat_mode")     ? o.getEnum(RepeatMode.class, "repeat_mode"): RepeatMode.OFF,
-                        o.has("prefix")          ? o.getString("prefix")                     : null,
-                        o.has("skip_ratio")      ? o.getDouble("skip_ratio")                 : SKIP_RATIO,
-                        o.has("bienvenidas_channel_id") ? o.getString("bienvenidas_channel_id")            : null,
-                        o.has("despedidas_channel_id") ? o.getString("despedidas_channel_id")            : null));
-            });
-        } catch(IOException | JSONException e) {
+            reader.close();
+
+        } catch( IOException e) {
             LoggerFactory.getLogger("Settings").warn("Failed to load server settings (this is normal if no settings have been set yet): "+e);
         }
     }
@@ -79,85 +77,37 @@ public class SettingsManager implements GuildSettingsManager
     
     public Settings getSettings(long guildId)
     {
-        return settings.computeIfAbsent(guildId, id -> createDefaultSettings());
+        Settings data = null;
+        try {
+            data = settings.computeIfAbsent(guildId, id -> createDefaultSettings());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return data;
     }
-    
+
     private Settings createDefaultSettings()
     {
-        return new Settings(this, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO, 0, 0);
+        return new Settings(this, -1, -1, -1, -1, 100, null, RepeatMode.OFF, null, SKIP_RATIO, -1, -1, new HashSet<>(), new ArrayList<>());
     }
     
-    protected void writeSettings()
+    public void writeSettings()
     {
-        JSONObject obj = new JSONObject();
-        settings.keySet().stream().forEach(key -> {
-            JSONObject o = new JSONObject();
-            Settings s = settings.get(key);
-            if(s.textId!=0)
-                o.put("text_channel_id", Long.toString(s.textId));
-            if(s.voiceId!=0)
-                o.put("voice_channel_id", Long.toString(s.voiceId));
-            if(s.roleId!=0)
-                o.put("dj_role_id", Long.toString(s.roleId));
-            if(s.getVolume()!=100)
-                o.put("volume",s.getVolume());
-            if(s.getDefaultPlaylist() != null)
-                o.put("default_playlist", s.getDefaultPlaylist());
-            if(s.getRepeatMode()!=RepeatMode.OFF)
-                o.put("repeat_mode", s.getRepeatMode());
-            if(s.getPrefix() != null)
-                o.put("prefix", s.getPrefix());
-            if(s.getSkipRatio() != SKIP_RATIO)
-                o.put("skip_ratio", s.getSkipRatio());
-            if(s.helloID!=0)
-                o.put("bienvenidas_channel_id", Long.toString(s.helloID));
-            if(s.goodByeID!=0)
-                o.put("despedidas_channel_id", Long.toString(s.goodByeID));
-
-            obj.put(Long.toString(key), o);
-        });
         try {
-            Files.write(OtherUtil.getPath("serversettings.json"), obj.toString(4).getBytes());
-        } catch(IOException ex){
+            FileWriter writer = new FileWriter(OtherUtil.getPath("serversettings.json").toFile());
+            new GsonBuilder().setPrettyPrinting().create().toJson(settings, writer);
+            writer.flush();
+            writer.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
             LoggerFactory.getLogger("Settings").warn("Failed to write to file: "+ex);
         }
     }
 
     protected void deleteSettings(String guild)
     {
-        JSONObject obj = new JSONObject();
-        settings.keySet().stream().forEach(key -> {
-            if (key == Long.parseLong(guild))
-                return;
-            JSONObject o = new JSONObject();
-            Settings s = settings.get(key);
-            if(s.textId!=0)
-                o.put("text_channel_id", Long.toString(s.textId));
-            if(s.voiceId!=0)
-                o.put("voice_channel_id", Long.toString(s.voiceId));
-            if(s.roleId!=0)
-                o.put("dj_role_id", Long.toString(s.roleId));
-            if(s.getVolume()!=100)
-                o.put("volume",s.getVolume());
-            if(s.getDefaultPlaylist() != null)
-                o.put("default_playlist", s.getDefaultPlaylist());
-            if(s.getRepeatMode()!=RepeatMode.OFF)
-                o.put("repeat_mode", s.getRepeatMode());
-            if(s.getPrefix() != null)
-                o.put("prefix", s.getPrefix());
-            if(s.getSkipRatio() != SKIP_RATIO)
-                o.put("skip_ratio", s.getSkipRatio());
-            if(s.helloID!=0)
-                o.put("bienvenidas_channel_id", Long.toString(s.helloID));
-            if(s.goodByeID!=0)
-                o.put("despedidas_channel_id", Long.toString(s.goodByeID));
+        settings.remove(Long.parseLong(guild));
+        writeSettings();
 
-            obj.put(Long.toString(key), o);
-        });
-        try {
-            Files.write(OtherUtil.getPath("serversettings.json"), obj.toString(4).getBytes());
-        } catch(IOException ex){
-            LoggerFactory.getLogger("Settings").warn("Failed to write to file: "+ex);
-        }
     }
 }
