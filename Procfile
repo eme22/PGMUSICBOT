@@ -1,1 +1,0 @@
-web: java $JAVA_OPTS -Dserver.port=$PORT -jar bolo-0.1.1-SNAPSHOT-jar-with-dependencies.jar wait $JAR_OPTS
