@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="UPDATING TO PUSH">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/playlist/PlaylistLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/playlist/PlaylistLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" afterDir="false" />
-    </list>
+    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="UPDATING TO PUSH" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -262,7 +257,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646070486989</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="UPDATING TO PUSH">
+      <created>1646072862324</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1646072862324</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
