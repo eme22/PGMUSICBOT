@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dserver.port=$PORT -cp target/classes:target/dependency/* com.eme22.bolo.Bolo wait $JAR_OPTS
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar out/bolo2022/bolo-0.1.1-SNAPSHOT-jar-with-dependencies.jar wait $JAR_OPTS

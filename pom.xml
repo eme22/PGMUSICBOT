@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.eme22</groupId>
     <artifactId>bolo</artifactId>
     <version>0.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
+
     <repositories>
         <repository>
             <id>jitpack.io</id>
@@ -120,9 +121,45 @@
     
     <build>
       <plugins>
-          <!--
+          <plugin>
+              <artifactId>maven-jar-plugin</artifactId>
+              <version>2.3.1</version>
+              <executions>
+                  <execution>
+                      <id>default-jar</id>
+                      <phase>package</phase>
+                  </execution>
+              </executions>
+          </plugin>
+
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-shade-plugin</artifactId>
+              <version>2.3</version>
+              <executions>
+                  <execution>
+                      <phase>package</phase>
+                      <goals>
+                          <goal>shade</goal>
+                      </goals>
+                      <configuration>
+                          <transformers>
+                              <transformer
+                                      implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                  <mainClass>com.eme22.bolo.Bolo</mainClass>
+                              </transformer>
+                          </transformers>
+                          <shadedArtifactAttached>true</shadedArtifactAttached>
+                          <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
+                          <outputDirectory>${maven.multiModuleProjectDirectory}/out/bolo2022</outputDirectory>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
+      <!--
           <plugin>
               <artifactId>maven-assembly-plugin</artifactId>
+
               <configuration>
                   <archive>
                       <manifest>
@@ -143,61 +180,7 @@
                   </execution>
               </executions>
           </plugin>
-          -->
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-dependency-plugin</artifactId>
-              <version>2.9</version>
-              <executions>
-                  <execution>
-                      <id>build-classpath</id>
-                      <phase>generate-sources</phase>
-                      <goals>
-                          <goal>build-classpath</goal>
-                      </goals>
-                      <configuration>
-                          <includeScope>compile</includeScope>
-                          <!-- Omit to print on console: -->
-                          <outputFile>${project.build.directory}/compile-classpath.txt</outputFile>
-                      </configuration>
-                  </execution>
-                  <execution>
-                      <id>build-test-classpath</id>
-                      <phase>generate-test-sources</phase>
-                      <goals>
-                          <goal>build-classpath</goal>
-                      </goals>
-                      <configuration>
-                          <includeScope>test</includeScope>
-                          <!-- Omit to print on console: -->
-                      </configuration>
-                  </execution>
-              </executions>
-          </plugin>
-
-
-          <plugin>
-              <groupId>com.heroku.sdk</groupId>
-              <artifactId>heroku-maven-plugin</artifactId>
-              <version>3.0.3</version>
-              <configuration>
-                  <jdkVersion>11</jdkVersion>
-                  <!-- Use your own application name >>> heroku enforces lowcase names -->
-                  <appName>bolo2022</appName>
-                  <processTypes>
-                      <!-- Tell Heroku how to launch your application -->
-                      <web>java $JAVA_OPTS -Dserver.port=$PORT -cp target/classes;target/dependency/* com.eme22.bolo.Bolo wait $JAR_OPTS</web>
-                  </processTypes>
-              </configuration>
-          </plugin>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-compiler-plugin</artifactId>
-              <configuration>
-                  <source>9</source>
-                  <target>9</target>
-              </configuration>
-          </plugin>
+                   -->
       </plugins>
     </build>
     
