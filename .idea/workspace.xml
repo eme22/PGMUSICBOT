@@ -4,29 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="MAJOR REFRACTOR">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeImageCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeImageCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/poll/PollManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AloneInVoiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AloneInVoiceHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/NowplayingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/NowplayingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/PlayerManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/PlayerManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/RequestMetadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/RequestMetadata.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/TransformativeAudioSourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/TransformativeAudioSourceManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PollCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PollCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/LyricsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/LyricsCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Poll.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Poll.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Prompt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Prompt.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" afterDir="false" />
+    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="BUGFIXES">
+      <change afterPath="$PROJECT_DIR$/out/bolo2022/img/bolo.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
