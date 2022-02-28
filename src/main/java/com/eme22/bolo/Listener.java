@@ -362,11 +362,11 @@ public class Listener extends ListenerAdapter
                     new LyricsClient().getLyrics(title).thenAccept(lyrics ->
                     {
                         if(lyrics == null)
-                            event.getTextChannel().sendMessage("Lyrics for `" + finalTitle + "` could not be found!" + (finalTitle.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).complete();
+                            event.getTextChannel().sendMessage("Lyrics for `" + finalTitle + "` could not be found!" + (finalTitle.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
                         else
                             LyricsCmd.showLyrics(null, event.getGuild().getSelfMember().getColor(), event.getTextChannel(),finalTitle, lyrics);
                     });
-                    event.getReaction().removeReaction(event.getUser()).complete();
+                    event.getReaction().removeReaction(event.getUser()).queue();
                 }
 
                 if (reaction.equals("\uD83D\uDCC3"))
@@ -397,7 +397,7 @@ public class Listener extends ListenerAdapter
                             .setItems(songs)
                     ;
                     builder.build().paginate(event.getChannel(), pagenum);
-                    event.getReaction().removeReaction(event.getUser()).complete();
+                    event.getReaction().removeReaction(event.getUser()).queue();
                 }
 
             }
