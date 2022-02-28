@@ -120,6 +120,7 @@
     
     <build>
       <plugins>
+          <!--
           <plugin>
               <artifactId>maven-assembly-plugin</artifactId>
               <configuration>
@@ -142,28 +143,24 @@
                   </execution>
               </executions>
           </plugin>
+          -->
           <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-dependency-plugin</artifactId>
-              <executions>
-                  <execution>
-                      <id>copy-dependencies</id>
-                      <phase>prepare-package</phase>
-                      <goals>
-                          <goal>copy-dependencies</goal>
-                      </goals>
-                      <configuration>
-                          <outputDirectory>
-                              ${project.build.directory}/libs
-                          </outputDirectory>
-                      </configuration>
-                  </execution>
-              </executions>
+              <groupId>com.heroku.sdk</groupId>
+              <artifactId>heroku-maven-plugin</artifactId>
+              <version>3.0.3</version>
+              <configuration>
+                  <jdkVersion>11</jdkVersion>
+                  <!-- Use your own application name >>> heroku enforces lowcase names -->
+                  <appName>bolo2022</appName>
+                  <processTypes>
+                      <!-- Tell Heroku how to launch your application -->
+                      <web>java $JAVA_OPTS -cp target/classes:target/dependency/* com.eme22.bolo.Bolo</web>
+                  </processTypes>
+              </configuration>
           </plugin>
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
-              <version>3.10.0</version>
               <configuration>
                   <source>9</source>
                   <target>9</target>

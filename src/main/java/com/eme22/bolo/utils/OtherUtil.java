@@ -426,7 +426,7 @@ public class OtherUtil
 
     public static void loadFileFromGit(File file) throws IOException, NoSuchAlgorithmException {
 
-        GitHub github = new GitHubBuilder().withOAuthToken("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").build();
+        GitHub github = new GitHubBuilder().withOAuthToken(System.getenv("GITHUB_OAUTH")).build();
         GHRepository repo = github.getRepository("eme22/PGMUSICBOTSETTINGS");
 
         Files.copy(repo.getTree("main").getEntry(file.getPath()).readAsBlob(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -443,7 +443,7 @@ public class OtherUtil
         if (SHA.contains(checksum))
             return;
 
-        GitHub github = new GitHubBuilder().withOAuthToken("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").build();
+        GitHub github = new GitHubBuilder().withOAuthToken(System.getenv("GITHUB_OAUTH")).build();
         GHRepository repo = github.getRepository("eme22/PGMUSICBOTSETTINGS");
         GHRef masterRef = repo.getRef("heads/main");
         String masterTreeSha = repo.getTree("main").getSha();

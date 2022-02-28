@@ -47,13 +47,12 @@ public class PlaylistLoader
         if(folderExists())
         {
             File folder = new File(OtherUtil.getPath(config.getPlaylistsFolder()).toString());
-            return Arrays.asList(folder.listFiles((pathname) -> pathname.getName().endsWith(".txt")))
-                    .stream().map(f -> f.getName().substring(0,f.getName().length()-4)).collect(Collectors.toList());
+            return Arrays.stream(folder.listFiles((pathname) -> pathname.getName().endsWith(".txt"))).map(f -> f.getName().substring(0,f.getName().length()-4)).collect(Collectors.toList());
         }
         else
         {
             createFolder();
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
     
@@ -213,7 +212,7 @@ public class PlaylistLoader
                                     loaded.set(first, loaded.get(second));
                                     loaded.set(second, tmp);
                                 }
-                            loaded.removeIf(track -> config.isTooLong(track));
+                            loaded.removeIf(config::isTooLong);
                             loaded.forEach(at -> at.setUserData(0L));
                             tracks.addAll(loaded);
                             loaded.forEach(at -> consumer.accept(at));
@@ -231,7 +230,7 @@ public class PlaylistLoader
                     @Override
                     public void loadFailed(FriendlyException fe) 
                     {
-                        errors.add(new PlaylistLoadError(index, items.get(index), "Failed to load track: "+fe.getLocalizedMessage()));
+                        errors.add(new PlaylistLoadError(index, items.get(index), "Failed to load track: " + fe.getLocalizedMessage()));
                         done();
                     }
                 });
@@ -264,7 +263,7 @@ public class PlaylistLoader
         }
     }
     
-    public class PlaylistLoadError
+    public static class PlaylistLoadError
     {
         private final int number;
         private final String item;
