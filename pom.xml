@@ -156,31 +156,18 @@
                   </execution>
               </executions>
           </plugin>
-      <!--
           <plugin>
-              <artifactId>maven-assembly-plugin</artifactId>
-
+              <groupId>com.heroku.sdk</groupId>
+              <artifactId>heroku-maven-plugin</artifactId>
+              <version>3.0.3</version>
               <configuration>
-                  <archive>
-                      <manifest>
-                          <mainClass>com.eme22.bolo.Bolo</mainClass>
-                      </manifest>
-                  </archive>
-                  <descriptorRefs>
-                      <descriptorRef>jar-with-dependencies</descriptorRef>
-                  </descriptorRefs>
+                  <jdkVersion>11</jdkVersion>
+                  <appName>bolo2022</appName>
+                  <processTypes>
+                      <web>java -jar ./out/bolo2022/bolo-0.1.1-SNAPSHOT-jar-with-dependencies.jar</web>
+                  </processTypes>
               </configuration>
-              <executions>
-                  <execution>
-                      <id>make-assembly</id>
-                      <phase>package</phase>
-                      <goals>
-                          <goal>single</goal>
-                      </goals>
-                  </execution>
-              </executions>
           </plugin>
-                   -->
       </plugins>
     </build>
     
