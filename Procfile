@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dnogui=true -Dserver.port=$PORT -cp build/classes/ com.eme22.bolo.Bolo wait
+web: java -cp target/classes/:target/dependency/* com.eme22.bolo.Bolo
