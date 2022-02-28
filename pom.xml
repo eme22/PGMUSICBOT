@@ -127,49 +127,73 @@
               <executions>
                   <execution>
                       <id>default-jar</id>
-                      <phase>package</phase>
+                      <phase>none</phase>
                   </execution>
               </executions>
           </plugin>
-
           <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-shade-plugin</artifactId>
-              <version>2.3</version>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <configuration>
+                  <archive>
+                      <manifest>
+                          <mainClass>com.eme22.bolo.Bolo</mainClass>
+                      </manifest>
+                  </archive>
+                  <descriptorRefs>
+                      <descriptorRef>jar-with-dependencies</descriptorRef>
+                  </descriptorRefs>
+              </configuration>
               <executions>
                   <execution>
-                      <phase>package</phase>
+                      <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                      <phase>package</phase> <!-- bind to the packaging phase -->
                       <goals>
-                          <goal>shade</goal>
+                          <goal>single</goal>
                       </goals>
-                      <configuration>
-                          <transformers>
-                              <transformer
-                                      implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                  <mainClass>com.eme22.bolo.Bolo</mainClass>
-                              </transformer>
-                          </transformers>
-                          <shadedArtifactAttached>true</shadedArtifactAttached>
-                          <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
-                          <outputDirectory>${maven.multiModuleProjectDirectory}/out/bolo2022</outputDirectory>
-                      </configuration>
                   </execution>
               </executions>
           </plugin>
-          <plugin>
-              <groupId>com.heroku.sdk</groupId>
-              <artifactId>heroku-maven-plugin</artifactId>
-              <version>3.0.3</version>
-              <configuration>
-                  <jdkVersion>11</jdkVersion>
-                  <appName>bolo2022</appName>
-                  <processTypes>
-                      <web>java -jar ./out/bolo2022/bolo-0.1.1-SNAPSHOT-jar-with-dependencies.jar</web>
-                  </processTypes>
-              </configuration>
-          </plugin>
-      </plugins>
-    </build>
+          <!--
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-shade-plugin</artifactId>
+                  <version>2.3</version>
+                  <executions>
+                      <execution>
+                          <phase>package</phase>
+                          <goals>
+                              <goal>shade</goal>
+                          </goals>
+                          <configuration>
+                              <transformers>
+                                  <transformer
+                                          implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                      <mainClass>com.eme22.bolo.Bolo</mainClass>
+                                  </transformer>
+                              </transformers>
+                              <shadedArtifactAttached>true</shadedArtifactAttached>
+                              <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
+                              <outputDirectory>${maven.multiModuleProjectDirectory}/out/bolo2022</outputDirectory>
+                          </configuration>
+                      </execution>
+                  </executions>
+              </plugin>
+              <plugin>
+                  <groupId>com.heroku.sdk</groupId>
+                  <artifactId>heroku-maven-plugin</artifactId>
+                  <version>3.0.3</version>
+                  <configuration>
+                      <jdkVersion>11</jdkVersion>
+                      <appName>bolo2022</appName>
+                      <processTypes>
+                          <web>java -jar ./out/bolo2022/bolo-0.1.1-SNAPSHOT-jar-with-dependencies.jar</web>
+                      </processTypes>
+                  </configuration>
+              </plugin>
+              -->
+          </plugins>
+        </build>
+
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
