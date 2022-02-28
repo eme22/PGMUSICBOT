@@ -2,19 +2,25 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
+import com.eme22.bolo.entities.Poll;
+import com.eme22.bolo.poll.PollManager;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PollCmd extends AdminCommand {
 
+    protected final Bot bot;
+
     public PollCmd(Bot bot) {
 
-        this.name = "cleardata";
-        this.help = "limpia todos los datos del servidor";
+        this.bot = bot;
+        this.name = "poll";
+        this.help = "crea una votacion con los datos enviados";
         this.arguments = "[Question] [Answer 1] [Answer 2]...[Answer 9]";
         this.aliases = bot.getConfig().getAliases(this.name);
     }
@@ -28,8 +34,10 @@ public class PollCmd extends AdminCommand {
             return;
         }
 
-        EmbedBuilder eb = new EmbedBuilder();
-        StringBuilder sb = new StringBuilder();
+        PollManager pollManager = bot.getPollManager();
+
+        Poll poll = new Poll();
+
         Pattern p = Pattern.compile("\\[(.*?)\\]");
         Matcher m = p.matcher(event.getArgs());
 
@@ -37,27 +45,32 @@ public class PollCmd extends AdminCommand {
         while(m.find()) {
             if (i[0] >= 10)
                 break;
-
-            if (i[0] == 1){
-                sb.append("\uD83D\uDCCA").append(" ").append(m.group(i[0])).append("\n");
+            if (i[0] == 1) {
+                    poll.setQuestion(m.group(1));
             }
             else {
-                sb.append(OtherUtil.numtoString(i[0])).append(" ").append(m.group(i[0])).append("\n");
+                Poll.Answers answers = new Poll.Answers(m.group(1), 0, new ArrayList<>());
+                poll.addAnswer(answers);
             }
 
             i[0]++;
         }
 
-        eb.setDescription(sb.toString());
-        event.getTextChannel().sendMessageEmbeds(eb.build()).queue(success -> {
-            if (i[0] == 10) i[0] = 9;
+        if (i[0] == 10)
+            i[0] = 9;
 
-            for (int j = 0; j < i[0]; j++) {
+        EmbedBuilder eb = new EmbedBuilder();
+
+        int answers = poll.getAnswers().size();
+        eb.setDescription(OtherUtil.makePollString(poll));
+        event.getTextChannel().sendMessageEmbeds(eb.build()).queue(success -> {
+
+           for (int j = 0; j < answers; j++) {
                 success.addReaction("U+003"+j+" U+FE0F U+20E3").queue();
             }
 
-            success.addReaction("\uD83D\uDCDD").queue();
-
+            //success.addReaction("\uD83D\uDCDD").queue();
+            pollManager.addPollForGuild(event.getGuild(), success.getIdLong(), poll);
         });
 
     }

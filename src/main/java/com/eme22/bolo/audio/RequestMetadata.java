@@ -37,7 +37,7 @@ public class RequestMetadata
         return user == null ? 0L : user.id;
     }
     
-    public class RequestInfo
+    public static class RequestInfo
     {
         public final String query, url;
         
@@ -48,7 +48,7 @@ public class RequestMetadata
         }
     }
     
-    public class UserInfo
+    public static class UserInfo
     {
         public final long id;
         public final String username, discrim, avatar;

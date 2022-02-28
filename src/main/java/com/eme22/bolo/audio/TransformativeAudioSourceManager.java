@@ -91,8 +91,8 @@ public class TransformativeAudioSourceManager extends YoutubeAudioSourceManager
     {
         try
         {
-            return transforms.root().entrySet().stream()
-                    .map(e -> new TransformativeAudioSourceManager(e.getKey(), transforms.getConfig(e.getKey())))
+            return transforms.root().keySet().stream()
+                    .map(configValue -> new TransformativeAudioSourceManager(configValue, transforms.getConfig(configValue)))
                     .collect(Collectors.toList());
         }
         catch (Exception ex)

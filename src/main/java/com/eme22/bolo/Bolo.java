@@ -77,14 +77,26 @@ public class Bolo
 
         try {
             OtherUtil.loadFileFromGit(new File("serversettings.json"));
-        } catch (IOException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
+            LoggerFactory.getLogger("Settings").warn("Se ha fallado en cargar las opciones del servidor, se usaran las locales: "+e);
+
+        }
+
+        try {
+            OtherUtil.loadFileFromGit(new File("serverpolls.json"));
+        }catch (IOException | NullPointerException | NoSuchAlgorithmException e){
+            LoggerFactory.getLogger("Settings").warn("Se ha fallado en cargar los datos de votaciones del servidor: "+e);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 OtherUtil.writeFileToGitHub(new File("serversettings.json"));
-            } catch (IOException | NoSuchAlgorithmException e) {
+            } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
+                e.printStackTrace();
+            }
+            try {
+                OtherUtil.writeFileToGitHub(new File("serverpolls.json"));
+            } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
                 e.printStackTrace();
             }
         }));
@@ -151,6 +163,7 @@ public class Bolo
 
                         new PrefixCmd(bot),
                         new SetdjCmd(bot),
+                        new PollCmd(bot),
                         new AddMemeCmd(bot),
                         new RemoveMemeCmd(bot),
                         new AddImageChannel(bot),

@@ -18,12 +18,12 @@ package com.eme22.bolo;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.audio.RequestMetadata;
+import com.eme22.bolo.commands.music.LyricsCmd;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.menu.Paginator;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageEmbedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +58,7 @@ import static com.eme22.bolo.commands.music.QueueCmd.getQueueTitle;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
+@SuppressWarnings("ConstantConditions")
 public class Listener extends ListenerAdapter
 {
     private final Bot bot;
@@ -147,7 +149,7 @@ public class Listener extends ListenerAdapter
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event)
     {
-        ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild()).getOnlyImageChannels(event.getGuild());
+       ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild()).getOnlyImageChannels(event.getGuild());
 
         if (bannedTextChannels.contains(event.getChannel())) {
             Message message = event.getMessage();
@@ -168,6 +170,8 @@ public class Listener extends ListenerAdapter
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) 
     {
         bot.getNowplayingHandler().onMessageDelete(event.getGuild(), event.getMessageIdLong());
+        bot.getPollManager().onGuildMessageDelete(event);
+
     }
 
     @Override
@@ -237,17 +241,13 @@ public class Listener extends ListenerAdapter
         }
 
 
-        pages.forEach( page -> {
+        pages.forEach( page -> defaultChannel.sendMessage(page).queue(success -> {
 
-            defaultChannel.sendMessage(page).queue(success -> {
-
-                tempChannels.put(success.getId(), channel);
-                for (int i = 0; i < getMessageItems(page); i++) {
-                    success.addReaction("U+003"+i+" U+FE0F U+20E3").queue();
-                }
-            });
-
-        });
+            tempChannels.put(success.getId(), channel);
+            for (int i = 0; i < getMessageItems(page); i++) {
+                success.addReaction("U+003"+i+" U+FE0F U+20E3").queue();
+            }
+        }));
 
     }
 
@@ -261,6 +261,8 @@ public class Listener extends ListenerAdapter
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         if (event.getUser().isBot())
             return;
+
+        bot.getPollManager().onGuildMessageReactionAdd(event);
 
         if (tempChannels.containsKey(event.getMessageId())){
 
@@ -360,39 +362,9 @@ public class Listener extends ListenerAdapter
                     new LyricsClient().getLyrics(title).thenAccept(lyrics ->
                     {
                         if(lyrics == null)
-                        {
                             event.getTextChannel().sendMessage("Lyrics for `" + finalTitle + "` could not be found!" + (finalTitle.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).complete();
-                            return;
-                        }
-
-                        EmbedBuilder eb = new EmbedBuilder()
-                                .setAuthor(lyrics.getAuthor())
-                                .setColor(event.getGuild().getSelfMember().getColor())
-                                .setTitle(lyrics.getTitle(), lyrics.getURL());
-                        if(lyrics.getContent().length()>15000)
-                        {
-                            event.getTextChannel().sendMessage("Lyrics for `" + finalTitle + "` found but likely not correct: " + lyrics.getURL()).complete();
-                        }
-                        else if(lyrics.getContent().length()>2000)
-                        {
-                            String content = lyrics.getContent().trim();
-                            while(content.length() > 2000)
-                            {
-                                int index = content.lastIndexOf("\n\n", 2000);
-                                if(index == -1)
-                                    index = content.lastIndexOf("\n", 2000);
-                                if(index == -1)
-                                    index = content.lastIndexOf(" ", 2000);
-                                if(index == -1)
-                                    index = 2000;
-                                event.getTextChannel().sendMessageEmbeds(eb.setDescription(content.substring(0, index).trim()).build()).complete();
-                                content = content.substring(index).trim();
-                                eb.setAuthor(null).setTitle(null, null);
-                            }
-                            event.getTextChannel().sendMessageEmbeds(eb.setDescription(content).build()).complete();
-                        }
                         else
-                            event.getTextChannel().sendMessageEmbeds(eb.setDescription(lyrics.getContent()).build()).complete();
+                            LyricsCmd.showLyrics(null, event.getGuild().getSelfMember().getColor(), event.getTextChannel(),finalTitle, lyrics);
                     });
                     event.getReaction().removeReaction(event.getUser()).complete();
                 }
@@ -409,9 +381,7 @@ public class Listener extends ListenerAdapter
                                 .build();
 
                         event.getTextChannel().sendMessage(built).queue(m ->
-                        {
-                            m.delete().queueAfter(5, TimeUnit.SECONDS);
-                        });
+                                m.delete().queueAfter(5, TimeUnit.SECONDS));
                         return;
                     }
                     String[] songs = new String[list.size()];
@@ -433,6 +403,11 @@ public class Listener extends ListenerAdapter
             }
         }
         catch (NullPointerException ignore){}
+    }
+
+    @Override
+    public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
+        bot.getPollManager().onGuildMessageReactionRemove(event);
     }
 
     private String formatTitle(String title) {
@@ -457,8 +432,7 @@ public class Listener extends ListenerAdapter
 
         String channam = chans[channel].split(":")[2].substring(1);
 
-        TextChannel chan = message.getGuild().getTextChannelsByName(channam, true).get(0);
-        return chan;
+        return message.getGuild().getTextChannelsByName(channam, true).get(0);
     }
 
     private static Set<String> getKeys(Map<String, Integer> map, Integer value) {
@@ -485,8 +459,7 @@ public class Listener extends ListenerAdapter
 
                 if(bienvenidas != null)
                 {
-                    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                    InputStream bienvenida = classloader.getResourceAsStream("images/bienvenida.png");
+                    InputStream bienvenida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), true);
                     String userImage = member.getAvatarUrl();
                     if (userImage == null)
                         userImage = member.getDefaultAvatarUrl();
@@ -509,10 +482,8 @@ public class Listener extends ListenerAdapter
                     }
 
 
-                    StringBuilder builder = new StringBuilder();
                     //builder.setThumbnail("attachment://bienvenida.png");
-                    builder.append("En que andas " + member.getAsMention() + "te damos la bienvenida a " + guild.getName() + " , Discord creado por el pueblo y para el pueblo.\nPARA INGRESAR A LOS OTROS CANALES, POR FAVOR LEE LAS "+ guild.getTextChannelById("869307625169367130").getAsMention() + " Y VERIFÍCATE.");
-                    bienvenidas.sendMessage(builder.toString()).addFile(converted).complete();
+                    bienvenidas.sendMessage("En que andas " + member.getAsMention() + "te damos la bienvenida a " + guild.getName() + " , Discord creado por el pueblo y para el pueblo.\nPARA INGRESAR A LOS OTROS CANALES, POR FAVOR LEE LAS " + guild.getTextChannelById("869307625169367130").getAsMention() + " Y VERIFÍCATE.").addFile(converted).complete();
                     converted.delete();
                 }
             }
@@ -532,8 +503,7 @@ public class Listener extends ListenerAdapter
                 TextChannel despedidas = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
                 if(despedidas!=null)
                 {
-                    ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                    InputStream despedida = classloader.getResourceAsStream("images/despedida.png");
+                    InputStream despedida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), false);
 
                     String userImage = member.getAvatarUrl();
                     if (userImage == null)
@@ -557,10 +527,8 @@ public class Listener extends ListenerAdapter
                     }
 
 
-                    StringBuilder builder = new StringBuilder();
                     //builder.setThumbnail("attachment://bienvenida.png");
-                    builder.append("Se ha escapado de nuestras manos");
-                    despedidas.sendMessage(builder.toString()).addFile(converted).complete();
+                    despedidas.sendMessage("Se ha escapado de nuestras manos").addFile(converted).complete();
                     converted.delete();
 
                 }

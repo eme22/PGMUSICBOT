@@ -17,13 +17,16 @@ package com.eme22.bolo.utils;
 
 import com.eme22.bolo.Bolo;
 import com.eme22.bolo.entities.Pair;
+import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.entities.Prompt;
+import com.eme22.bolo.settings.Settings;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +42,7 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -48,9 +52,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -229,6 +236,36 @@ public class OtherUtil
         }
     }
 
+    public static String makePollString(Poll poll){
+        StringBuilder sb = new StringBuilder();
+        DecimalFormat df = new DecimalFormat("#.##");
+
+        sb.append("*").append(poll.getQuestion()).append("*").append("\n").append("\n");
+
+        ArrayList<Poll.Answers> answers = poll.getAnswers();
+
+        AtomicReference<Integer> votes = new AtomicReference<>(0);
+        answers.forEach( answers1 -> votes.updateAndGet(v -> v + answers1.getCount()));
+
+        IntStream.range(0, answers.size())
+                .forEach(index -> {
+                    Poll.Answers answers1 = answers.get(index);
+                    sb.append(OtherUtil.numtoString(index)).append(": ").append(answers1.getAnswer()).append("\n");
+                    double perc;
+                    float count = answers1.getCount();
+                    if (Math.abs(votes.get()) < 0.0001)
+                        perc = 0;
+                    else
+                        perc = count /votes.get()*100;
+                    int perc2 = (int) (perc/100*20);
+                    sb.append("[ ").append(percentajetoDraw(perc2));
+                    sb.append(" | ").append(df.format(perc)).append("% (").append(count).append(")]");
+                    sb.append("\n");
+                });
+
+        return sb.toString();
+    }
+
     public static String numtoString(int num){
         num = num % 10;
         switch (num) {
@@ -243,6 +280,34 @@ public class OtherUtil
             case 7: return ":seven:";
             case 8: return ":eight:";
             case 9: return ":nine:";
+        }
+    }
+
+    public static String percentajetoDraw(int num){
+
+        switch (num) {
+            default: return "";
+            case 0: return  "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 1: return  "█⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 2: return  "██⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 3: return  "███⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 4: return  "████⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 5: return  "█████⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 6: return  "██████⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 7: return  "███████⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 8: return  "████████⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 9: return  "█████████⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 10: return "██████████⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 11: return "███████████⠀⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 12: return "████████████⠀⠀⠀⠀⠀⠀⠀⠀";
+            case 13: return "█████████████⠀⠀⠀⠀⠀⠀⠀";
+            case 14: return "██████████████⠀⠀⠀⠀⠀⠀";
+            case 15: return "███████████████⠀⠀⠀⠀⠀";
+            case 16: return "████████████████⠀⠀⠀⠀";
+            case 17: return "█████████████████⠀⠀⠀";
+            case 18: return "██████████████████⠀⠀";
+            case 19: return "███████████████████⠀";
+            case 20: return "████████████████████";
         }
     }
 
@@ -280,15 +345,15 @@ public class OtherUtil
             Font font2 = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(90f);
             Font font1 = font2.deriveFont(70f);
             ig2.setFont(font1);
-            drawOutlinedAndCenteredString(message, width, height, ig2, 0, 370, Color.white);
+            drawOutlinedAndCenteredString(message, width, height, ig2, 370);
             ig2.setFont(font2);
             ig2.setPaint(Color.white);
-            drawOutlinedAndCenteredString(name, width, height, ig2, 0, 470, Color.white);
+            drawOutlinedAndCenteredString(name, width, height, ig2, 470);
             ig2.dispose();
 
             File parent = new File("temp");
             if(!parent.exists()) {
-                parent.mkdirs();
+                boolean dircreated = parent.mkdirs();
             }
             ImageIO.write(bi, "png", new File("temp",id+".png"));
 
@@ -297,10 +362,9 @@ public class OtherUtil
         }
     }
 
-    private static void drawOutlinedAndCenteredString(String s, int w, int h, @NotNull Graphics2D g, int fw, int fh, Color color) {
+    private static void drawOutlinedAndCenteredString(String s, int w, int h, @NotNull Graphics2D g, int fh) {
         FontMetrics fm = g.getFontMetrics();
         int x = (w - fm.stringWidth(s)) / 2;
-        x = fw == 0 ? x: fw;
         int y = (fm.getAscent() + (h - (fm.getAscent() + fm.getDescent())) / 2);
         y = fh == 0 ? y: fh;
         g.setColor(Color.black);
@@ -308,8 +372,8 @@ public class OtherUtil
         g.drawString(s, x - 10, y);
         g.drawString(s, x,y + 10);
         g.drawString(s, x, y - 10);
-        g.setColor(color);
-        g.drawString(s, fw == 0 ? x: fw, fh == 0 ? y: fh);
+        g.setColor(Color.white);
+        g.drawString(s, x, fh == 0 ? y: fh);
 
     }
 
@@ -362,7 +426,7 @@ public class OtherUtil
 
     public static void loadFileFromGit(File file) throws IOException, NoSuchAlgorithmException {
 
-        GitHub github = new GitHubBuilder().withOAuthToken("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").build();
+        GitHub github = new GitHubBuilder().withOAuthToken("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").build();
         GHRepository repo = github.getRepository("eme22/PGMUSICBOTSETTINGS");
 
         Files.copy(repo.getTree("main").getEntry(file.getPath()).readAsBlob(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -379,20 +443,32 @@ public class OtherUtil
         if (SHA.contains(checksum))
             return;
 
-        GitHub github = new GitHubBuilder().withOAuthToken("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").build();
+        GitHub github = new GitHubBuilder().withOAuthToken("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").build();
         GHRepository repo = github.getRepository("eme22/PGMUSICBOTSETTINGS");
         GHRef masterRef = repo.getRef("heads/main");
         String masterTreeSha = repo.getTree("main").getSha();
-        String treeSha = repo.createTree()
-                .add(file.getName(), Files.readAllBytes(file.toPath()), true)
-                .create().getSha();
 
-        GHCommit commit = repo.createCommit()
-                .parent(masterTreeSha)
-                .tree(treeSha)
-                .message(LocalDateTime.now() + " Settings").create();
+        GHCommit commit = repo.createContent()
+                .content(Files.readAllBytes(file.toPath()))
+                .message(LocalDateTime.now() + " Settings")
+                .path(file.getName())
+                .sha(repo.getFileContent(file.getName()).getSha())
+                .commit()
+                .getCommit();
 
         masterRef.updateTo(commit.getSHA1());
+
+        //String masterTreeSha = repo.getTree("main").getSha();
+        //String treeSha = repo.createContent()
+        //        .add(file.getName(), Files.readAllBytes(file.toPath()), true)
+        //        .create().getSha();
+
+        //GHCommit commit = repo.createCommit()
+        //        .parent(masterTreeSha)
+        //        .tree(treeSha)
+        //        .message(LocalDateTime.now() + " Settings").create();
+
+        //masterRef.updateTo(commit.getSHA1());
     }
 
     private static String getFileChecksum(MessageDigest digest, File file) throws IOException
@@ -494,5 +570,66 @@ public class OtherUtil
         for (Map<String, String> data : list)
             if (data.equals(meme)) return true;
         return false;
+    }
+
+    public static int EmojiToNumber(String emoji) {
+        switch (emoji){
+            default: return -1;
+            case "0️⃣": return 0;
+            case "1️⃣": return 1;
+            case "2️⃣": return 2;
+            case "3️⃣": return 3;
+            case "4️⃣": return 4;
+            case "5️⃣": return 5;
+            case "6️⃣": return 6;
+            case "7️⃣": return 7;
+            case "8️⃣": return 8;
+            case "9️⃣": return 9;
+
+        }
+    }
+
+    public static boolean isValidUrl(String imageAddress) {
+        UrlValidator validator = new UrlValidator();
+        return validator.isValid(imageAddress);
+    }
+
+    public static boolean checkImage(String imageAddress) {
+        if(isValidUrl(imageAddress)) {
+            HttpURLConnection connection;
+            try {
+                connection = (HttpURLConnection) new URL(imageAddress).openConnection();
+                connection.setRequestMethod("HEAD");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            String contentType = connection.getHeaderField("Content-Type");
+
+            return contentType.startsWith("image/");
+        }
+        return false;
+    }
+
+    public static InputStream getBackground(Settings settings, boolean b) {
+        if (b){
+            String image = settings.getHelloImage();
+            if ( image == null){
+                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                return classloader.getResourceAsStream("images/bienvenida.png");
+            }
+            else {
+                return imageFromUrl(image);
+            }
+        } else {
+            String image = settings.getGoodByeImage();
+            if ( image == null){
+                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                return classloader.getResourceAsStream("images/despedida.png");
+            }
+            else {
+                return imageFromUrl(image);
+            }
+        }
     }
 }

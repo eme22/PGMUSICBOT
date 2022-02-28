@@ -23,6 +23,7 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.NowplayingHandler;
 import com.eme22.bolo.audio.PlayerManager;
 import com.eme22.bolo.gui.GUI;
+import com.eme22.bolo.poll.PollManager;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.eme22.bolo.playlist.PlaylistLoader;
 import com.eme22.bolo.settings.SettingsManager;
@@ -45,6 +46,7 @@ public class Bot
     private final PlaylistLoader playlists;
     private final NowplayingHandler nowplaying;
     private final AloneInVoiceHandler aloneInVoiceHandler;
+    private final PollManager polls;
     
     private boolean shuttingDown = false;
     private JDA jda;
@@ -63,6 +65,7 @@ public class Bot
         this.nowplaying.init();
         this.aloneInVoiceHandler = new AloneInVoiceHandler(this);
         this.aloneInVoiceHandler.init();
+        this.polls = new PollManager(this);
     }
     
     public BotConfig getConfig()
@@ -159,4 +162,6 @@ public class Bot
     {
         this.gui = gui;
     }
+
+    public PollManager getPollManager() { return polls; }
 }

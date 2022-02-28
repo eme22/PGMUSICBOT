@@ -28,9 +28,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  *
@@ -44,18 +42,13 @@ public class SettingsManager implements GuildSettingsManager<Settings>
     public SettingsManager()
     {
         this.settings = new HashMap<>();
-      try {
-        Reader reader = Files.newBufferedReader(OtherUtil.getPath("serversettings.json"));
-
-        Type type = new TypeToken<HashMap<Long,Settings>>(){}.getType();
-        HashMap<Long,Settings> settings = new Gson().fromJson(reader, type);
-
-        if (settings == null)
-            throw new IOException();
-
-        settings.forEach( (aLong, settings1) -> this.settings.put(aLong, new Settings(this, settings1.textId, settings1.voiceId, settings1.roleId, settings1.adminroleId, settings1.volume, settings1.defaultPlaylist, settings1.repeatMode, settings1.prefix, settings1.skipRatio, settings1.helloID, settings1.goodByeID, settings1.onlyImageChannels, settings1.memeImages)));
-
-
+        try {
+            Reader reader = Files.newBufferedReader(OtherUtil.getPath("serversettings.json"));
+            Type type = new TypeToken<HashMap<Long,Settings>>(){}.getType();
+            HashMap<Long,Settings> settings = new Gson().fromJson(reader, type);
+            if (settings == null)
+                throw new IOException();
+            settings.forEach( (aLong, settings1) -> this.settings.put(aLong, new Settings(this, settings1.textId, settings1.voiceId, settings1.roleId, settings1.adminroleId, settings1.volume, settings1.defaultPlaylist, settings1.repeatMode, settings1.prefix, settings1.skipRatio, settings1.helloID, settings1.helloImage, settings1.goodByeID, settings1.goodByeImage,settings1.onlyImageChannels, settings1.memeImages)));
             reader.close();
 
         } catch( IOException e) {
@@ -88,7 +81,7 @@ public class SettingsManager implements GuildSettingsManager<Settings>
 
     private Settings createDefaultSettings()
     {
-        return new Settings(this, -1, -1, -1, -1, 100, null, RepeatMode.OFF, null, SKIP_RATIO, -1, -1, new HashSet<>(), new ArrayList<>());
+        return new Settings(this, 0, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null, 0, null, null, null);
     }
     
     public void writeSettings()

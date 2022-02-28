@@ -32,11 +32,11 @@ public class MemeCmd extends Command {
         Map<String, String> data;
         try {
             if (pos != null)
-                data = s.getMemeImage(pos);
+                data = s.getMemeImage(pos-1);
             else
                 data = s.getRandomMemeImages();
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
-            event.replyError("No hay memes configurados en este servidor");
+            event.replyError("Meme invalido o no hay memes configurados en este servidor");
             return;
         }
 

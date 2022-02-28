@@ -15,13 +15,14 @@
  */
 package com.eme22.bolo.settings;
 
-import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.utils.OtherUtil;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -35,6 +36,8 @@ import java.util.*;
  * @author John Grosh <john.a.grosh@gmail.com>
  */
 @JsonAdapter(Settings.SettingsAdapter.class)
+@Getter
+@AllArgsConstructor
 public class Settings implements GuildSettingsProvider {
     private final SettingsManager manager;
     protected long textId;
@@ -47,12 +50,13 @@ public class Settings implements GuildSettingsProvider {
     protected String prefix;
     protected double skipRatio;
     protected long helloID;
+    protected String helloImage;
     protected long goodByeID;
+    protected String goodByeImage;
     protected HashSet<Long> onlyImageChannels;
     protected List<Map<String, String>> memeImages;
-    protected List<Poll> polls;
 
-    public Settings(SettingsManager manager, String textId, String voiceId, String roleId, String adminroleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio, String helloID, String goodByeID, HashSet<Long> imageOnly, List<Map<String, String>> memeImages) {
+    public Settings(SettingsManager manager, String textId, String voiceId, String roleId, String adminroleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio, String helloID, String helloImage, String goodByeID, String goodByeImage, HashSet<Long> imageOnly, List<Map<String, String>> memeImages) {
         this.manager = manager;
         try {
             this.textId = Long.parseLong(textId);
@@ -84,38 +88,17 @@ public class Settings implements GuildSettingsProvider {
         } catch (NumberFormatException e) {
             this.helloID = 0;
         }
+        this.helloImage =helloImage;
         try {
             this.goodByeID = Long.parseLong(goodByeID);
         } catch (NumberFormatException e) {
             this.helloID = 0;
         }
+        this.goodByeImage = goodByeImage;
 
-        if (imageOnly == null)
-            this.onlyImageChannels = new HashSet<>();
-        else
-            this.onlyImageChannels = imageOnly;
+        this.onlyImageChannels = Objects.requireNonNullElseGet(imageOnly, HashSet::new);
 
-        if (memeImages == null)
-            this.memeImages = new ArrayList<>();
-        else
-            this.memeImages = memeImages;
-    }
-
-    public Settings(SettingsManager manager, long textId, long voiceId, long roleId, long adminroleId,int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio, long helloID, long goodByeID, HashSet<Long> imageOnly, List<Map<String, String>> memeImages) {
-        this.manager = manager;
-        this.textId = textId;
-        this.voiceId = voiceId;
-        this.roleId = roleId;
-        this.adminroleId = adminroleId;
-        this.volume = volume;
-        this.defaultPlaylist = defaultPlaylist;
-        this.repeatMode = repeatMode;
-        this.prefix = prefix;
-        this.skipRatio = skipRatio;
-        this.helloID = helloID;
-        this.goodByeID = goodByeID;
-        this.onlyImageChannels = imageOnly;
-        this.memeImages = memeImages;
+        this.memeImages = Objects.requireNonNullElseGet(memeImages, ArrayList::new);
     }
 
     // Getters
@@ -135,26 +118,6 @@ public class Settings implements GuildSettingsProvider {
         return guild == null ? null : guild.getRoleById(adminroleId);
     }
 
-    public int getVolume() {
-        return volume;
-    }
-
-    public String getDefaultPlaylist() {
-        return defaultPlaylist;
-    }
-
-    public RepeatMode getRepeatMode() {
-        return repeatMode;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public double getSkipRatio() {
-        return skipRatio;
-    }
-
     public TextChannel getHelloChannel(Guild guild) {
         return guild == null ? null : guild.getTextChannelById(helloID);
     }
@@ -166,6 +129,16 @@ public class Settings implements GuildSettingsProvider {
     @Override
     public Collection<String> getPrefixes() {
         return prefix == null ? Collections.emptySet() : Collections.singleton(prefix);
+    }
+
+    public void setHelloImage(String helloImage) {
+        this.helloImage = helloImage;
+        this.manager.writeSettings();
+    }
+
+    public void setGoodByeImage(String goodByeImage) {
+        this.goodByeImage = goodByeImage;
+        this.manager.writeSettings();
     }
 
     // Setters
@@ -252,10 +225,6 @@ public class Settings implements GuildSettingsProvider {
         this.manager.writeSettings();
     }
 
-    public List<Map<String, String>> getMemeImages() {
-        return memeImages;
-    }
-
     public Map<String, String> getMemeImage(int position) throws IndexOutOfBoundsException {
         return memeImages.get(position);
     }
@@ -290,10 +259,13 @@ public class Settings implements GuildSettingsProvider {
         this.repeatMode = null;
         this.prefix = null;
         this.skipRatio = 0;
+        this.adminroleId =0;
         this.helloID = 0;
         this.onlyImageChannels = null;
         this.memeImages = null;
         this.goodByeID = 0;
+        this.helloImage = null;
+        this.goodByeImage = null;
         this.manager.deleteSettings(guild.getId());
     }
 
@@ -323,8 +295,12 @@ public class Settings implements GuildSettingsProvider {
                 writer.name("skip_ratio").value(value.skipRatio);
             if (value.helloID != 0)
                 writer.name("bienvenidas_channel_id").value(value.helloID);
+            if (value.helloImage != null)
+                writer.name("bienvenidas_channel_image").value(value.helloImage);
             if (value.goodByeID != 0)
                 writer.name("despedidas_channel_id").value(value.goodByeID);
+            if (value.goodByeImage != null)
+                writer.name("despedidas_channel_image").value(value.goodByeImage);
             if (value.onlyImageChannels != null){
                 writer.name("image_only_channels_ids");
                 writer.beginArray();
@@ -340,20 +316,17 @@ public class Settings implements GuildSettingsProvider {
             if (value.memeImages != null) {
                 writer.name("meme_images");
                 writer.beginArray();
-                value.memeImages.forEach(stringStringMap -> {
-                    stringStringMap.forEach((message, meme) -> {
-                        try {
-                            writer.beginObject();
-                            writer.name("message").value(message);
-                            writer.name("meme").value(meme);
-                            writer.endObject();
-                        } catch (IOException exception) {
-                            exception.printStackTrace();
-                        }
+                value.memeImages.forEach(stringStringMap -> stringStringMap.forEach((message, meme) -> {
+                    try {
+                        writer.beginObject();
+                        writer.name("message").value(message);
+                        writer.name("meme").value(meme);
+                        writer.endObject();
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
 
-                    });
-
-                });
+                }));
                 writer.endArray();
             }
             writer.endObject();
@@ -373,7 +346,9 @@ public class Settings implements GuildSettingsProvider {
             String prefix = null;
             double skipRatio = 0;
             String helloID = null;
+            String helloImage = null;
             String goodByeID = null;
+            String goodByeImage = null;
             HashSet<Long> onlyImageChannels = new HashSet<>();
             List<Map<String, String>> memeImages = new ArrayList<>();
 
@@ -414,8 +389,14 @@ public class Settings implements GuildSettingsProvider {
                 if (name.equals("bienvenidas_channel_id")) {
                     helloID = String.valueOf(reader.nextLong());
                 }
+                if (name.equals("bienvenidas_channel_image")) {
+                    helloImage = reader.nextString();
+                }
                 if (name.equals("despedidas_channel_id")) {
                     goodByeID = String.valueOf(reader.nextLong());
+                }
+                if (name.equals("despedidas_channel_image")) {
+                    goodByeImage = reader.nextString();
                 }
                 if (name.equals("image_only_channels_ids")) {
                     reader.beginArray();
@@ -445,10 +426,9 @@ public class Settings implements GuildSettingsProvider {
                     reader.endArray();
                 }
             }
-
             reader.endObject();
 
-            return new Settings(null, textId, voiceId, roleId, adminroleId, volume, defaultPlaylist, repeatMode, prefix, skipRatio, helloID, goodByeID, onlyImageChannels, memeImages);
+            return new Settings(null, textId, voiceId, roleId, adminroleId, volume, defaultPlaylist, repeatMode, prefix, skipRatio, helloID, helloImage, goodByeID,  goodByeImage,onlyImageChannels, memeImages);
         }
 
     }

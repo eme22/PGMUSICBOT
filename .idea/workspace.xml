@@ -4,41 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="a">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/AddImageChannel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/AddMemeCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/CloneAndDeleteChannel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/CloneChannelCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/DeleteImageChannel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PollCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/RemoveMemeCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetAdminCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/AvatarCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeListCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/ShowImageChannelsCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Poll.java" afterDir="false" />
+    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="MAJOR REFRACTOR">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeImageCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeImageCmd.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/poll/PollManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/BotConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/BotConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AudioHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AudioHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/AdminCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/AdminCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/DJCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/DJCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/SettingsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/SettingsCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/QueueCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/QueueCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/RemoveCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/RemoveCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Pair.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Pair.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/RepeatMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/RepeatMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AloneInVoiceHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AloneInVoiceHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/NowplayingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/NowplayingHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/PlayerManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/PlayerManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/RequestMetadata.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/RequestMetadata.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/TransformativeAudioSourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/TransformativeAudioSourceManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PollCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PollCmd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeCmd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/LyricsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/LyricsCmd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Poll.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Poll.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Prompt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Prompt.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/images/despedida.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/despedida.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/reference.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/reference.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,6 +79,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2908046" />
@@ -102,6 +91,9 @@
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\MSB19\IdeaProjects\PGMUSICBOT\src\main\resources\images" />
+    </key>
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="com.eme22.bolo.utils.OtherUtil" />
     </key>
     <key name="MoveInnerDialog.RECENTS_KEY">
       <recent name="com.eme22.bolo.commands.admin" />
@@ -173,7 +165,12 @@
       <workItem from="1645769117740" duration="434000" />
       <workItem from="1645769629707" duration="177000" />
       <workItem from="1645769974912" duration="88000" />
-      <workItem from="1645804621973" duration="20968000" />
+      <workItem from="1645804621973" duration="35942000" />
+      <workItem from="1645887277288" duration="22306000" />
+      <workItem from="1645981427856" duration="5059000" />
+      <workItem from="1645999164489" duration="4517000" />
+      <workItem from="1646006824226" duration="902000" />
+      <workItem from="1646065216295" duration="1467000" />
     </task>
     <task id="LOCAL-00001" summary="a">
       <created>1644690778045</created>
@@ -217,7 +214,14 @@
       <option name="project" value="LOCAL" />
       <updated>1644937568941</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="MAJOR REFRACTOR">
+      <created>1645839385639</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1645839385639</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -241,7 +245,8 @@
       <path value="$PROJECT_DIR$/out/bolo2022/a/bolo2022" />
     </ignored-roots>
     <MESSAGE value="a" />
-    <option name="LAST_COMMIT_MESSAGE" value="a" />
+    <MESSAGE value="MAJOR REFRACTOR" />
+    <option name="LAST_COMMIT_MESSAGE" value="MAJOR REFRACTOR" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

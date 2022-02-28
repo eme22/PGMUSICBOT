@@ -16,12 +16,17 @@
 package com.eme22.bolo.commands.music;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.MusicCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.TextChannel;
+
+import javax.annotation.Nullable;
+import java.awt.*;
 
 /**
  *
@@ -67,34 +72,50 @@ public class LyricsCmd extends MusicCommand
                 return;
             }
 
-            EmbedBuilder eb = new EmbedBuilder()
-                    .setAuthor(lyrics.getAuthor())
-                    .setColor(event.getSelfMember().getColor())
-                    .setTitle(lyrics.getTitle(), lyrics.getURL());
-            if(lyrics.getContent().length()>15000)
-            {
+            showLyrics(event, event.getSelfMember().getColor(), null, title, lyrics);
+        });
+    }
+
+    public static void showLyrics(@Nullable CommandEvent event, Color color, TextChannel channel, String title, Lyrics lyrics) {
+        EmbedBuilder eb = new EmbedBuilder()
+                .setAuthor(lyrics.getAuthor())
+                .setColor(color)
+                .setTitle(lyrics.getTitle(), lyrics.getURL());
+        if(lyrics.getContent().length()>15000)
+        {
+            if (event == null)
+                channel.sendMessage("Lyrics for `" + title + "` found but likely not correct: " + lyrics.getURL()).complete();
+            else
                 event.replyWarning("Lyrics for `" + title + "` found but likely not correct: " + lyrics.getURL());
-            }
-            else if(lyrics.getContent().length()>2000)
+        }
+        else if(lyrics.getContent().length()>2000)
+        {
+            String content = lyrics.getContent().trim();
+            while(content.length() > 2000)
             {
-                String content = lyrics.getContent().trim();
-                while(content.length() > 2000)
-                {
-                    int index = content.lastIndexOf("\n\n", 2000);
-                    if(index == -1)
-                        index = content.lastIndexOf("\n", 2000);
-                    if(index == -1)
-                        index = content.lastIndexOf(" ", 2000);
-                    if(index == -1)
-                        index = 2000;
+                int index = content.lastIndexOf("\n\n", 2000);
+                if(index == -1)
+                    index = content.lastIndexOf("\n", 2000);
+                if(index == -1)
+                    index = content.lastIndexOf(" ", 2000);
+                if(index == -1)
+                    index = 2000;
+                if (event == null)
+                    channel.sendMessageEmbeds(eb.setDescription(content.substring(0, index).trim()).build()).complete();
+                else
                     event.reply(eb.setDescription(content.substring(0, index).trim()).build());
-                    content = content.substring(index).trim();
-                    eb.setAuthor(null).setTitle(null, null);
-                }
-                event.reply(eb.setDescription(content).build());
+                content = content.substring(index).trim();
+                eb.setAuthor(null).setTitle(null, null);
             }
+            if (event == null)
+                channel.sendMessageEmbeds(eb.setDescription(content).build()).complete();
+            else
+                event.reply(eb.setDescription(content).build());
+        }
+        else
+            if (event == null)
+                channel.sendMessageEmbeds(eb.setDescription(lyrics.getContent()).build()).complete();
             else
                 event.reply(eb.setDescription(lyrics.getContent()).build());
-        });
     }
 }
