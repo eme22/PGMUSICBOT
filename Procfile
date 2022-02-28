@@ -1,1 +1,1 @@
-web: java -cp target/classes/:target/dependency/* com.eme22.bolo.Bolo
+web: java $JAVA_OPTS -cp target/classes/:target/dependency/* com.eme22.bolo.Bolo
