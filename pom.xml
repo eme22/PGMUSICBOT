@@ -145,6 +145,38 @@
           </plugin>
           -->
           <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>2.9</version>
+              <executions>
+                  <execution>
+                      <id>build-classpath</id>
+                      <phase>generate-sources</phase>
+                      <goals>
+                          <goal>build-classpath</goal>
+                      </goals>
+                      <configuration>
+                          <includeScope>compile</includeScope>
+                          <!-- Omit to print on console: -->
+                          <outputFile>${project.build.directory}/compile-classpath.txt</outputFile>
+                      </configuration>
+                  </execution>
+                  <execution>
+                      <id>build-test-classpath</id>
+                      <phase>generate-test-sources</phase>
+                      <goals>
+                          <goal>build-classpath</goal>
+                      </goals>
+                      <configuration>
+                          <includeScope>test</includeScope>
+                          <!-- Omit to print on console: -->
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
+
+
+          <plugin>
               <groupId>com.heroku.sdk</groupId>
               <artifactId>heroku-maven-plugin</artifactId>
               <version>3.0.3</version>
@@ -154,7 +186,7 @@
                   <appName>bolo2022</appName>
                   <processTypes>
                       <!-- Tell Heroku how to launch your application -->
-                      <web>java $JAVA_OPTS -cp target/classes:target/dependency/* com.eme22.bolo.Bolo</web>
+                      <web>java $JAVA_OPTS -Dserver.port=$PORT -cp target/classes;target/dependency/* com.eme22.bolo.Bolo wait $JAR_OPTS</web>
                   </processTypes>
               </configuration>
           </plugin>
