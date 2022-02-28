@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -Dserver.port=$PORT -jar target/bolo-0.1.1-SNAPSHOT-jar-with-dependencies.jar wait $JAR_OPTS
+web: java $JAVA_OPTS -Dtoken="$DISCORD_TOKEN" -Dserver.port=$PORT -jar target/bolo-0.1.1-SNAPSHOT-jar-with-dependencies.jar wait $JAR_OPTS

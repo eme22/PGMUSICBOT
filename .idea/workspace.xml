@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="UPDATING TO PUSH">
-      <change beforePath="$PROJECT_DIR$/404.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/bolo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/hello.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/konata.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Procfile" beforeDir="false" afterPath="$PROJECT_DIR$/Procfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +73,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\MSB19\IdeaProjects\PGMUSICBOT\" />
       <recent name="C:\Users\MSB19\IdeaProjects\PGMUSICBOT\src\main\resources\images" />
     </key>
     <key name="MoveMembersDialog.RECENTS_KEY">
@@ -366,7 +362,21 @@
       <option name="project" value="LOCAL" />
       <updated>1646084370897</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="UPDATING TO PUSH">
+      <created>1646084682087</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1646084682087</updated>
+    </task>
+    <task id="LOCAL-00031" summary="UPDATING TO PUSH">
+      <created>1646084815566</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1646084815566</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
