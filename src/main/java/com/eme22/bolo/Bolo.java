@@ -45,10 +45,8 @@ import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Date;
 
 /**
  *
@@ -260,7 +258,7 @@ public class Bolo
         String port = System.getProperty("server.port");
 
         WebServer webServer = WebServers.createWebServer(Integer.parseInt(port))
-                .add(new StaticFileHandler("/"));
+                .add(new StaticFileHandler("."));
         webServer.start();
         System.out.println("Server running at " + webServer.getUri());
     }

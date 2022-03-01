@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="WebServer bugfix">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/HTTPProtocol.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/HTTPServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/SocketWebServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/SocketWebServer.java" afterDir="false" />
-    </list>
+    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="WebServer bugfix" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -166,7 +159,7 @@
       <workItem from="1646086938851" duration="491000" />
       <workItem from="1646147331218" duration="390000" />
       <workItem from="1646152181869" duration="1505000" />
-      <workItem from="1646154302310" duration="5137000" />
+      <workItem from="1646154302310" duration="5490000" />
     </task>
     <task id="LOCAL-00001" summary="a">
       <created>1644690778045</created>
@@ -448,7 +441,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646159324205</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="WebServer bugfix">
+      <created>1646159838225</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1646159838225</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
