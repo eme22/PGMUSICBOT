@@ -4,7 +4,7 @@ import java.net.*;
 import java.io.*;
 import java.util.StringTokenizer;
 
-
+@SuppressWarnings("InfiniteLoopStatement")
 public class SocketWebServer implements Runnable{
 
     private final int port;
