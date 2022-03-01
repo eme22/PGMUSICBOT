@@ -1,4 +1,4 @@
-<img align="right" src="https://bolo2022.herokuapp.com/img/bolo.png" height="200" width="200" alt="Main Icon">
+<img align="right" src="https://bolo2022.herokuapp.com/img/bolo.png?" height="200" width="200" alt="Main Icon">
 
 # BoloBot
 
