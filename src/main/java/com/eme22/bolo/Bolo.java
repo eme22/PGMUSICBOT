@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.webbitserver.WebServer;
 import org.webbitserver.WebServers;
+import org.webbitserver.handler.NotFoundHttpHandler;
 import org.webbitserver.handler.StaticFileHandler;
 
 import javax.security.auth.login.LoginException;
@@ -258,7 +259,9 @@ public class Bolo
         String port = System.getProperty("server.port");
 
         WebServer webServer = WebServers.createWebServer(Integer.parseInt(port))
-                .add(new StaticFileHandler("."));
+                .add(new StaticFileHandler("."))
+                .add( new webserver.NotFoundHandler())
+                ;
         webServer.start();
         System.out.println("Server running at " + webServer.getUri());
     }
