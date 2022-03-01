@@ -36,7 +36,7 @@ public class AvatarCmd extends Command {
         }
 
         Member member1 = member.get(0);
-        String avatar = member1.getUser().getEffectiveAvatarUrl();
+        String avatar = member1.getUser().getEffectiveAvatarUrl()+"?size=512";
         EmbedBuilder eb = new EmbedBuilder();
         eb.setDescription("Avatar para "+member1.getAsMention());
         eb.setImage(avatar);

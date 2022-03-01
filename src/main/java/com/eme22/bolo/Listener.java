@@ -336,8 +336,6 @@ public class Listener extends ListenerAdapter
                 if (reaction.equals("⏯")) {
 
                     AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-                    //event.getTextChannel().sendMessage("Resumido **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**.");
-                    //event.getTextChannel().sendMessage("Paused **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**. Type `"+bot.getConfig().getPrefix()+"play` to unpause!");
                     handler.getPlayer().setPaused(!handler.getPlayer().isPaused());
                     event.getReaction().removeReaction(event.getUser()).complete();
                 }
