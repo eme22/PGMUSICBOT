@@ -36,7 +36,7 @@ public class Socket implements Runnable{
                     while(true) {
                         String message = input.readLine();
                         if (message==null) break;
-                        System.out.println(message);
+                        System.out.println("Mensaje: "+message);
                         if (message.equals("PING|")) {
                             output = new PrintWriter(socket.getOutputStream(),true); // get user input and transmit it to server
 
@@ -48,27 +48,47 @@ public class Socket implements Runnable{
 
                         StringTokenizer st = new StringTokenizer(message);
                         String method = st.nextToken();
-                        if (!method.equals("GET")) {
+
+                        if (method.equals("HEAD")){
+                            while ((message = input.readLine()) != null) {
+                                if (message.trim().equals("")) break;
+                            }
+                            File file =new File(st.nextToken().substring(1));
+
+                            //HEADERS
+                            PrintStream os =  new PrintStream(socket.getOutputStream());
+                            os.print("HTTP/1.0 200 OK\r\n");
+                            os.print("Server: Bolo/1.0\r\n");
+                            if(file.getName().contains("html"))
+                                os.print("content-type: text/html\r\n");
+                            os.print("content-length: "+(int) file.length());
+                            os.print("\r\n");
+                            os.close();
+                            return;
+                        }
+                        else if (method.equals("GET")){
+                            while ((message = input.readLine()) != null) {
+                                if (message.trim().equals("")) break;
+                            }
+                            String file = st.nextToken();
+
+                            if (file.charAt(0) != '/') {
+                                System.err.println("Saliendo: El nombre de archivo debe iniciar "
+                                        + "con \"/\"");
+                                return;
+                            }
+                            if (file.contains("../")) {
+                                System.err.println("Saliendo: \"../\" no esta permitido en el nombre de archivo");
+                                return;
+                            }
+                            sendFile(new PrintStream(socket.getOutputStream()), file);
+                            socket.close();
+                        }
+
+                        else {
                             System.err.println("Solo metodo HTTP \"GET\" implementado");
-                            return;
+                            socket.close();
                         }
-
-                        while ((message = input.readLine()) != null) {
-                            if (message.trim().equals("")) break;
-                        }
-                        String file = st.nextToken();
-
-                        if (file.charAt(0) != '/') {
-                            System.err.println("Saliendo: El nombre de archivo debe iniciar "
-                                    + "con \"/\"");
-                            return;
-                        }
-                        if (file.contains("../")) {
-                            System.err.println("Saliendo: \"../\" no esta permitido en el nombre de archivo");
-                            return;
-                        }
-                        sendFile(new PrintStream(socket.getOutputStream()), file);
-                        socket.close();
                     }
                 }
                 catch (IOException ignore) {
@@ -105,6 +125,7 @@ public class Socket implements Runnable{
             os.print("Server: Bolo/1.0\r\n");
             if(theFile.getName().contains("html"))
                 os.print("Content-type: text/html\r\n");
+            os.print("content-length: "+(int) theFile.length());
             os.print("\r\n");
             os.write(theData);
             os.close();
