@@ -42,8 +42,10 @@ import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  *
@@ -251,11 +253,33 @@ public class Bolo
     }
 
     private static void startSocket() {
+
+        try {
+            Integer PORT = Integer.parseInt(System.getProperty("server.port"));
+            ServerSocket serverConnect = new ServerSocket(PORT);
+            System.out.println("Servidor iniciado.\n" +
+                    "Escuchando conexiones en el puerto : " + PORT + " ...\n");
+
+            // we listen until user halts server execution
+            while (true) {
+                SocketWebServer_2 server = new SocketWebServer_2(true, serverConnect.accept());
+                System.out.println("Conexión abierta. (" + new Date() + ")");
+
+                // create dedicated thread to manage the client connection
+                Thread thread = new Thread(server);
+                thread.start();
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error de conexión del servidor : " + e.getMessage());
+        }
+
+
         String port = System.getProperty("server.port");
         if (port == null) return;
 
         try {
-            Thread thread = new Thread(new Socket(Integer.parseInt(port)));
+            Thread thread = new Thread(new SocketWebServer(Integer.parseInt(port)));
             thread.start();
         }
         catch (Exception e){

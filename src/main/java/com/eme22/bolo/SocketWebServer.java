@@ -5,11 +5,11 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 
-public class Socket implements Runnable{
+public class SocketWebServer implements Runnable{
 
     private final int port;
 
-    public Socket(int port) {
+    public SocketWebServer(int port) {
         this.port = port;
     }
 
@@ -64,7 +64,6 @@ public class Socket implements Runnable{
                             os.print("content-length: "+(int) file.length());
                             os.print("\r\n");
                             os.close();
-                            return;
                         }
                         else if (method.equals("GET")){
                             while ((message = input.readLine()) != null) {
@@ -84,7 +83,6 @@ public class Socket implements Runnable{
                             sendFile(new PrintStream(socket.getOutputStream()), file);
                             socket.close();
                         }
-
                         else {
                             System.err.println("Solo metodo HTTP \"GET\" implementado");
                             socket.close();
