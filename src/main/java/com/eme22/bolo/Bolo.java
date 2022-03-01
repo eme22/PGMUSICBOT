@@ -37,6 +37,9 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.webbitserver.WebServer;
+import org.webbitserver.WebServers;
+import org.webbitserver.handler.StaticFileHandler;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -254,8 +257,12 @@ public class Bolo
 
     private static void startSocket() {
 
-        HTTPServer server = new HTTPServer();
-        server.startServer();
+        String port = System.getProperty("server.port");
+
+        WebServer webServer = WebServers.createWebServer(Integer.parseInt(port))
+                .add(new StaticFileHandler("/"));
+        webServer.start();
+        System.out.println("Server running at " + webServer.getUri());
     }
 
     private static void waitExec(Logger log, String[] args) {

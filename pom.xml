@@ -118,9 +118,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.java-websocket</groupId>
-            <artifactId>Java-WebSocket</artifactId>
-            <version>1.5.2</version>
+            <groupId>org.webbitserver</groupId>
+            <artifactId>webbit</artifactId>
+            <version>0.4.15</version>
         </dependency>
     </dependencies>
     
