@@ -79,9 +79,7 @@ public class Bolo
         // get and check latest version
         String version = OtherUtil.checkVersion(prompt);
 
-        // create settings
-        SettingsManager settings = new SettingsManager();
-
+        // load settings from git
         try {
             OtherUtil.loadFileFromGit(new File("serversettings.json"));
         } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
@@ -89,12 +87,10 @@ public class Bolo
 
         }
 
-        try {
-            OtherUtil.loadFileFromGit(new File("serverpolls.json"));
-        }catch (IOException | NullPointerException | NoSuchAlgorithmException e){
-            LoggerFactory.getLogger("Settings").warn("Se ha fallado en cargar los datos de votaciones del servidor: "+e);
-        }
+        // create settings
+        SettingsManager settings = new SettingsManager();
 
+        //save settings on shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 settings.writeSettings();

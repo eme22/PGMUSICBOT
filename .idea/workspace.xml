@@ -4,42 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="WebServer bugfix">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Answer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/MemeImage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/CODE_OF_CONDUCT.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/CODE_OF_CONDUCT.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/config.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AudioHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/AudioHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/AdminCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/AdminCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/DJCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/DJCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/CloneAndDeleteChannel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/CloneAndDeleteChannel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PollCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/PollCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/RemoveMemeCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/RemoveMemeCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetAdminCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetAdminCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeImageCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeImageCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeImageCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeImageCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetdjCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetdjCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SettcCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SettcCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetvcCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetvcCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeListCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/MemeListCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/SettingsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/SettingsCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/ShowImageChannelsCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/general/ShowImageChannelsCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/RemoveCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/music/RemoveCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Poll.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/Poll.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/poll/PollManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/reference.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/reference.conf" afterDir="false" />
-    </list>
+    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="Changed to Jackson" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -193,7 +158,7 @@
       <workItem from="1646147331218" duration="390000" />
       <workItem from="1646152181869" duration="1505000" />
       <workItem from="1646154302310" duration="8210000" />
-      <workItem from="1646265514304" duration="2992000" />
+      <workItem from="1646265514304" duration="3340000" />
     </task>
     <task id="LOCAL-00001" summary="a">
       <created>1644690778045</created>
@@ -496,7 +461,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646162052482</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Changed to Jackson">
+      <created>1646268697244</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1646268697244</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -525,7 +497,8 @@
     <MESSAGE value="BUGFIXES" />
     <MESSAGE value="UPDATING TO PUSH" />
     <MESSAGE value="WebServer bugfix" />
-    <option name="LAST_COMMIT_MESSAGE" value="WebServer bugfix" />
+    <MESSAGE value="Changed to Jackson" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed to Jackson" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
