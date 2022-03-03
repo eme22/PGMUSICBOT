@@ -79,6 +79,9 @@ public class Bolo
         // get and check latest version
         String version = OtherUtil.checkVersion(prompt);
 
+        // create settings
+        SettingsManager settings = new SettingsManager();
+
         try {
             OtherUtil.loadFileFromGit(new File("serversettings.json"));
         } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
@@ -94,12 +97,8 @@ public class Bolo
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
+                settings.writeSettings();
                 OtherUtil.writeFileToGitHub(new File("serversettings.json"));
-            } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
-                e.printStackTrace();
-            }
-            try {
-                OtherUtil.writeFileToGitHub(new File("serverpolls.json"));
             } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
                 e.printStackTrace();
             }
@@ -117,7 +116,6 @@ public class Bolo
         
         // set up the listener
         EventWaiter waiter = new EventWaiter();
-        SettingsManager settings = new SettingsManager();
         Bot bot = new Bot(waiter, config, settings);
         
         AboutCommand aboutCommand = new AboutCommand(Color.BLUE.brighter(),

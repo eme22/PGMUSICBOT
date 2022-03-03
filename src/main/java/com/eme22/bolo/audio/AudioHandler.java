@@ -16,6 +16,7 @@
 package com.eme22.bolo.audio;
 
 import com.eme22.bolo.queue.FairQueue;
+import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.eme22.bolo.Bolo;
 import com.eme22.bolo.playlist.PlaylistLoader.Playlist;
@@ -30,7 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.eme22.bolo.settings.Settings;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import java.nio.ByteBuffer;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -136,11 +136,11 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             audioPlayer.playTrack(defaultQueue.remove(0));
             return true;
         }
-        Settings settings = manager.getBot().getSettingsManager().getSettings(guildId);
-        if(settings==null || settings.getDefaultPlaylist()==null)
+        Settings settingsTEST = manager.getBot().getSettingsManager().getSettings(guildId);
+        if(settingsTEST ==null || settingsTEST.getDefaultPlaylist()==null)
             return false;
         
-        Playlist pl = manager.getBot().getPlaylistLoader().getPlaylist(settings.getDefaultPlaylist());
+        Playlist pl = manager.getBot().getPlaylistLoader().getPlaylist(settingsTEST.getDefaultPlaylist());
         if(pl==null || pl.getItems().isEmpty())
             return false;
         pl.loadTracks(manager, (at) -> 

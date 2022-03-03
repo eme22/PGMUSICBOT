@@ -1,6 +1,7 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
+import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -29,22 +30,18 @@ public class MemeCmd extends Command {
             pos = Integer.parseInt(event.getArgs());
         } catch (NumberFormatException ignore) {}
 
-        Map<String, String> data;
+        MemeImage data;
         try {
             if (pos != null)
-                data = s.getMemeImage(pos-1);
+                data = s.getMemeImages().get(pos-1);
             else
                 data = s.getRandomMemeImages();
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
             event.replyError("Meme invalido o no hay memes configurados en este servidor");
             return;
         }
-
-
-        data.forEach( (s1, s2) -> {
-            MessageBuilder builder = new MessageBuilder().append(s1);
-            EmbedBuilder eb = new EmbedBuilder().setImage(s2);
-            event.getTextChannel().sendMessage(builder.build()).setEmbeds(eb.build()).complete();
-        });
+        MessageBuilder builder = new MessageBuilder().append(data.getMessage());
+        EmbedBuilder eb = new EmbedBuilder().setImage(data.getMeme());
+        event.getTextChannel().sendMessage(builder.build()).setEmbeds(eb.build()).complete();
     }
 }

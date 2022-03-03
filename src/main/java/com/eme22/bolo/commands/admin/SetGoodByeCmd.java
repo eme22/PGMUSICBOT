@@ -50,7 +50,7 @@ public class SetGoodByeCmd extends AdminCommand
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
-            s.setGoodByeID(null);
+            s.setDespedidasChannelId(0);
             event.reply(event.getClient().getSuccess()+" El canal de las despedidas ha sido quitado.");
         }
         else
@@ -62,7 +62,7 @@ public class SetGoodByeCmd extends AdminCommand
                 event.reply(event.getClient().getWarning()+FormatUtil.listOfTChannels(list, event.getArgs()));
             else
             {
-                s.setGoodByeID(list.get(0));
+                s.setDespedidasChannelId(list.get(0).getIdLong());
                 event.reply(event.getClient().getSuccess()+" El canal de las despedidas es ahora <#"+list.get(0).getId()+">");
             }
         }

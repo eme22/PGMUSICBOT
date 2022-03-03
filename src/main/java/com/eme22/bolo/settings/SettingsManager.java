@@ -15,20 +15,26 @@
  */
 package com.eme22.bolo.settings;
 
+import com.eme22.bolo.Bot;
+import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.utils.OtherUtil;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -37,10 +43,25 @@ import java.util.HashMap;
 public class SettingsManager implements GuildSettingsManager<Settings>
 {
     private final static double SKIP_RATIO = .55;
-    private final HashMap<Long,Settings> settings;
+    private final HashMap<Long, Settings> settings;
 
     public SettingsManager()
     {
+        this.settings = new HashMap<>();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            File file = new File("serversettings.json");
+            if (!file.exists())
+                throw new IOException();
+            HashMap<Long, Settings> temp_Settings = mapper.readValue(file, new TypeReference<>() {});
+            temp_Settings.forEach( (aLong, settingsTEST) -> this.settings.put(aLong, settingsTEST.withManager(this)));
+
+        } catch( IOException e) {
+            LoggerFactory.getLogger("Settings").warn("Failed to load server settings (this is normal if no settings have been set yet): "+e);
+        }
+
+
+        /*
         this.settings = new HashMap<>();
         try {
             Reader reader = Files.newBufferedReader(OtherUtil.getPath("serversettings.json"));
@@ -54,6 +75,8 @@ public class SettingsManager implements GuildSettingsManager<Settings>
         } catch( IOException e) {
             LoggerFactory.getLogger("Settings").warn("Failed to load server settings (this is normal if no settings have been set yet): "+e);
         }
+
+         */
     }
     
     /**
@@ -81,11 +104,23 @@ public class SettingsManager implements GuildSettingsManager<Settings>
 
     private Settings createDefaultSettings()
     {
-        return new Settings(this, 0, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null, 0, null, null, null);
+        return new Settings(this, 0, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
     
     public void writeSettings()
     {
+
+
+        // convert book object to JSON file
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get("serversettings.json").toFile(), settings);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /*
         try {
             FileWriter writer = new FileWriter(OtherUtil.getPath("serversettings.json").toFile());
             new GsonBuilder().setPrettyPrinting().create().toJson(settings, writer);
@@ -95,12 +130,66 @@ public class SettingsManager implements GuildSettingsManager<Settings>
             ex.printStackTrace();
             LoggerFactory.getLogger("Settings").warn("Failed to write to file: "+ex);
         }
+         */
     }
 
     protected void deleteSettings(String guild)
     {
         settings.remove(Long.parseLong(guild));
-        writeSettings();
+    }
 
+    public void onGuildMessageReactionAdd(@NotNull MessageReactionAddEvent event, Bot bot) {
+
+        if (this.settings.get(event.getGuild().getIdLong()).getPolls().stream().anyMatch( poll -> poll.getId() == event.getMessageIdLong())) {
+            Poll polls = this.settings.get(event.getGuild().getIdLong()).getPolls().stream().filter(poll -> poll.getId() == event.getMessageIdLong()).findFirst().orElse(null);
+            int num = OtherUtil.EmojiToNumber(event.getReaction().getReactionEmote().getEmoji());
+            if (polls != null && num != -1 && polls.isUserParticipating(event.getUserIdLong())){
+                event.getUser().openPrivateChannel().queue( success -> success.sendMessage(bot.getConfig().getError()+" Solo puedes votar una vez").queue(m ->
+                        m.delete().queueAfter(30, TimeUnit.SECONDS)));
+                event.getReaction().removeReaction(event.getUser()).queue();
+            }else {
+
+                if (polls != null) {
+                    polls.addVoteToAnswer(num, event.getUserIdLong());
+                    event.getTextChannel().
+                            editMessageEmbedsById(
+                                    event.getMessageId(),
+                                    new EmbedBuilder()
+                                            .setDescription(OtherUtil.makePollString(polls))
+                                            .build()
+                            ).queue();
+                    //settings.get(event.getGuild().getIdLong()).getManager().writeSettings();
+                }
+
+            }
+        }
+    }
+
+    public void onGuildMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
+
+        if (this.settings.get(event.getGuild().getIdLong()).getPolls().stream().anyMatch( poll -> poll.getId() == event.getMessageIdLong())) {
+            Poll polls = this.settings.get(event.getGuild().getIdLong()).getPolls().stream().filter(poll -> poll.getId() == event.getMessageIdLong()).findFirst().orElse(null);
+            int num = OtherUtil.EmojiToNumber(event.getReaction().getReactionEmote().getEmoji());
+            if (polls != null && num != -1 && polls.isUserParticipating(event.getUserIdLong())) {
+                if (polls.isUserParticipatingInAnswer(num, event.getUserIdLong())) {
+                    polls.removeVoteFromAnswer(num, event.getUserIdLong());
+                    event.getTextChannel().
+                            editMessageEmbedsById(
+                                    event.getMessageId(),
+                                    new EmbedBuilder()
+                                            .setDescription(OtherUtil.makePollString(polls))
+                                            .build()
+                            ).queue();
+
+                    //settings.get(event.getGuild().getIdLong()).getManager().writeSettings();
+                }
+            }
+        }
+
+    }
+
+
+    public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
+        this.settings.get(event.getGuild().getIdLong()).removePollFromGuild(event.getMessageIdLong());
     }
 }

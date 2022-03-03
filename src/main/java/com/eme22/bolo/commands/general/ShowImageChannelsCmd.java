@@ -16,16 +16,12 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.settings.RepeatMode;
 import com.eme22.bolo.settings.Settings;
-import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 
 import java.util.ArrayList;
 

@@ -50,7 +50,7 @@ public class SetWelcomeCmd extends AdminCommand
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
-            s.setHelloID(null);
+            s.setBienvenidasChannelId(0);
             event.reply(event.getClient().getSuccess()+" El canal de las bienvenidas ha sido quitado.");
         }
         else
@@ -62,7 +62,7 @@ public class SetWelcomeCmd extends AdminCommand
                 event.reply(event.getClient().getWarning()+FormatUtil.listOfTChannels(list, event.getArgs()));
             else
             {
-                s.setHelloID(list.get(0));
+                s.setBienvenidasChannelId(list.get(0).getIdLong());
                 event.reply(event.getClient().getSuccess()+" El canal de las bienvenidas es ahora <#"+list.get(0).getId()+">");
             }
         }

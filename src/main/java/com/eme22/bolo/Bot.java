@@ -15,22 +15,21 @@
  */
 package com.eme22.bolo;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 import com.eme22.bolo.audio.AloneInVoiceHandler;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.NowplayingHandler;
 import com.eme22.bolo.audio.PlayerManager;
 import com.eme22.bolo.gui.GUI;
-import com.eme22.bolo.poll.PollManager;
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.eme22.bolo.playlist.PlaylistLoader;
 import com.eme22.bolo.settings.SettingsManager;
-import java.util.Objects;
+import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  *
@@ -46,7 +45,6 @@ public class Bot
     private final PlaylistLoader playlists;
     private final NowplayingHandler nowplaying;
     private final AloneInVoiceHandler aloneInVoiceHandler;
-    private final PollManager polls;
     
     private boolean shuttingDown = false;
     private JDA jda;
@@ -65,7 +63,6 @@ public class Bot
         this.nowplaying.init();
         this.aloneInVoiceHandler = new AloneInVoiceHandler(this);
         this.aloneInVoiceHandler.init();
-        this.polls = new PollManager(this);
     }
     
     public BotConfig getConfig()
@@ -162,6 +159,4 @@ public class Bot
     {
         this.gui = gui;
     }
-
-    public PollManager getPollManager() { return polls; }
 }

@@ -170,7 +170,8 @@ public class Listener extends ListenerAdapter
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) 
     {
         bot.getNowplayingHandler().onMessageDelete(event.getGuild(), event.getMessageIdLong());
-        bot.getPollManager().onGuildMessageDelete(event);
+        bot.getSettingsManager().onGuildMessageDelete(event);
+       // bot.getPollManager().onGuildMessageDelete(event);
 
     }
 
@@ -262,7 +263,7 @@ public class Listener extends ListenerAdapter
         if (event.getUser().isBot())
             return;
 
-        bot.getPollManager().onGuildMessageReactionAdd(event);
+        bot.getSettingsManager().onGuildMessageReactionAdd(event, bot);
 
         if (tempChannels.containsKey(event.getMessageId())){
 
@@ -279,7 +280,7 @@ public class Listener extends ListenerAdapter
                         msgToDelete.delete().complete();
 
                     }
-                    bot.getSettingsManager().getSettings(event.getGuild()).setTextChannel(channelId);
+                    bot.getSettingsManager().getSettings(event.getGuild()).setTextChannelId(channelId.getIdLong());
                 }
                 if (mode == 1){
                     for (String key : getKeys(tempChannels, 1)) {
@@ -288,7 +289,7 @@ public class Listener extends ListenerAdapter
                         msgToDelete.delete().complete();
 
                     }
-                    bot.getSettingsManager().getSettings(event.getGuild()).setHelloID(channelId);
+                    bot.getSettingsManager().getSettings(event.getGuild()).setBienvenidasChannelId(channelId.getIdLong());
                 }
                 if (mode == 2){
                     for (String key : getKeys(tempChannels, 2)) {
@@ -297,7 +298,7 @@ public class Listener extends ListenerAdapter
                         msgToDelete.delete().complete();
 
                     }
-                    bot.getSettingsManager().getSettings(event.getGuild()).setGoodByeID(channelId);
+                    bot.getSettingsManager().getSettings(event.getGuild()).setDespedidasChannelId(channelId.getIdLong());
                 }
             }
 
@@ -389,9 +390,9 @@ public class Listener extends ListenerAdapter
                         total += list.get(i).getTrack().getDuration();
                         songs[i] = list.get(i).toString();
                     }
-                    Settings settings = bot.getSettingsManager().getSettings(event.getGuild());
+                    Settings settingsTEST = bot.getSettingsManager().getSettings(event.getGuild());
                     long fintotal = total;
-                    builder.setText((i1,i2) -> getQueueTitle(ah, bot.getConfig().getSuccess(), songs.length, fintotal, settings.getRepeatMode()))
+                    builder.setText((i1,i2) -> getQueueTitle(ah, bot.getConfig().getSuccess(), songs.length, fintotal, settingsTEST.getRepeatMode()))
                             .setItems(songs)
                     ;
                     builder.build().paginate(event.getChannel(), pagenum);
@@ -405,7 +406,7 @@ public class Listener extends ListenerAdapter
 
     @Override
     public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
-        bot.getPollManager().onGuildMessageReactionRemove(event);
+        bot.getSettingsManager().onGuildMessageReactionRemove(event);
     }
 
     private String formatTitle(String title) {

@@ -5,9 +5,6 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 public class RemoveMemeCmd extends AdminCommand {
 
     public RemoveMemeCmd(Bot bot)

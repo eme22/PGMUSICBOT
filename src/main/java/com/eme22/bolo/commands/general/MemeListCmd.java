@@ -1,6 +1,7 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
+import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -22,16 +23,16 @@ public class MemeListCmd extends Command {
 
         Settings s = event.getClient().getSettingsFor(event.getGuild());
 
-        List<Map<String, String>> data = s.getMemeImages();
+        List<MemeImage> data = s.getMemeImages();
 
         EmbedBuilder builder = new EmbedBuilder();
         StringBuilder stringBuilder = new StringBuilder();
 
         int j = 0;
-        for (Map<String, String> datum : data) {
+        for (MemeImage datum : data) {
             j++;
             int finalJ = j;
-            datum.keySet().forEach(message -> stringBuilder.append(finalJ).append(": ").append(message).append("\n"));
+            stringBuilder.append(finalJ).append(": ").append(datum.getMessage()).append("\n");
 
         }
 

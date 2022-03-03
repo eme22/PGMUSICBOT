@@ -23,13 +23,13 @@ public class CloneAndDeleteChannel extends AdminCommand {
                     Settings s = event.getClient().getSettingsFor(event.getGuild());
 
                     if (s.getHelloChannel(event.getGuild()).getIdLong() == channel.getIdLong())
-                        s.setHelloID(success);
+                        s.setBienvenidasChannelId(success.getIdLong());
 
                     if (s.getGoodbyeChannel(event.getGuild()).getIdLong() == channel.getIdLong())
-                        s.setGoodByeID(success);
+                        s.setDespedidasChannelId(success.getIdLong());
 
                     if (s.getTextChannel(event.getGuild()).getIdLong() == channel.getIdLong())
-                        s.setTextChannel(success);
+                        s.setTextChannelId(success.getIdLong());
 
                     channel.delete().queue();
                     success.sendMessage("El canal se ha clonado con exito").queue();

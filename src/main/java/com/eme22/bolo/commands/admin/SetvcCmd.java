@@ -49,7 +49,7 @@ public class SetvcCmd extends AdminCommand
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
-            s.setVoiceChannel(null);
+            s.setVoiceChannelId(0);
             event.reply(event.getClient().getSuccess()+" Music can now be played in any channel");
         }
         else
@@ -61,7 +61,7 @@ public class SetvcCmd extends AdminCommand
                 event.reply(event.getClient().getWarning()+FormatUtil.listOfVChannels(list, event.getArgs()));
             else
             {
-                s.setVoiceChannel(list.get(0));
+                s.setVoiceChannelId(list.get(0).getIdLong());
                 event.reply(event.getClient().getSuccess()+" Music can now only be played in "+list.get(0).getAsMention());
             }
         }

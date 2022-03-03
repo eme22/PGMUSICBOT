@@ -49,7 +49,7 @@ public class SettcCmd extends AdminCommand
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
-            s.setTextChannel(null);
+            s.setTextChannelId(0);
             event.reply(event.getClient().getSuccess()+" Music commands can now be used in any channel");
         }
         else
@@ -61,7 +61,7 @@ public class SettcCmd extends AdminCommand
                 event.reply(event.getClient().getWarning()+FormatUtil.listOfTChannels(list, event.getArgs()));
             else
             {
-                s.setTextChannel(list.get(0));
+                s.setTextChannelId(list.get(0).getIdLong());
                 event.reply(event.getClient().getSuccess()+" Music commands can now only be used in <#"+list.get(0).getId()+">");
             }
         }

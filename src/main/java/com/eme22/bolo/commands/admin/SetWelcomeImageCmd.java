@@ -27,12 +27,12 @@ public class SetWelcomeImageCmd extends AdminCommand {
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(image.equalsIgnoreCase("none"))
         {
-            s.setHelloImage(null);
+            s.setBienvenidasChannelImage(null);
             event.reply(event.getClient().getSuccess()+" La imagen de bienvenidas se ha quitado.");
             return;
         }
         if (OtherUtil.checkImage(image)){
-            s.setHelloImage(image);
+            s.setBienvenidasChannelImage(image);
             event.reply(event.getClient().getSuccess()+"La imagen de bienvenidas es ahora "+image);
         }
         else {

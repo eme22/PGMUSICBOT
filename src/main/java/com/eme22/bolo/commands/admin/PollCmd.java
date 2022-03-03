@@ -2,13 +2,14 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
+import com.eme22.bolo.entities.Answer;
 import com.eme22.bolo.entities.Poll;
-import com.eme22.bolo.poll.PollManager;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +35,6 @@ public class PollCmd extends AdminCommand {
             return;
         }
 
-        PollManager pollManager = bot.getPollManager();
-
         Poll poll = new Poll();
 
         Pattern p = Pattern.compile("\\[(.*?)\\]");
@@ -49,7 +48,7 @@ public class PollCmd extends AdminCommand {
                     poll.setQuestion(m.group(1));
             }
             else {
-                Poll.Answers answers = new Poll.Answers(m.group(1), 0, new ArrayList<>());
+                Answer answers = new Answer(m.group(1), new HashSet<>());
                 poll.addAnswer(answers);
             }
 
@@ -70,7 +69,8 @@ public class PollCmd extends AdminCommand {
             }
 
             //success.addReaction("\uD83D\uDCDD").queue();
-            pollManager.addPollForGuild(event.getGuild(), success.getIdLong(), poll);
+            bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addPollForGuild(success.getIdLong(), poll);
+            //pollManager.addPollForGuild(event.getGuild(), success.getIdLong(), poll);
         });
 
     }

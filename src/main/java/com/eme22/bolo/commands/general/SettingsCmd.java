@@ -57,8 +57,8 @@ public class SettingsCmd extends Command
         TextChannel dchan = s.getGoodbyeChannel(event.getGuild());
         TextChannel tchan = s.getTextChannel(event.getGuild());
         VoiceChannel vchan = s.getVoiceChannel(event.getGuild());
-        Role djRole = s.getDJRole(event.getGuild());
-        Role adminrole =s.getAdminRole(event.getGuild());
+        Role djRole = s.getDJRoleId(event.getGuild());
+        Role adminrole =s.getAdminRoleId(event.getGuild());
         ArrayList<TextChannel> onlyimages = s.getOnlyImageChannels(event.getGuild());
 
         EmbedBuilder ebuilder = new EmbedBuilder()

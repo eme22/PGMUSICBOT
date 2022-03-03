@@ -52,7 +52,7 @@ public class SetAdminCmd extends AdminCommand
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
-            s.setDJRole(null);
+            s.setDjRoleId(0);
             event.reply(event.getClient().getSuccess()+"Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.");
         }
         else
@@ -64,7 +64,7 @@ public class SetAdminCmd extends AdminCommand
                 event.reply(event.getClient().getWarning()+FormatUtil.listOfRoles(list, event.getArgs()));
             else
             {
-                s.setAdminRole(list.get(0));
+                s.setAdminRoleId(list.get(0).getIdLong());
                 event.reply(event.getClient().getSuccess()+" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+list.get(0).getName()+"** role.");
             }
         }

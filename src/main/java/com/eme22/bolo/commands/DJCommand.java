@@ -18,7 +18,6 @@ package com.eme22.bolo.commands;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.settings.Settings;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 
 /**
@@ -40,11 +39,11 @@ public abstract class DJCommand extends MusicCommand
         if(event.getGuild()==null)
             return true;
         Settings settings = event.getClient().getSettingsFor(event.getGuild());
-        Role admin = settings.getAdminRole(event.getGuild());
+        Role admin = settings.getAdminRoleId(event.getGuild());
         if(event.getMember().getRoles().contains(admin))
             return true;
 
-        Role dj = settings.getDJRole(event.getGuild());
+        Role dj = settings.getDJRoleId(event.getGuild());
         return dj!=null && (event.getMember().getRoles().contains(dj) || dj.getIdLong()==event.getGuild().getIdLong());
     }
 }

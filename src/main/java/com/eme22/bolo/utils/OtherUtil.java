@@ -16,6 +16,7 @@
 package com.eme22.bolo.utils;
 
 import com.eme22.bolo.Bolo;
+import com.eme22.bolo.entities.Answer;
 import com.eme22.bolo.entities.Pair;
 import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.entities.Prompt;
@@ -242,17 +243,16 @@ public class OtherUtil
 
         sb.append("*").append(poll.getQuestion()).append("*").append("\n").append("\n");
 
-        ArrayList<Poll.Answers> answers = poll.getAnswers();
+        List<Answer> answers = poll.getAnswers();
 
-        AtomicReference<Integer> votes = new AtomicReference<>(0);
-        answers.forEach( answers1 -> votes.updateAndGet(v -> v + answers1.getCount()));
+        AtomicReference<Integer> votes = new AtomicReference<>(poll.getAllVoteCount());
 
         IntStream.range(0, answers.size())
                 .forEach(index -> {
-                    Poll.Answers answers1 = answers.get(index);
+                    Answer answers1 = answers.get(index);
                     sb.append(OtherUtil.numtoString(index)).append(": ").append(answers1.getAnswer()).append("\n");
                     double perc;
-                    float count = answers1.getCount();
+                    float count = answers1.votes.size();
                     if (Math.abs(votes.get()) < 0.0001)
                         perc = 0;
                     else
@@ -426,6 +426,7 @@ public class OtherUtil
 
     public static void loadFileFromGit(File file) throws IOException, NoSuchAlgorithmException {
 
+
         GitHub github = new GitHubBuilder().withOAuthToken(System.getenv("GITHUB_OAUTH")).build();
         GHRepository repo = github.getRepository("eme22/PGMUSICBOTSETTINGS");
 
@@ -437,7 +438,9 @@ public class OtherUtil
     }
 
     public static void writeFileToGitHub(File file) throws IOException, NoSuchAlgorithmException {
-       MessageDigest md5Digest = MessageDigest.getInstance("SHA-256");
+
+
+        MessageDigest md5Digest = MessageDigest.getInstance("SHA-256");
         String checksum = getFileChecksum(md5Digest, file);
 
         if (SHA.contains(checksum))
@@ -469,6 +472,8 @@ public class OtherUtil
         //        .message(LocalDateTime.now() + " Settings").create();
 
         //masterRef.updateTo(commit.getSHA1());
+
+
     }
 
     private static String getFileChecksum(MessageDigest digest, File file) throws IOException
@@ -611,9 +616,9 @@ public class OtherUtil
         return false;
     }
 
-    public static InputStream getBackground(Settings settings, boolean b) {
+    public static InputStream getBackground(Settings settingsTEST, boolean b) {
         if (b){
-            String image = settings.getHelloImage();
+            String image = settingsTEST.getBienvenidasChannelImage();
             if ( image == null){
                 ClassLoader classloader = Thread.currentThread().getContextClassLoader();
                 return classloader.getResourceAsStream("images/bienvenida.png");
@@ -622,7 +627,7 @@ public class OtherUtil
                 return imageFromUrl(image);
             }
         } else {
-            String image = settings.getGoodByeImage();
+            String image = settingsTEST.getDespedidasChannelImage();
             if ( image == null){
                 ClassLoader classloader = Thread.currentThread().getContextClassLoader();
                 return classloader.getResourceAsStream("images/despedida.png");

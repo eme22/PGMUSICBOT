@@ -49,7 +49,7 @@ public class SetdjCmd extends AdminCommand
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
-            s.setDJRole(null);
+            s.setDjRoleId(0);
             event.reply(event.getClient().getSuccess()+" DJ role cleared; Only Admins can use the DJ commands.");
         }
         else
@@ -61,7 +61,7 @@ public class SetdjCmd extends AdminCommand
                 event.reply(event.getClient().getWarning()+FormatUtil.listOfRoles(list, event.getArgs()));
             else
             {
-                s.setDJRole(list.get(0));
+                s.setDjRoleId(list.get(0).getIdLong());
                 event.reply(event.getClient().getSuccess()+" DJ commands can now be used by users with the **"+list.get(0).getName()+"** role.");
             }
         }
