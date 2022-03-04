@@ -262,7 +262,6 @@ public class Bolo
                 .setHandler((new ResourceHandler(new PathResourceManager(new File(".").toPath() ), new ErrorPageHandler())).setDirectoryListingEnabled(false))
                 .build();
         server.start();
-        System.out.println("Server running at " + server.getXnio().getName());
     }
 
     private static void waitExec(Logger log, String[] args) {
