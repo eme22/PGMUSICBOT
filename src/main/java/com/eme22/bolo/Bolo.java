@@ -253,7 +253,7 @@ public class Bolo
         int port = Integer.parseInt(System.getProperty("server.port"));
 
         Undertow server = Undertow.builder()
-                .addHttpListener(port, "bolo2022.herokuapp.com")
+                .addHttpListener(port, "https://bolo2022.herokuapp.com")
                 .setHandler((new ResourceHandler(new PathResourceManager(new File(".").toPath()), new FileErrorPageHandler(new File("404.html").toPath()))).setDirectoryListingEnabled(false))
                 .build();
         server.start();
