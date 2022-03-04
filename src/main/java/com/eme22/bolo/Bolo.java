@@ -28,6 +28,10 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.AboutCommand;
 import com.jagrosh.jdautilities.examples.command.PingCommand;
+import io.undertow.Undertow;
+import io.undertow.server.handlers.error.FileErrorPageHandler;
+import io.undertow.server.handlers.resource.PathResourceManager;
+import io.undertow.server.handlers.resource.ResourceHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -37,10 +41,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.webbitserver.WebServer;
-import org.webbitserver.WebServers;
-import org.webbitserver.handler.NotFoundHttpHandler;
-import org.webbitserver.handler.StaticFileHandler;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -250,14 +250,14 @@ public class Bolo
 
     private static void startSocket() {
 
-        String port = System.getProperty("server.port");
+        int port = Integer.parseInt(System.getProperty("server.port"));
 
-        WebServer webServer = WebServers.createWebServer(Integer.parseInt(port))
-                .add(new StaticFileHandler("."))
-                .add( new webserver.NotFoundHandler())
-                ;
-        webServer.start();
-        System.out.println("Server running at " + webServer.getUri());
+        Undertow server = Undertow.builder()
+                .addHttpListener(port, "localhost")
+                .setHandler((new ResourceHandler(new PathResourceManager(new File(".").toPath()), new FileErrorPageHandler(new File("404.html").toPath()))).setDirectoryListingEnabled(false))
+                .build();
+        server.start();
+        System.out.println("Server running at " + server.getXnio().getName());
     }
 
     private static void waitExec(Logger log, String[] args) {

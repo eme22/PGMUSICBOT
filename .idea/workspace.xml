@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="Changed to Jackson">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/TransformativeAudioSourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/TransformativeAudioSourceManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +57,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="jdk.selected.JAVA_MODULE" value="11" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Artifacts" />
@@ -161,7 +165,9 @@
       <workItem from="1646152181869" duration="1505000" />
       <workItem from="1646154302310" duration="8210000" />
       <workItem from="1646265514304" duration="3832000" />
-      <workItem from="1646269630736" duration="394000" />
+      <workItem from="1646269630736" duration="1177000" />
+      <workItem from="1646334041504" duration="1903000" />
+      <workItem from="1646362796706" duration="4208000" />
     </task>
     <task id="LOCAL-00001" summary="a">
       <created>1644690778045</created>
@@ -478,7 +484,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646269204664</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="Changed to Jackson">
+      <created>1646270205470</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1646270205470</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
