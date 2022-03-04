@@ -23,12 +23,15 @@ import com.eme22.bolo.commands.owner.*;
 import com.eme22.bolo.entities.Prompt;
 import com.eme22.bolo.gui.GUI;
 import com.eme22.bolo.settings.SettingsManager;
+import com.eme22.bolo.utils.ErrorPageHandler;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.AboutCommand;
 import com.jagrosh.jdautilities.examples.command.PingCommand;
 import io.undertow.Undertow;
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.ResponseCodeHandler;
 import io.undertow.server.handlers.error.FileErrorPageHandler;
 import io.undertow.server.handlers.resource.PathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
@@ -48,6 +51,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import static io.undertow.server.handlers.ResponseCodeHandler.HANDLE_404;
 
 /**
  *
@@ -254,7 +259,7 @@ public class Bolo
 
         Undertow server = Undertow.builder()
                 .addHttpListener(port, "0.0.0.0")
-                .setHandler((new ResourceHandler(new PathResourceManager(new File(".").toPath()), new FileErrorPageHandler(new File("404.html").toPath()))).setDirectoryListingEnabled(false))
+                .setHandler((new ResourceHandler(new PathResourceManager(new File(".").toPath() ), new ErrorPageHandler())).setDirectoryListingEnabled(false))
                 .build();
         server.start();
         System.out.println("Server running at " + server.getXnio().getName());
