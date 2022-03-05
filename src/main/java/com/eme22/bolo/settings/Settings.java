@@ -3,16 +3,14 @@ package com.eme22.bolo.settings;
 
 import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.entities.Poll;
+import com.eme22.bolo.entities.RoleManager;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
 import lombok.*;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -30,11 +28,14 @@ import java.util.*;
     "skip_ratio",
     "bienvenidas_channel_id",
     "bienvenidas_channel_image",
+    "bienvenidas_channel_message",
     "despedidas_channel_id",
     "despedidas_channel_image",
+    "despedidas_channel_message",
     "image_only_channels_ids",
     "meme_images",
-    "polls"
+    "polls",
+    "role_manager"
 })
 
 @AllArgsConstructor
@@ -68,16 +69,22 @@ public class Settings implements GuildSettingsProvider {
     private long bienvenidasChannelId;
     @JsonProperty("bienvenidas_channel_image")
     private String bienvenidasChannelImage;
+    @JsonProperty("bienvenidas_channel_message")
+    private String bienvenidasChannelMessage;
     @JsonProperty("despedidas_channel_id")
     private long despedidasChannelId;
     @JsonProperty("despedidas_channel_image")
     private String despedidasChannelImage;
+    @JsonProperty("despedidas_channel_message")
+    private String despedidasChannelMessage;
     @JsonProperty("image_only_channels_ids")
     private List<Long> imageOnlyChannelsIds;
     @JsonProperty("meme_images")
     private List<MemeImage> memeImages;
     @JsonProperty("polls")
     private List<Poll> polls;
+    @JsonProperty("role_manager")
+    private List<RoleManager> roleManagerList;
 
     public void addPollForGuild(Long messageId, Poll poll){
         if (this.polls.stream().anyMatch( poll1 -> poll1.getId() == messageId))
@@ -148,23 +155,20 @@ public class Settings implements GuildSettingsProvider {
         this.memeImages.remove(position);
     }
 
+    public void addToRoleManagers(RoleManager manager) {
+        this.roleManagerList.add(manager);
+    }
+
+    @JsonIgnore
+    public RoleManager getRoleManager(Long messageID) {
+        return roleManagerList.stream().filter(manager -> manager.getId() == messageID).findFirst().orElse(null);
+    }
+
+    public void deleteRoleManagers(Long messageID) {
+        this.roleManagerList.removeIf( memeImage -> memeImage.getId() == messageID);
+    }
+
     public void clearServerData(Guild guild) {
-        this.textChannelId = 0;
-        this.voiceChannelId = 0;
-        this.djRoleId = 0;
-        this.volume = 0;
-        this.defaultPlaylist = null;
-        this.repeatMode = null;
-        this.prefix = null;
-        this.skipRatio = 0;
-        this.adminRoleId =0;
-        this.bienvenidasChannelId = 0;
-        this.bienvenidasChannelImage = null;
-        this.imageOnlyChannelsIds = null;
-        this.memeImages = null;
-        this.despedidasChannelId = 0;
-        this.despedidasChannelImage = null;
-        this.polls = null;
         this.manager.deleteSettings(guild.getId());
     }
 

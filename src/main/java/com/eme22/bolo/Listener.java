@@ -19,8 +19,10 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.audio.RequestMetadata;
 import com.eme22.bolo.commands.music.LyricsCmd;
+import com.eme22.bolo.entities.RoleManager;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.OtherUtil;
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import com.jagrosh.jdautilities.menu.Paginator;
 import com.jagrosh.jlyrics.LyricsClient;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -402,11 +404,38 @@ public class Listener extends ListenerAdapter
             }
         }
         catch (NullPointerException ignore){}
+
+        RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).getRoleManager(event.getMessageIdLong());
+
+        if (manager != null) {
+            String reaction = event.getReactionEmote().getAsReactionCode();
+             HashMap<String, String> datas = manager.getEmoji();
+
+             if (datas.containsKey(reaction)){
+                 List<Role> list = FinderUtil.findRoles(datas.get(reaction), event.getGuild());
+                 event.getGuild().addRoleToMember(event.getUserId(), list.get(0)).complete();
+             }
+        }
     }
 
     @Override
     public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
+        if (event.getUser().isBot())
+            return;
+
         bot.getSettingsManager().onGuildMessageReactionRemove(event);
+
+        RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).getRoleManager(event.getMessageIdLong());
+
+        if (manager != null) {
+            String reaction = event.getReactionEmote().getAsReactionCode();
+            HashMap<String, String> datas = manager.getEmoji();
+
+            if (datas.containsKey(reaction)){
+                List<Role> list = FinderUtil.findRoles(datas.get(reaction), event.getGuild());
+                event.getGuild().removeRoleFromMember(event.getUserId(), list.get(0)).complete();
+            }
+        }
     }
 
     private String formatTitle(String title) {
@@ -480,9 +509,11 @@ public class Listener extends ListenerAdapter
                         log.error("Image not created");
                     }
 
+                    String message = OtherUtil.getMessage(bot, guild, true );
+                    message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername", guild.getName());
 
                     //builder.setThumbnail("attachment://bienvenida.png");
-                    bienvenidas.sendMessage("En que andas " + member.getAsMention() + "te damos la bienvenida a " + guild.getName() + " , Discord creado por el pueblo y para el pueblo.\nPARA INGRESAR A LOS OTROS CANALES, POR FAVOR LEE LAS " + guild.getTextChannelById("869307625169367130").getAsMention() + " Y VERIFÍCATE.").addFile(converted).complete();
+                    bienvenidas.sendMessage( message ).addFile(converted).complete();
                     converted.delete();
                 }
             }
@@ -525,9 +556,10 @@ public class Listener extends ListenerAdapter
                         log.error("Image not created");
                     }
 
-
+                    String message = OtherUtil.getMessage(bot, guild, false );
+                    message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername", guild.getName());
                     //builder.setThumbnail("attachment://bienvenida.png");
-                    despedidas.sendMessage("Se ha escapado de nuestras manos").addFile(converted).complete();
+                    despedidas.sendMessage(message).addFile(converted).complete();
                     converted.delete();
 
                 }

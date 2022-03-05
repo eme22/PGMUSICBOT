@@ -23,18 +23,11 @@ import com.eme22.bolo.commands.owner.*;
 import com.eme22.bolo.entities.Prompt;
 import com.eme22.bolo.gui.GUI;
 import com.eme22.bolo.settings.SettingsManager;
-import com.eme22.bolo.utils.ErrorPageHandler;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.AboutCommand;
 import com.jagrosh.jdautilities.examples.command.PingCommand;
-import io.undertow.Undertow;
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.ResponseCodeHandler;
-import io.undertow.server.handlers.error.FileErrorPageHandler;
-import io.undertow.server.handlers.resource.PathResourceManager;
-import io.undertow.server.handlers.resource.ResourceHandler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -51,8 +44,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-
-import static io.undertow.server.handlers.ResponseCodeHandler.HANDLE_404;
 
 /**
  *
@@ -76,7 +67,6 @@ public class Bolo
         Logger log = LoggerFactory.getLogger("Startup");
 
         waitExec(log, args);
-        startSocket();
 
         // create prompt to handle startup
         Prompt prompt = new Prompt("JMusicBot", "Switching to nogui mode. You can manually start in nogui mode by including the -Dnogui=true flag.");
@@ -181,6 +171,9 @@ public class Bolo
                         new SetvcCmd(bot),
                         new ClearDataCmd(bot),
                         new ClearMessagesCmd(bot),
+                        new SetGoodByeMessageCmd(bot),
+                        new SetWelcomeMessageCmd(bot),
+                        new SetRoleManagerCmd(bot),
                         
                         new AutoplaylistCmd(bot),
                         new DebugCmd(bot),
@@ -251,17 +244,6 @@ public class Bolo
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
-    }
-
-    private static void startSocket() {
-
-        int port = Integer.parseInt(System.getProperty("server.port"));
-
-        Undertow server = Undertow.builder()
-                .addHttpListener(port, "0.0.0.0")
-                .setHandler((new ResourceHandler(new PathResourceManager(new File(".").toPath() ), new ErrorPageHandler())).setDirectoryListingEnabled(false))
-                .build();
-        server.start();
     }
 
     private static void waitExec(Logger log, String[] args) {

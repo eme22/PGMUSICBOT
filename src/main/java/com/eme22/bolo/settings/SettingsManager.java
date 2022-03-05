@@ -61,22 +61,6 @@ public class SettingsManager implements GuildSettingsManager<Settings>
         }
 
 
-        /*
-        this.settings = new HashMap<>();
-        try {
-            Reader reader = Files.newBufferedReader(OtherUtil.getPath("serversettings.json"));
-            Type type = new TypeToken<HashMap<Long,Settings>>(){}.getType();
-            HashMap<Long,Settings> settings = new Gson().fromJson(reader, type);
-            if (settings == null)
-                throw new IOException();
-            settings.forEach( (aLong, settings1) -> this.settings.put(aLong, new Settings(this, settings1.textId, settings1.voiceId, settings1.roleId, settings1.adminroleId, settings1.volume, settings1.defaultPlaylist, settings1.repeatMode, settings1.prefix, settings1.skipRatio, settings1.helloID, settings1.helloImage, settings1.goodByeID, settings1.goodByeImage,settings1.onlyImageChannels, settings1.memeImages)));
-            reader.close();
-
-        } catch( IOException e) {
-            LoggerFactory.getLogger("Settings").warn("Failed to load server settings (this is normal if no settings have been set yet): "+e);
-        }
-
-         */
     }
     
     /**
@@ -102,9 +86,9 @@ public class SettingsManager implements GuildSettingsManager<Settings>
         return data;
     }
 
-    private Settings createDefaultSettings()
+    protected Settings createDefaultSettings()
     {
-        return new Settings(this, 0, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null, 0, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        return new Settings(this, 0, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null, null,0, null,null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
     
     public void writeSettings()
@@ -120,17 +104,6 @@ public class SettingsManager implements GuildSettingsManager<Settings>
             e.printStackTrace();
         }
 
-        /*
-        try {
-            FileWriter writer = new FileWriter(OtherUtil.getPath("serversettings.json").toFile());
-            new GsonBuilder().setPrettyPrinting().create().toJson(settings, writer);
-            writer.flush();
-            writer.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            LoggerFactory.getLogger("Settings").warn("Failed to write to file: "+ex);
-        }
-         */
     }
 
     protected void deleteSettings(String guild)

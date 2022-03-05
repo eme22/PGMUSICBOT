@@ -116,6 +116,13 @@ playlistsfolder = "Playlists"
 
 updatealerts=false
 
+// Default Welcome Message
+
+welcomemessage = "@username Bienvenuido al servidor @servername, disfruta tu estadia."
+
+// Default leave Message
+
+goodbyemessage = "@username se ha ido."
 
 // Changing this changes the lyrics provider
 // Currently available providers: "A-Z Lyrics", "Genius", "MusicMatch", "LyricsFreak"
@@ -125,7 +132,7 @@ updatealerts=false
 // If you are interested in contributing a provider, please see
 // https://github.com/jagrosh/JLyrics
 
-lyrics.default = "A-Z Lyrics"
+lyrics.default = "MusicMatch"
 
 
 // These settings allow you to configure custom aliases for all commands.

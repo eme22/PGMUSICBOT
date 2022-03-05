@@ -16,6 +16,8 @@
 package com.eme22.bolo.utils;
 
 import com.eme22.bolo.Bolo;
+import com.eme22.bolo.Bot;
+import com.eme22.bolo.BotConfig;
 import com.eme22.bolo.entities.Answer;
 import com.eme22.bolo.entities.Pair;
 import com.eme22.bolo.entities.Poll;
@@ -23,6 +25,7 @@ import com.eme22.bolo.entities.Prompt;
 import com.eme22.bolo.settings.Settings;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -636,5 +639,18 @@ public class OtherUtil
                 return imageFromUrl(image);
             }
         }
+    }
+
+    public static String getMessage(Bot bot, Guild guild, boolean b) {
+
+        Settings settings = bot.getSettingsManager().getSettings(guild.getIdLong());
+        BotConfig config = bot.getConfig();
+
+        String message = b ? settings.getBienvenidasChannelMessage() : settings.getDespedidasChannelMessage();
+
+        if (message == null)
+            return b ? config.getWelcomeString() : config.getGoodByeString();
+        else
+            return message;
     }
 }
