@@ -158,6 +158,7 @@ public class Bolo
                         new SetdjCmd(bot),
                         new PollCmd(bot),
                         new AddMemeCmd(bot),
+                        new BotMessageCmd(bot),
                         new RemoveMemeCmd(bot),
                         new AddImageChannel(bot),
                         new DeleteImageChannel(bot),

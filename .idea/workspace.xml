@@ -4,22 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="BugFix">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetGoodByeMessageCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetRoleManagerCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetWelcomeMessageCmd.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/entities/RoleManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/FUNDING.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.txt" beforeDir="false" afterPath="$PROJECT_DIR$/config.txt" afterDir="false" />
+    <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="Bugfixes">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/BotMessageCmd.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/BotConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/BotConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/CloneAndDeleteChannel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/CloneAndDeleteChannel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/reference.conf" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/reference.conf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -535,7 +522,39 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="noweb" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="noweb" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="master" />
+                </option>
+              </RecentGroup>
+            </list>
           </value>
         </entry>
       </map>
