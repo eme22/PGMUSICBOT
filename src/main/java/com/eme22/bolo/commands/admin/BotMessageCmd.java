@@ -22,6 +22,7 @@ public class BotMessageCmd extends AdminCommand {
             return;
         }
 
+        event.getMessage().delete().complete();
         event.getTextChannel().sendMessage(event.getArgs()).complete();
     }
 }

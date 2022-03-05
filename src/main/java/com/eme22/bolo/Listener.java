@@ -405,15 +405,21 @@ public class Listener extends ListenerAdapter
         }
         catch (NullPointerException ignore){}
 
+        //System.out.println(event.getReactionEmote().getName());
+        //System.out.println(event.getReactionEmote().getId());
         RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).getRoleManager(event.getMessageIdLong());
 
         if (manager != null) {
             String reaction = event.getReactionEmote().getAsReactionCode();
-             HashMap<String, String> datas = manager.getEmoji();
+            //System.out.println("Emote for Search: "+event.getReactionEmote().getAsReactionCode());
+            HashMap<String, String> datas = manager.getEmoji();
+            datas.forEach((key, value) -> System.out.println(key + " " + value));
 
-             if (datas.containsKey(reaction)){
-                 List<Role> list = FinderUtil.findRoles(datas.get(reaction), event.getGuild());
-                 event.getGuild().addRoleToMember(event.getUserId(), list.get(0)).complete();
+             if (datas.containsKey(event.getReactionEmote().getAsReactionCode())){
+                 String roleT = datas.get(reaction);
+                 //System.out.println("Role:"+ roleT);
+                 List<Role> list = FinderUtil.findRoles(roleT, event.getGuild());
+                 event.getGuild().addRoleToMember(event.getUserId(), list.get(0)).queue();
              }
         }
     }

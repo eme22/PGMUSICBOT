@@ -136,7 +136,7 @@ public class NowplayingHandler
                     // ratelimit, we just won't change the topic this time
                     tchan.getManager().setTopic(text).complete(wait);
                 } 
-                catch(PermissionException | RateLimitedException ignore) {}
+                catch(PermissionException | RateLimitedException e) { e.printStackTrace();}
             }
         }
     }

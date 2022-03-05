@@ -156,6 +156,8 @@ public class Settings implements GuildSettingsProvider {
     }
 
     public void addToRoleManagers(RoleManager manager) {
+        if (this.roleManagerList == null)
+           this.roleManagerList = new ArrayList<>();
         this.roleManagerList.add(manager);
     }
 

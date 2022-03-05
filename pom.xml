@@ -27,13 +27,18 @@
             <name>Pentaho.org</name>
             <url>https://public.nexus.pentaho.org/content/groups/omni/</url>
         </repository>
+        <repository>
+            <id>chew</id>
+            <name>m2-chew</name>
+            <url>https://m2.chew.pro/releases</url>
+        </repository>
     </repositories>
     
     <dependencies>
         <dependency>
-            <groupId>net.dv8tion</groupId> 
-            <artifactId>JDA</artifactId> 
-            <version>4.3.0_324</version>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>4.4.0_350</version>
         </dependency>
         <!-- using a fork of this to fix some issues faster -->
         <!-- dependency>
@@ -53,9 +58,10 @@
             <version>1.3.13</version>
         </dependency-->
         <dependency>
-            <groupId>com.jagrosh</groupId>
-            <artifactId>jda-utilities</artifactId>
-            <version>3.0.5</version>
+            <groupId>pw.chew</groupId>
+            <artifactId>jda-chewtils</artifactId>
+            <version>1.24.1</version>
+            <scope>compile</scope>
             <type>pom</type>
         </dependency>
         <!-- jitpack for now, we need to version this correctly later -->

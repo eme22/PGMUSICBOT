@@ -163,6 +163,8 @@ public class SettingsManager implements GuildSettingsManager<Settings>
 
 
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
-        this.settings.get(event.getGuild().getIdLong()).removePollFromGuild(event.getMessageIdLong());
+        Settings settings1 = this.settings.get(event.getGuild().getIdLong());
+        settings1.removePollFromGuild(event.getMessageIdLong());
+        settings1.deleteRoleManagers(event.getMessageIdLong());
     }
 }

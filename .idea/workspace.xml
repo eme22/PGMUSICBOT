@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7a6707ed-5084-4d28-8271-278e6ce00021" name="Changes" comment="Bugfixes">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/BotMessageCmd.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Bolo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/Listener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/NowplayingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/audio/NowplayingHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetRoleManagerCmd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/commands/admin/SetRoleManagerCmd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/Settings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/settings/SettingsManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/eme22/bolo/utils/OtherUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,12 +97,12 @@
   <component name="RunManager">
     <configuration name="Run" type="Application" factoryName="Application">
       <envs>
-        <env name="GITHUB_OAUTH" value="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" />
+        <env name="GITHUB_OAUTH" value="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" />
       </envs>
       <option name="MAIN_CLASS_NAME" value="com.eme22.bolo.Bolo" />
       <module name="Bolo" />
       <option name="PROGRAM_PARAMETERS" value="wait" />
-      <option name="VM_PARAMETERS" value="-Dnogui=true -Dserver.port=5000" />
+      <option name="VM_PARAMETERS" value="-Dnogui=true -Dserver.port=5000 -Dtoken=ODAyNzA1MDUxMDkyNjQ3OTM2.YAzHVQ.WAPIzvszkp7JbqwNU0wgnt_6GTg" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -167,13 +174,6 @@
       <workItem from="1646334041504" duration="1903000" />
       <workItem from="1646362796706" duration="8225000" />
       <workItem from="1646415312735" duration="12530000" />
-    </task>
-    <task id="LOCAL-00006" summary="a">
-      <created>1644937568941</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1644937568941</updated>
     </task>
     <task id="LOCAL-00007" summary="MAJOR REFRACTOR">
       <created>1645839385639</created>
@@ -511,7 +511,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646375518230</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Bugfixes">
+      <created>1646448786845</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1646448786845</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -575,7 +582,8 @@
     <MESSAGE value="Changed to Jackson" />
     <MESSAGE value="Changed from Webbit to Undertow" />
     <MESSAGE value="BugFix" />
-    <option name="LAST_COMMIT_MESSAGE" value="BugFix" />
+    <MESSAGE value="Bugfixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bugfixes" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
