@@ -3,17 +3,16 @@ package com.eme22.bolo.commands.admin;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BotMessageCmd extends AdminCommand {
+public class BotEmbbedMessageCmd extends AdminCommand {
 
-    public BotMessageCmd(Bot bot) {
-        this.name = "message";
-        this.help = "hace hablar al bot";
+    public BotEmbbedMessageCmd(Bot bot) {
+        this.name = "message2";
+        this.help = "hace hablar al bot con mensajes embedidos";
         this.arguments = "<mensaje>";
         this.aliases = bot.getConfig().getAliases(this.name);
     }
@@ -27,20 +26,22 @@ public class BotMessageCmd extends AdminCommand {
             return;
         }
 
+        EmbedBuilder builder;
+
         Pattern regex = Pattern.compile("]?([^]]*)");
         Matcher matcher = regex.matcher(message);
         while (matcher.find()){
             String nextmessage = matcher.group(1);
             Pattern regex1 = Pattern.compile("\\[([^\\[]*)\\]");
             Matcher matcher1 = regex1.matcher(nextmessage);
+            builder = new EmbedBuilder();
             if (matcher1.find()){
                 nextmessage = nextmessage.replace(matcher1.group(), "");
-                event.getTextChannel().sendMessage(nextmessage + " " + matcher1.group(1) ).complete();
+                builder.setDescription(nextmessage).setImage(matcher1.group(1));
             } else {
-                event.getTextChannel().sendMessage(nextmessage).complete();
+                builder.setDescription(nextmessage);
             }
-
-
+            event.getTextChannel().sendMessageEmbeds(builder.build()).complete();
         }
     }
 }
