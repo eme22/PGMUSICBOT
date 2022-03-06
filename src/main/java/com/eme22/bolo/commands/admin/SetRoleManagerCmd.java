@@ -6,16 +6,10 @@ import com.eme22.bolo.entities.RoleManager;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Role;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-
-import static com.jagrosh.jdautilities.commons.utils.FinderUtil.DISCORD_ID;
-import static com.jagrosh.jdautilities.commons.utils.FinderUtil.EMOTE_MENTION;
 
 public class SetRoleManagerCmd extends AdminCommand {
 
