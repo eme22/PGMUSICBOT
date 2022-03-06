@@ -27,10 +27,12 @@ public class BotMessageCmd extends AdminCommand {
             return;
         }
 
-        Pattern regex = Pattern.compile("]?([^]]*)");
+        Pattern regex = Pattern.compile("(.+?(?=]).|.*)");
         Matcher matcher = regex.matcher(message);
         while (matcher.find()){
             String nextmessage = matcher.group(1);
+            if (nextmessage == null || nextmessage.isBlank())
+                continue;
             Pattern regex1 = Pattern.compile("\\[([^\\[]*)\\]");
             Matcher matcher1 = regex1.matcher(nextmessage);
             if (matcher1.find()){
@@ -39,8 +41,6 @@ public class BotMessageCmd extends AdminCommand {
             } else {
                 event.getTextChannel().sendMessage(nextmessage).complete();
             }
-
-
         }
     }
 }

@@ -28,11 +28,11 @@ public class BotEmbbedMessageCmd extends AdminCommand {
 
         EmbedBuilder builder;
 
-        Pattern regex = Pattern.compile("]?([^]]*)");
+        Pattern regex = Pattern.compile("(.+?(?=]).|.*)");
         Matcher matcher = regex.matcher(message);
         while (matcher.find()){
             String nextmessage = matcher.group(1);
-            if (nextmessage.isBlank())
+            if (nextmessage == null || nextmessage.isBlank())
                 continue;
             Pattern regex1 = Pattern.compile("\\[([^\\[]*)\\]");
             Matcher matcher1 = regex1.matcher(nextmessage);
