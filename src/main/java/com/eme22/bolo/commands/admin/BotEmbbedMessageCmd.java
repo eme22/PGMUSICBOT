@@ -32,6 +32,8 @@ public class BotEmbbedMessageCmd extends AdminCommand {
         Matcher matcher = regex.matcher(message);
         while (matcher.find()){
             String nextmessage = matcher.group(1);
+            if (nextmessage.isBlank())
+                continue;
             Pattern regex1 = Pattern.compile("\\[([^\\[]*)\\]");
             Matcher matcher1 = regex1.matcher(nextmessage);
             builder = new EmbedBuilder();
