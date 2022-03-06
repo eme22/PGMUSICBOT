@@ -27,7 +27,7 @@ public class BotMessageCmd extends AdminCommand {
             return;
         }
 
-        Pattern regex = Pattern.compile("(.+?(?=]).|.*)");
+        Pattern regex = Pattern.compile("(.+?(?=]).|.*)", Pattern.DOTALL);
         Matcher matcher = regex.matcher(message);
         while (matcher.find()){
             String nextmessage = matcher.group(1);
