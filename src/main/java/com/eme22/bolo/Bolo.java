@@ -125,6 +125,7 @@ public class Bolo
                 .setHelpWord(config.getHelp())
                 .setLinkedCacheSize(200)
                 .setGuildSettingsManager(settings)
+                .addSlashCommands(new AvatarCmd(bot))
                 .addCommands(aboutCommand,
                         new PingCommand(),
                         new SettingsCmd(bot),
