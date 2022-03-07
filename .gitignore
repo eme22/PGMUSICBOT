@@ -6,3 +6,5 @@
 *.txt
 nb*.xml
 /out/
+/.idea/
+/.github/
