@@ -1,15 +1,20 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Collections;
 import java.util.List;
 
-public class AvatarCmd extends Command {
+public class AvatarCmd extends SlashCommand {
 
     public AvatarCmd(Bot bot) {
         this.name = "avatar";
@@ -17,13 +22,36 @@ public class AvatarCmd extends Command {
         this.arguments = "<user>";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
+        this.options = Collections.singletonList(new OptionData(OptionType.USER, "usuario", "Seleccione al usuario al que ver su avatar.").setRequired(true));
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        getAvatar(event);
+    }
+
+    private void getAvatar(SlashCommandEvent event) {
+        OptionMapping option = event.getOption("usuario");
+        if(option == null)
+        {
+            event.reply(getClient().getSuccess()+ "Asegurese de que el usuario exista y no sea un bot").complete();
+            return;
+        }
+
+        Member member = option.getAsMember();
+
+        String avatar = member.getUser().getEffectiveAvatarUrl()+"?size=512";
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setDescription("Avatar para "+member.getAsMention());
+        eb.setImage(avatar);
+        event.getTextChannel().sendMessageEmbeds(eb.build()).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
         if(event.getArgs().isEmpty())
         {
-            event.reply(event.getClient().getError()+"Por favor incluya un nombre");
+            event.replyError("Por favor incluya un nombre");
             return;
         }
 
@@ -31,7 +59,7 @@ public class AvatarCmd extends Command {
 
         if (member.isEmpty())
         {
-            event.reply(event.getClient().getError()+"Asegurese de que el usuario exista y no sea un bot");
+            event.replyError("Asegurese de que el usuario exista y no sea un bot");
             return;
         }
 
