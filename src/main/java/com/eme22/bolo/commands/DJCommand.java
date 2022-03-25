@@ -37,7 +37,7 @@ public abstract class DJCommand extends MusicCommand
     {
         if(event.getAuthor().getId().equals(event.getClient().getOwnerId()))
             return true;
-        if(event.getGuild()==null)
+        if (event.getAuthor().equals(event.getGuild().getOwner().getUser()))
             return true;
         Settings settings = event.getClient().getSettingsFor(event.getGuild());
         Role admin = settings.getAdminRoleId(event.getGuild());
