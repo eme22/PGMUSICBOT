@@ -1,6 +1,7 @@
 
 package com.eme22.bolo.settings;
 
+import com.eme22.bolo.BotConfig;
 import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.entities.RoleManager;
@@ -55,7 +56,7 @@ public class Settings implements GuildSettingsProvider {
     @JsonProperty("admin_role_id")
     private long adminRoleId;
     @JsonIgnore
-    private int volume;
+    private int volume = BotConfig.DEFAULT_VOLUME;
     @JsonProperty("default_playlist")
     private String defaultPlaylist;
     @JsonProperty("repeat_mode")
