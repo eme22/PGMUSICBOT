@@ -26,10 +26,12 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
+ * TODO: IMPLEMENT
  */
 public class PlaynextCmd extends DJCommand
 {
@@ -60,7 +62,12 @@ public class PlaynextCmd extends DJCommand
                 : event.getArgs().isEmpty() ? event.getMessage().getAttachments().get(0).getUrl() : event.getArgs();
         event.reply(loadingEmoji+" Loading... `["+args+"]`", m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), args, new ResultHandler(m,event,false)));
     }
-    
+
+    @Override
+    public void doCommand(SlashCommandEvent event) {
+
+    }
+
     private class ResultHandler implements AudioLoadResultHandler
     {
         private final Message m;

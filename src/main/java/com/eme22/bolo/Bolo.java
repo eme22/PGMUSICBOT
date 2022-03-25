@@ -22,6 +22,9 @@ import com.eme22.bolo.commands.music.*;
 import com.eme22.bolo.commands.owner.*;
 import com.eme22.bolo.entities.Prompt;
 import com.eme22.bolo.gui.GUI;
+import com.eme22.bolo.listeners.Listener;
+import com.eme22.bolo.listeners.MusicListener;
+import com.eme22.bolo.listeners.PollListener;
 import com.eme22.bolo.settings.SettingsManager;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
@@ -75,6 +78,8 @@ public class Bolo
         String version = OtherUtil.checkVersion(prompt);
 
         // load settings from git
+
+
         try {
             OtherUtil.loadFileFromGit(new File("serversettings.json"));
         } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
@@ -111,7 +116,7 @@ public class Bolo
         
         AboutCommand aboutCommand = new AboutCommand(Color.BLUE.brighter(),
                                 "Hola soy Bolo' un BOT con lag) (v"+version+") [Status: https://bolo2022.herokuapp.com/]",
-                                new String[]{"Musica en HD", "Mensaje de bienvenida y despedida", "Limpiar mensajes"},
+                                new String[]{"Musica en HQ", "Mensaje de bienvenida y despedida configurables", "Limpiar mensajes", "Votaciones", "Memes", "Manejo de roles"},
                                 RECOMMENDED_PERMS);
         aboutCommand.setIsAuthor(false);
         aboutCommand.setReplacementCharacter("\uD83C\uDFB6"); // 🎶
@@ -125,7 +130,38 @@ public class Bolo
                 .setHelpWord(config.getHelp())
                 .setLinkedCacheSize(200)
                 .setGuildSettingsManager(settings)
-                .addSlashCommands(new AvatarCmd(bot))
+                .addSlashCommands( new AvatarCmd(bot),
+                        new SettingsCmd(bot),
+                        new BiteCmd(bot),
+                        new KissCmd(bot),
+                        new LickCmd(bot),
+                        new SlapCmd(bot),
+                        new MemeCmd(bot),
+                        new MemeListCmd(bot),
+                        new ShowImageChannelsCmd(bot),
+
+                        new LyricsCmd(bot),
+                        new NowplayingCmd(bot),
+                        new PlayCmd(bot),
+                        new PlaylistsCmd(bot),
+                        new QueueCmd(bot),
+                        new RemoveCmd(bot),
+                        new SearchCmd(bot),
+                        new SCSearchCmd(bot),
+                        new ShuffleCmd(bot),
+                        new SkipCmd(bot),
+
+                        new ForceRemoveCmd(bot),
+                        new ForceskipCmd(bot),
+                        new MoveTrackCmd(bot),
+                        new PauseCmd(bot),
+                        new PlaynextCmd(bot),
+                        new RepeatCmd(bot),
+                        new SkiptoCmd(bot),
+                        new StopCmd(bot),
+                        new VolumeCmd(bot)
+
+                )
                 .addCommands(aboutCommand,
                         new PingCommand(),
                         new SettingsCmd(bot),
@@ -233,7 +269,7 @@ public class Bolo
                     .setActivity(nogame ? null : Activity.playing("loading..."))
                     .setStatus(config.getStatus()==OnlineStatus.INVISIBLE || config.getStatus()==OnlineStatus.OFFLINE 
                             ? OnlineStatus.INVISIBLE : OnlineStatus.DO_NOT_DISTURB)
-                    .addEventListeners(cb.build(), waiter, new Listener(bot))
+                    .addEventListeners(cb.build(), waiter, new Listener(bot), new MusicListener(bot), new PollListener(bot))
                     .setBulkDeleteSplittingEnabled(true)
                     .build();
             bot.setJDA(jda);
@@ -255,23 +291,19 @@ public class Bolo
 
     private static void waitExec(Logger log, String[] args) {
 
-        boolean wait = true;
-
         for (String arg : args) {
             if (arg.equalsIgnoreCase("wait")) {
-                wait = false;
-                break;
+                return;
             }
         }
 
-        if (wait)
-            for(int j = 20; j >= 0; j--) {
-                log.info(j + " seconds remaining");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        for(int j = 20; j >= 0; j--) {
+            log.info(j + " seconds remaining");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+        }
     }
 }

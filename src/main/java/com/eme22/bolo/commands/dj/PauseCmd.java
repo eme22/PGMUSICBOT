@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.DJCommand;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  *
@@ -46,5 +47,18 @@ public class PauseCmd extends DJCommand
         }
         handler.getPlayer().setPaused(true);
         event.replySuccess("Paused **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**. Type `"+event.getClient().getPrefix()+"play` to unpause!");
+    }
+
+    @Override
+    public void doCommand(SlashCommandEvent event) {
+        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        if(handler.getPlayer().isPaused())
+        {
+            event.reply( getClient().getWarning()+ "The player is already paused! Use `"+getClient().getPrefix()+"play` to unpause!");
+            return;
+        }
+        handler.getPlayer().setPaused(true);
+        event.reply( getClient().getSuccess()+ "Paused **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**. Type `"+getClient().getPrefix()+"play` to unpause!");
+
     }
 }

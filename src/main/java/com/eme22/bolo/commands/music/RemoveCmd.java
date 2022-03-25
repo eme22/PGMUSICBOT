@@ -23,6 +23,12 @@ import com.eme22.bolo.commands.MusicCommand;
 import com.eme22.bolo.settings.Settings;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.Collections;
 
 /**
  *
@@ -39,6 +45,8 @@ public class RemoveCmd extends MusicCommand
         this.aliases = bot.getConfig().getAliases(this.name);
         this.beListening = true;
         this.bePlaying = true;
+        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "posicion", "Posicion para eliminar de la cola").setRequired(true));
+
     }
 
     @Override
@@ -95,6 +103,58 @@ public class RemoveCmd extends MusicCommand
         else
         {
             event.replyError("You cannot remove **"+qt.getTrack().getInfo().title+"** because you didn't add it!");
+        }
+    }
+
+    @Override
+    public void doCommand(SlashCommandEvent event) {
+        OptionMapping option = event.getOption("posicion");
+        if (option == null)
+           return;
+
+        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        if(handler.getQueue().isEmpty())
+        {
+            event.reply(getClient().getError()+"There is nothing in the queue!").setEphemeral(true).queue();
+            return;
+        }
+
+        int pos;
+        try {
+            pos = Integer.parseInt(option.getAsString());
+        } catch(NumberFormatException e) {
+            pos = 0;
+        }
+        if(pos<1 || pos>handler.getQueue().size())
+        {
+            event.reply(getClient().getError()+"Position must be a valid integer between 1 and "+handler.getQueue().size()+"!").setEphemeral(true).queue();
+            return;
+        }
+        Settings settings = getClient().getSettingsFor(event.getGuild());
+        boolean isDJ = event.getMember().hasPermission(Permission.MANAGE_SERVER);
+        if(!isDJ)
+            isDJ = event.getMember().getRoles().contains(settings.getDJRoleId(event.getGuild()));
+        QueuedTrack qt = handler.getQueue().get(pos-1);
+        if(qt.getIdentifier()==event.getUser().getIdLong())
+        {
+            handler.getQueue().remove(pos-1);
+            event.reply(getClient().getSuccess()+"Removed **"+qt.getTrack().getInfo().title+"** from the queue").queue();
+        }
+        else if(isDJ)
+        {
+            handler.getQueue().remove(pos-1);
+            User u;
+            try {
+                u = event.getJDA().getUserById(qt.getIdentifier());
+            } catch(Exception e) {
+                u = null;
+            }
+            event.reply(getClient().getSuccess()+"Removed **"+qt.getTrack().getInfo().title
+                    +"** from the queue (requested by "+(u==null ? "someone" : "**"+u.getName()+"**")+")").queue();
+        }
+        else
+        {
+            event.reply(getClient().getError()+"You cannot remove **"+qt.getTrack().getInfo().title+"** because you didn't add it!").queue();
         }
     }
 }

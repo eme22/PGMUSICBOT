@@ -24,6 +24,7 @@ import com.eme22.bolo.commands.DJCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 /**
  *
  * @author Michaili K.
+ * TODO: IMPLEMENT
  */
 public class ForceRemoveCmd extends DJCommand
 {
@@ -101,6 +103,11 @@ public class ForceRemoveCmd extends DJCommand
         }
 
         removeAllEntries(target, event);
+
+    }
+
+    @Override
+    public void doCommand(SlashCommandEvent event) {
 
     }
 

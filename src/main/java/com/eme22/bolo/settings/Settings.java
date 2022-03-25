@@ -21,7 +21,6 @@ import java.util.*;
     "voice_channel_id",
     "dj_role_id",
     "admin_role_id",
-    "volume",
     "default_playlist",
     "repeat_mode",
     "prefix",
@@ -55,7 +54,7 @@ public class Settings implements GuildSettingsProvider {
     private long djRoleId;
     @JsonProperty("admin_role_id")
     private long adminRoleId;
-    @JsonProperty("volume")
+    @JsonIgnore
     private int volume;
     @JsonProperty("default_playlist")
     private String defaultPlaylist;

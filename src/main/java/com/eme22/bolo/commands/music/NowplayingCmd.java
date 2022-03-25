@@ -21,6 +21,7 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.MusicCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  *
@@ -45,7 +46,7 @@ public class NowplayingCmd extends MusicCommand
         if(m==null)
         {
             event.reply(handler.getNoMusicPlaying(event.getJDA()));
-            bot.getNowplayingHandler().clearLastNPMessage(event.getGuild());
+            bot.getNowPlayingHandler().clearLastNPMessage(event.getGuild());
         }
         else
         {
@@ -55,8 +56,30 @@ public class NowplayingCmd extends MusicCommand
                 msg.addReaction("U+1F507").queue();
                 msg.addReaction("U+1F4C3").queue();
                 msg.addReaction("U+1F3B5").queue();
-                bot.getNowplayingHandler().setLastNPMessage(msg);
+                bot.getNowPlayingHandler().setLastNPMessage(msg);
             });
+        }
+    }
+
+    @Override
+    public void doCommand(SlashCommandEvent event) {
+        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        Message m = handler.getNowPlaying(event.getJDA());
+        if(m==null)
+        {
+            event.reply(handler.getNoMusicPlaying(event.getJDA())).queue();
+            bot.getNowPlayingHandler().clearLastNPMessage(event.getGuild());
+        }
+        else
+        {
+            event.reply(m).queue( s -> s.retrieveOriginal().queue(msg -> {
+                msg.addReaction("U+23EF").queue();
+                msg.addReaction("U+23ED").queue();
+                msg.addReaction("U+1F507").queue();
+                msg.addReaction("U+1F4C3").queue();
+                msg.addReaction("U+1F3B5").queue();
+                bot.getNowPlayingHandler().setLastNPMessage(msg);
+            }) );
         }
     }
 }

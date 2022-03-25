@@ -16,6 +16,7 @@
 package com.eme22.bolo.settings;
 
 import com.eme22.bolo.Bot;
+import com.eme22.bolo.BotConfig;
 import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.utils.OtherUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -88,7 +89,7 @@ public class SettingsManager implements GuildSettingsManager<Settings>
 
     protected Settings createDefaultSettings()
     {
-        return new Settings(this, 0, 0, 0, 0, 100, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null, null,0, null,null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        return new Settings(this, 0, 0, 0, 0, BotConfig.DEFAULT_VOLUME, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null, null,0, null,null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
     
     public void writeSettings()
@@ -109,62 +110,5 @@ public class SettingsManager implements GuildSettingsManager<Settings>
     protected void deleteSettings(String guild)
     {
         settings.remove(Long.parseLong(guild));
-    }
-
-    public void onGuildMessageReactionAdd(@NotNull MessageReactionAddEvent event, Bot bot) {
-
-        if (this.settings.get(event.getGuild().getIdLong()).getPolls().stream().anyMatch( poll -> poll.getId() == event.getMessageIdLong())) {
-            Poll polls = this.settings.get(event.getGuild().getIdLong()).getPolls().stream().filter(poll -> poll.getId() == event.getMessageIdLong()).findFirst().orElse(null);
-            int num = OtherUtil.EmojiToNumber(event.getReaction().getReactionEmote().getEmoji());
-            if (polls != null && num != -1 && polls.isUserParticipating(event.getUserIdLong())){
-                event.getUser().openPrivateChannel().queue( success -> success.sendMessage(bot.getConfig().getError()+" Solo puedes votar una vez").queue(m ->
-                        m.delete().queueAfter(30, TimeUnit.SECONDS)));
-                event.getReaction().removeReaction(event.getUser()).queue();
-            }else {
-
-                if (polls != null) {
-                    polls.addVoteToAnswer(num, event.getUserIdLong());
-                    event.getTextChannel().
-                            editMessageEmbedsById(
-                                    event.getMessageId(),
-                                    new EmbedBuilder()
-                                            .setDescription(OtherUtil.makePollString(polls))
-                                            .build()
-                            ).queue();
-                    //settings.get(event.getGuild().getIdLong()).getManager().writeSettings();
-                }
-
-            }
-        }
-    }
-
-    public void onGuildMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
-
-        if (this.settings.get(event.getGuild().getIdLong()).getPolls().stream().anyMatch( poll -> poll.getId() == event.getMessageIdLong())) {
-            Poll polls = this.settings.get(event.getGuild().getIdLong()).getPolls().stream().filter(poll -> poll.getId() == event.getMessageIdLong()).findFirst().orElse(null);
-            int num = OtherUtil.EmojiToNumber(event.getReaction().getReactionEmote().getEmoji());
-            if (polls != null && num != -1 && polls.isUserParticipating(event.getUserIdLong())) {
-                if (polls.isUserParticipatingInAnswer(num, event.getUserIdLong())) {
-                    polls.removeVoteFromAnswer(num, event.getUserIdLong());
-                    event.getTextChannel().
-                            editMessageEmbedsById(
-                                    event.getMessageId(),
-                                    new EmbedBuilder()
-                                            .setDescription(OtherUtil.makePollString(polls))
-                                            .build()
-                            ).queue();
-
-                    //settings.get(event.getGuild().getIdLong()).getManager().writeSettings();
-                }
-            }
-        }
-
-    }
-
-
-    public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
-        Settings settings1 = this.settings.get(event.getGuild().getIdLong());
-        settings1.removePollFromGuild(event.getMessageIdLong());
-        settings1.deleteRoleManagers(event.getMessageIdLong());
     }
 }

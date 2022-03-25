@@ -36,6 +36,9 @@ import java.nio.file.Path;
  */
 public class BotConfig
 {
+    //Default Volume
+    public final static int DEFAULT_VOLUME = 100;
+
     private final Prompt prompt;
     private final static String CONTEXT = "Config";
     private final static String START_TOKEN = "/// START OF JMUSICBOT CONFIG ///";

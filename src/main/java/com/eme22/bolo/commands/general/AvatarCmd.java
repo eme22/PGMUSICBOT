@@ -27,14 +27,10 @@ public class AvatarCmd extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        getAvatar(event);
-    }
-
-    private void getAvatar(SlashCommandEvent event) {
         OptionMapping option = event.getOption("usuario");
         if(option == null)
         {
-            event.reply(getClient().getSuccess()+ "Asegurese de que el usuario exista y no sea un bot").complete();
+            event.reply(getClient().getError()+ "Asegurese de que el usuario exista y no sea un bot").setEphemeral(true).queue();
             return;
         }
 
@@ -44,7 +40,7 @@ public class AvatarCmd extends SlashCommand {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setDescription("Avatar para "+member.getAsMention());
         eb.setImage(avatar);
-        event.getTextChannel().sendMessageEmbeds(eb.build()).queue();
+        event.replyEmbeds(eb.build()).queue();
     }
 
     @Override
@@ -68,6 +64,6 @@ public class AvatarCmd extends SlashCommand {
         EmbedBuilder eb = new EmbedBuilder();
         eb.setDescription("Avatar para "+member1.getAsMention());
         eb.setImage(avatar);
-        event.getTextChannel().sendMessageEmbeds(eb.build()).queue();
+        event.reply(eb.build());
     }
 }

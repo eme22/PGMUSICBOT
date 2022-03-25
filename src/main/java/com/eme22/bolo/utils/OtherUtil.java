@@ -23,9 +23,11 @@ import com.eme22.bolo.entities.Pair;
 import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.entities.Prompt;
 import com.eme22.bolo.settings.Settings;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.exceptions.PermissionException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -314,7 +316,7 @@ public class OtherUtil
         }
     }
 
-    public static void createImage(String message, String name, String id, InputStream background, String userImage) throws IOException {
+    public static void createImage(String message, String name, String id, InputStream background, String userImage, File image) throws IOException {
 
         try {
             int width = 1000, height = 500;
@@ -354,11 +356,8 @@ public class OtherUtil
             drawOutlinedAndCenteredString(name, width, height, ig2, 470);
             ig2.dispose();
 
-            File parent = new File("temp");
-            if(!parent.exists()) {
-                boolean dircreated = parent.mkdirs();
-            }
-            ImageIO.write(bi, "png", new File("temp",id+".png"));
+
+            ImageIO.write(bi, "png", image);
 
         } catch (FontFormatException ie) {
             ie.printStackTrace();
@@ -428,7 +427,6 @@ public class OtherUtil
     }
 
     public static void loadFileFromGit(File file) throws IOException, NoSuchAlgorithmException {
-
 
         GitHub github = new GitHubBuilder().withOAuthToken(System.getenv("GITHUB_OAUTH")).build();
         GHRepository repo = github.getRepository("eme22/PGMUSICBOTSETTINGS");
@@ -652,5 +650,34 @@ public class OtherUtil
             return b ? config.getWelcomeString() : config.getGoodByeString();
         else
             return message;
+    }
+
+    public static boolean isAudioChannelAllowed(Guild guild, Settings settings, Member member){
+        VoiceChannel current = guild.getSelfMember().getVoiceState().getChannel();
+        GuildVoiceState userState = member.getVoiceState();
+
+        if(current==null) {
+            current = settings.getVoiceChannel(guild);
+            if (current == null) {
+                return true;
+            }
+            else
+                return userState.getChannel().equals(current);
+
+        }
+        else
+            return userState.getChannel().equals(current);
+
+    }
+
+    public static int isUserInVoice(Guild guild, Settings settings, Member member){
+        GuildVoiceState userState = member.getVoiceState();
+        if (userState.inVoiceChannel()) {
+            VoiceChannel afkChannel = guild.getAfkChannel();
+            if(afkChannel != null && afkChannel.equals(userState.getChannel()))
+                return 2;
+            return 1;
+        }
+        return 0;
     }
 }

@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.DJCommand;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  *
@@ -42,5 +43,14 @@ public class StopCmd extends DJCommand
         handler.stopAndClear();
         event.getGuild().getAudioManager().closeAudioConnection();
         event.reply(event.getClient().getSuccess()+" The player has stopped and the queue has been cleared.");
+    }
+
+    @Override
+    public void doCommand(SlashCommandEvent event) {
+        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        handler.stopAndClear();
+        event.getGuild().getAudioManager().closeAudioConnection();
+        event.reply(getClient().getSuccess()+" The player has stopped and the queue has been cleared.").queue();
+
     }
 }

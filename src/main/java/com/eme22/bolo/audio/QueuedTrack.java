@@ -18,6 +18,7 @@ package com.eme22.bolo.audio;
 import com.eme22.bolo.queue.Queueable;
 import com.eme22.bolo.utils.FormatUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 /**

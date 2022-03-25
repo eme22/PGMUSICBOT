@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.settings.Settings;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  *
@@ -29,10 +30,10 @@ public abstract class DJCommand extends MusicCommand
     public DJCommand(Bot bot)
     {
         super(bot);
-        this.category = new Category("DJ", event -> checkDJPermission(event));
+        this.category = new Category("DJ", this::checkDJPermission);
     }
     
-    public static boolean checkDJPermission(CommandEvent event)
+    public boolean checkDJPermission(CommandEvent event)
     {
         if(event.getAuthor().getId().equals(event.getClient().getOwnerId()))
             return true;
@@ -44,6 +45,21 @@ public abstract class DJCommand extends MusicCommand
             return true;
 
         Role dj = settings.getDJRoleId(event.getGuild());
-        return dj!=null && (event.getMember().getRoles().contains(dj) || dj.getIdLong()==event.getGuild().getIdLong());
+        return dj!=null && (event.getMember().getRoles().contains(dj) || dj.getIdLong()==event.getMember().getIdLong());
+    }
+
+    public boolean checkDJPermission(SlashCommandEvent event)
+    {
+        if(event.getMember().getId().equals(getClient().getOwnerId()))
+            return true;
+        if(event.getGuild()==null)
+            return true;
+        Settings settings = getClient().getSettingsFor(event.getGuild());
+        Role admin = settings.getAdminRoleId(event.getGuild());
+        if(event.getMember().getRoles().contains(admin))
+            return true;
+
+        Role dj = settings.getDJRoleId(event.getGuild());
+        return dj!=null && (event.getMember().getRoles().contains(dj) || dj.getIdLong()==event.getUser().getIdLong());
     }
 }

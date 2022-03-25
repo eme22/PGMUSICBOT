@@ -7,9 +7,11 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.commands.DJCommand;
 import com.eme22.bolo.queue.FairQueue;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  * Command that provides users the ability to move a track in the playlist.
+ * TODO: IMPLEMENT
  */
 public class MoveTrackCmd extends DJCommand
 {
@@ -76,6 +78,11 @@ public class MoveTrackCmd extends DJCommand
         String trackTitle = track.getTrack().getInfo().title;
         String reply = String.format("Moved **%s** from position `%d` to `%d`.", trackTitle, from, to);
         event.replySuccess(reply);
+    }
+
+    @Override
+    public void doCommand(SlashCommandEvent event) {
+
     }
 
     private static boolean isUnavailablePosition(FairQueue<QueuedTrack> queue, int position)

@@ -21,6 +21,11 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.DJCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.Collections;
 
 /**
  *
@@ -34,7 +39,8 @@ public class VolumeCmd extends DJCommand
         this.name = "volume";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.help = "sets or shows volume";
-        this.arguments = "[0-150]";
+        this.arguments = "[0-99999]";
+        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "volumen", "Pone el volumen seleccionado.").setRequired(false));
     }
 
     @Override
@@ -55,8 +61,8 @@ public class VolumeCmd extends DJCommand
             }catch(NumberFormatException e){
                 nvolume = -1;
             }
-            if(nvolume<0 || nvolume>150)
-                event.reply(event.getClient().getError()+" Volume must be a valid integer between 0 and 150!");
+            if(nvolume<0 || nvolume>99999)
+                event.reply(event.getClient().getError()+" Volume must be a valid integer between 0 and 99999!");
             else
             {
                 handler.getPlayer().setVolume(nvolume);
@@ -65,5 +71,10 @@ public class VolumeCmd extends DJCommand
             }
         }
     }
-    
+
+    @Override
+    public void doCommand(SlashCommandEvent event) {
+
+    }
+
 }

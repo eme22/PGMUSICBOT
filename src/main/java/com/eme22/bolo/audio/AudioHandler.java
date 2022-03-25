@@ -41,6 +41,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ContextException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +103,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         queue.clear();
         defaultQueue.clear();
         audioPlayer.stopTrack();
-        manager.getBot().getNowplayingHandler().clearLastNPMessage(manager.getBot().getJDA().getGuildById(guildId));
+        manager.getBot().getNowPlayingHandler().clearLastNPMessage(manager.getBot().getJDA().getGuildById(guildId));
         //current = null;
     }
     
@@ -176,7 +177,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         {
             if(!playFromDefault())
             {
-                manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, null, this);
+                manager.getBot().getNowPlayingHandler().onTrackUpdate(guildId, null, this);
                 if(!manager.getBot().getConfig().getStay())
                     manager.getBot().closeAudioConnection(guildId);
                 // unpause, in the case when the player was paused and the track has been skipped.
@@ -196,34 +197,39 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     {
         try {
 
-
             votes.clear();
-            manager.getBot().getNowplayingHandler().onTrackUpdate(guildId, track, this);
+            manager.getBot().getNowPlayingHandler().onTrackUpdate(guildId, track, this);
 
             Message m = getNowPlaying(manager.getBot().getJDA());
             Guild guild = manager.getBot().getJDA().getGuildById(guildId);
             if(m==null)
             {
                 TextChannel chn = manager.getBot().getSettingsManager().getSettings(guild).getTextChannel(guild);
-                chn.sendMessage(getNoMusicPlaying(manager.getBot().getJDA()));
-                manager.getBot().getNowplayingHandler().clearLastNPMessage(guild);
+
+                if (chn == null){
+                    chn = guild.getDefaultChannel();
+                }
+
+                chn.sendMessage(getNoMusicPlaying(manager.getBot().getJDA())).queue();
+                manager.getBot().getNowPlayingHandler().clearLastNPMessage(guild);
             }
             else
             {
-                manager.getBot().getNowplayingHandler().clearLastNPMessage(guild);
+                manager.getBot().getNowPlayingHandler().clearLastNPMessage(guild);
                 TextChannel chn = manager.getBot().getSettingsManager().getSettings(guild).getTextChannel(guild);
 
                 if (chn == null)
                     chn = manager.getBot().getJDA().getGuildById(guildId).getDefaultChannel();
 
-                chn.sendMessage(m).queue(msg -> {
-                    msg.addReaction("U+23EF").queue();
-                    msg.addReaction("U+23ED").queue();
-                    msg.addReaction("U+1F507").queue();
-                    msg.addReaction("U+1F4C3").queue();
-                    msg.addReaction("U+1F3B5").queue();
 
-                    manager.getBot().getNowplayingHandler().setLastNPMessage(msg);
+                chn.sendMessage(m).queue(msg -> {
+                        msg.addReaction("U+23EF").queue(s -> {}, t -> {});
+                        msg.addReaction("U+23ED").queue(s -> {}, t -> {});
+                        msg.addReaction("U+1F507").queue(s -> {}, t -> {});
+                        msg.addReaction("U+1F4C3").queue(s -> {},t -> {});
+                        msg.addReaction("U+1F3B5").queue(s -> {}, t -> {});
+
+                        manager.getBot().getNowPlayingHandler().setLastNPMessage(msg);
                 });
             }
         }
