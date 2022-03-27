@@ -183,6 +183,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                 // unpause, in the case when the player was paused and the track has been skipped.
                 // this is to prevent the player being paused next time it's being used.
                 player.setPaused(false);
+                manager.getBot().getNowPlayingHandler().clearLastNPMessage(guildId);
             }
         }
         else

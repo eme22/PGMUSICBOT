@@ -60,17 +60,29 @@ public class NowplayingHandler
     
     public void clearLastNPMessage(Guild guild)
     {
-        Pair<Long,Long> lastmessage = lastNP.get(guild.getIdLong());
+        deleteLastMessage(lastNP.get(guild.getIdLong()));
+        lastNP.remove(guild.getIdLong());
+    }
+
+    public void clearLastNPMessage(long guild)
+    {
+        deleteLastMessage(lastNP.get(guild));
+        lastNP.remove(guild);
+    }
+
+    private void deleteLastMessage(Pair<Long, Long> lastmessage) {
         if (lastmessage != null)
         {
             TextChannel music = bot.getJDA().getTextChannelById(lastmessage.getKey());
-            music.deleteMessageById(lastmessage.getValue()).queue();
+            if (music != null) {
+                music.retrieveMessageById(lastmessage.getValue()).queue(success -> {
+                    success.delete().queue();
+                    success.clearReactions().queue();
+                });
+            }
         }
-        lastNP.remove(guild.getIdLong());
-
-
     }
-    
+
     private void updateAll()
     {
         Set<Long> toRemove = new HashSet<>();
