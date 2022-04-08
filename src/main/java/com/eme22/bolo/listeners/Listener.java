@@ -86,13 +86,13 @@ public class Listener extends ListenerAdapter
             }
             catch(Exception ignore) {}
         });
-        if(bot.getConfig().useUpdateAlerts())
+        if(bot.getConfig().isUpdatealerts())
         {
             bot.getThreadpool().scheduleWithFixedDelay(() -> 
             {
                 try
                 {
-                    User owner = bot.getJDA().retrieveUserById(bot.getConfig().getOwnerId()).complete();
+                    User owner = bot.getJDA().retrieveUserById(bot.getConfig().getOwner()).complete();
                     String currentVersion = OtherUtil.getCurrentVersion();
                     String latestVersion = OtherUtil.getLatestVersion();
                     if(latestVersion!=null && !currentVersion.equalsIgnoreCase(latestVersion))

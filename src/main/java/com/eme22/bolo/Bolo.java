@@ -69,8 +69,6 @@ public class Bolo
         // startup log
         Logger log = LoggerFactory.getLogger("Startup");
 
-        waitExec(log, args);
-
         // create prompt to handle startup
         Prompt prompt = new Prompt("JMusicBot", "Switching to nogui mode. You can manually start in nogui mode by including the -Dnogui=true flag.");
         
@@ -125,9 +123,9 @@ public class Bolo
         CommandClientBuilder cb = new CommandClientBuilder()
                 .setPrefix(config.getPrefix())
                 .setAlternativePrefix(config.getAltPrefix())
-                .setOwnerId(Long.toString(config.getOwnerId()))
-                .setEmojis(config.getSuccess(), config.getWarning(), config.getError())
-                .setHelpWord(config.getHelp())
+                .setOwnerId(Long.toString(config.getOwner()))
+                .setEmojis(config.getSuccessEmoji(), config.getWarningEmoji(), config.getErrorEmoji())
+                .setHelpWord(config.getHelpWord())
                 .setLinkedCacheSize(200)
                 .setGuildSettingsManager(settings)
                 .addSlashCommands( new AvatarCmd(bot),
@@ -227,7 +225,7 @@ public class Bolo
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot)
                 );
-        if(config.useEval())
+        if(config.isUseEval())
             cb.addCommand(new EvalCmd(bot));
         boolean nogame = false;
         if(config.getStatus()!=OnlineStatus.UNKNOWN)
@@ -289,21 +287,4 @@ public class Bolo
         }
     }
 
-    private static void waitExec(Logger log, String[] args) {
-
-        for (String arg : args) {
-            if (arg.equalsIgnoreCase("wait")) {
-                return;
-            }
-        }
-
-        for(int j = 20; j >= 0; j--) {
-            log.info(j + " seconds remaining");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

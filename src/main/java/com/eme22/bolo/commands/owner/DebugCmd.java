@@ -54,15 +54,15 @@ public class DebugCmd extends OwnerCommand
             sb.append("\n  ").append(key).append(" = ").append(System.getProperty(key));
         sb.append("\n\nJMusicBot Information:")
                 .append("\n  Version = ").append(OtherUtil.getCurrentVersion())
-                .append("\n  Owner = ").append(bot.getConfig().getOwnerId())
+                .append("\n  Owner = ").append(bot.getConfig().getOwner())
                 .append("\n  Prefix = ").append(bot.getConfig().getPrefix())
                 .append("\n  AltPrefix = ").append(bot.getConfig().getAltPrefix())
                 .append("\n  MaxSeconds = ").append(bot.getConfig().getMaxSeconds())
-                .append("\n  NPImages = ").append(bot.getConfig().useNPImages())
-                .append("\n  SongInStatus = ").append(bot.getConfig().getSongInStatus())
-                .append("\n  StayInChannel = ").append(bot.getConfig().getStay())
-                .append("\n  UseEval = ").append(bot.getConfig().useEval())
-                .append("\n  UpdateAlerts = ").append(bot.getConfig().useUpdateAlerts());
+                .append("\n  NPImages = ").append(bot.getConfig().isNpImages())
+                .append("\n  SongInStatus = ").append(bot.getConfig().isSongInStatus())
+                .append("\n  StayInChannel = ").append(bot.getConfig().isStayInChannel())
+                .append("\n  UseEval = ").append(bot.getConfig().isUseEval())
+                .append("\n  UpdateAlerts = ").append(bot.getConfig().isUpdatealerts());
         sb.append("\n\nDependency Information:")
                 .append("\n  JDA Version = ").append(JDAInfo.VERSION)
                 .append("\n  JDA-Utilities Version = ").append(JDAUtilitiesInfo.VERSION)

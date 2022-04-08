@@ -31,7 +31,7 @@ public class PollListener extends ListenerAdapter {
             Poll polls = settings.getPolls().stream().filter(poll -> poll.getId() == event.getMessageIdLong()).findFirst().orElse(null);
             int num = OtherUtil.EmojiToNumber(event.getReaction().getReactionEmote().getEmoji());
             if (polls != null && num != -1 && polls.isUserParticipating(event.getUserIdLong())) {
-                event.getUser().openPrivateChannel().queue(success -> success.sendMessage(bot.getConfig().getError() + " Solo puedes votar una vez").queue(m ->
+                event.getUser().openPrivateChannel().queue(success -> success.sendMessage(bot.getConfig().getErrorEmoji() + " Solo puedes votar una vez").queue(m ->
                         m.delete().queueAfter(30, TimeUnit.SECONDS)));
                 event.getReaction().removeReaction(event.getUser()).queue();
             } else {

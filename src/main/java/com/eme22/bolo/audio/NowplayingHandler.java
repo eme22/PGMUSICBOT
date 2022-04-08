@@ -48,7 +48,7 @@ public class NowplayingHandler
     
     public void init()
     {
-        if(!bot.getConfig().useNPImages())
+        if(!bot.getConfig().isNpImages())
             bot.getThreadpool().scheduleWithFixedDelay(this::updateAll, 0, 5, TimeUnit.SECONDS);
     }
     
@@ -75,10 +75,7 @@ public class NowplayingHandler
         {
             TextChannel music = bot.getJDA().getTextChannelById(lastmessage.getKey());
             if (music != null) {
-                music.retrieveMessageById(lastmessage.getValue()).queue(success -> {
-                    success.delete().queue();
-                    success.clearReactions().queue();
-                });
+                music.deleteMessageById(lastmessage.getValue()).queue();
             }
         }
     }
@@ -157,7 +154,7 @@ public class NowplayingHandler
     public void onTrackUpdate(long guildId, AudioTrack track, AudioHandler handler)
     {
         // update bot status if applicable
-        if(bot.getConfig().getSongInStatus())
+        if(bot.getConfig().isSongInStatus())
         {
             if(track!=null && bot.getJDA().getGuilds().stream().filter(g -> g.getSelfMember().getVoiceState().inVoiceChannel()).count()<=1)
                 bot.getJDA().getPresence().setActivity(Activity.listening(track.getInfo().title));

@@ -21,6 +21,7 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Guild;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -59,7 +60,9 @@ public class PlayerManager extends DefaultAudioPlayerManager
         if(guild.getAudioManager().getSendingHandler()==null)
         {
             AudioPlayer player = createPlayer();
-            player.setVolume(bot.getSettingsManager().getSettings(guild).getVolume());
+            int volume = bot.getSettingsManager().getSettings(guild).getVolume();
+            LoggerFactory.getLogger("BoloBot - Listener").info("Starting Volume:" + volume);
+            player.setVolume(volume);
             handler = new AudioHandler(this, guild, player);
             player.addListener(handler);
             guild.getAudioManager().setSendingHandler(handler);

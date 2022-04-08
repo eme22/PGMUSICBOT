@@ -50,7 +50,7 @@ public class SearchCmd extends MusicCommand
     public SearchCmd(Bot bot)
     {
         super(bot);
-        this.searchingEmoji = bot.getConfig().getSearching();
+        this.searchingEmoji = bot.getConfig().getSearchingEmoji();
         this.name = "search";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.arguments = "<query>";

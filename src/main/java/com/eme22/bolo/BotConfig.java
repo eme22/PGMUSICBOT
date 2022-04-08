@@ -22,6 +22,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
+import lombok.Getter;
+import lombok.Setter;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 
@@ -34,6 +36,7 @@ import java.nio.file.Path;
  * 
  * @author John Grosh (jagrosh)
  */
+@Getter @Setter
 public class BotConfig
 {
     //Default Volume
@@ -45,9 +48,11 @@ public class BotConfig
     private final static String END_TOKEN = "/// END OF JMUSICBOT CONFIG ///";
     
     private Path path = null;
+
+
     private String token, prefix, altprefix, helpWord, playlistsFolder,
             successEmoji, warningEmoji, errorEmoji, loadingEmoji, searchingEmoji, welcomeString, goodByeString;
-    private boolean stayInChannel, songInGame, npImages, updatealerts, useEval, dbots;
+    private boolean stayInChannel, songInStatus, npImages, updatealerts, useEval, dbots;
     private long owner, maxSeconds, aloneTimeUntilStop;
     private OnlineStatus status;
     private Activity game;
@@ -94,7 +99,7 @@ public class BotConfig
             game = OtherUtil.parseGame(config.getString("game"));
             status = OtherUtil.parseStatus(config.getString("status"));
             stayInChannel = config.getBoolean("stayinchannel");
-            songInGame = config.getBoolean("songinstatus");
+            songInStatus = config.getBoolean("songinstatus");
             npImages = config.getBoolean("npimages");
             updatealerts = config.getBoolean("updatealerts");
             welcomeString = config.getString("welcomemessage");
@@ -192,127 +197,23 @@ public class BotConfig
                 + path.toAbsolutePath());
         }
     }
-    
-    public boolean isValid()
-    {
-        return valid;
-    }
-    
+
     public String getConfigLocation()
     {
         return path.toFile().getAbsolutePath();
-    }
-    
-    public String getPrefix()
-    {
-        return prefix;
     }
     
     public String getAltPrefix()
     {
         return "NONE".equalsIgnoreCase(altprefix) ? null : altprefix;
     }
-    
-    public String getToken()
-    {
-        return token;
-    }
-    
-    public long getOwnerId()
-    {
-        return owner;
-    }
-    
-    public String getSuccess()
-    {
-        return successEmoji;
-    }
-    
-    public String getWarning()
-    {
-        return warningEmoji;
-    }
-    
-    public String getError()
-    {
-        return errorEmoji;
-    }
-    
-    public String getLoading()
-    {
-        return loadingEmoji;
-    }
-    
-    public String getSearching()
-    {
-        return searchingEmoji;
-    }
-    
-    public Activity getGame()
-    {
-        return game;
-    }
-    
-    public OnlineStatus getStatus()
-    {
-        return status;
-    }
-    
-    public String getHelp()
-    {
-        return helpWord;
-    }
-    
-    public boolean getStay()
-    {
-        return stayInChannel;
-    }
-    
-    public boolean getSongInStatus()
-    {
-        return songInGame;
-    }
-    
-    public String getPlaylistsFolder()
-    {
-        return playlistsFolder;
-    }
-    
-    public boolean getDBots()
-    {
-        return dbots;
-    }
-    
-    public boolean useUpdateAlerts()
-    {
-        return updatealerts;
-    }
-    
-    public boolean useEval()
-    {
-        return useEval;
-    }
-    
-    public boolean useNPImages()
-    {
-        return npImages;
-    }
-    
-    public long getMaxSeconds()
-    {
-        return maxSeconds;
-    }
-    
+
+
     public String getMaxTime()
     {
         return FormatUtil.formatTime(maxSeconds * 1000);
     }
 
-    public long getAloneTimeUntilStop()
-    {
-        return aloneTimeUntilStop;
-    }
-    
     public boolean isTooLong(AudioTrack track)
     {
         if(maxSeconds<=0)
@@ -331,25 +232,5 @@ public class BotConfig
             return new String[0];
         }
     }
-    
-    public Config getTransforms()
-    {
-        return transforms;
-    }
 
-    public String getWelcomeString() {
-        return welcomeString;
-    }
-
-    public void setWelcomeString(String welcomeString) {
-        this.welcomeString = welcomeString;
-    }
-
-    public String getGoodByeString() {
-        return goodByeString;
-    }
-
-    public void setGoodByeString(String goodByeString) {
-        this.goodByeString = goodByeString;
-    }
 }

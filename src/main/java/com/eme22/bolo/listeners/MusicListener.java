@@ -138,7 +138,7 @@ public class MusicListener extends ListenerAdapter {
         List<QueuedTrack> list = handler.getQueue().getList();
         if (list.isEmpty()) {
             Message built = new MessageBuilder()
-                    .setContent(bot.getConfig().getWarning() + " There is no music in the queue!")
+                    .setContent(bot.getConfig().getWarningEmoji() + " There is no music in the queue!")
                     .build();
 
             event.getTextChannel().sendMessage(built).queue(m ->
@@ -155,7 +155,7 @@ public class MusicListener extends ListenerAdapter {
         long fintotal = total;
         builder.setText((i1, i2) -> {
                     assert settingsTEST != null;
-                    return getQueueTitle(handler, bot.getConfig().getSuccess(), songs.length, fintotal, settingsTEST.getRepeatMode());
+                    return getQueueTitle(handler, bot.getConfig().getSuccessEmoji(), songs.length, fintotal, settingsTEST.getRepeatMode());
                 })
                 .setItems(songs)
         ;
@@ -177,7 +177,7 @@ public class MusicListener extends ListenerAdapter {
         AudioHandler handler = ((AudioHandler) event.getGuild().getAudioManager().getSendingHandler());
         assert handler != null;
         RequestMetadata rm = handler.getRequestMetadata();
-        event.getTextChannel().sendMessage(bot.getConfig().getSuccess() + " Skipped **" + handler.getPlayer().getPlayingTrack().getInfo().title
+        event.getTextChannel().sendMessage(bot.getConfig().getSuccessEmoji() + " Skipped **" + handler.getPlayer().getPlayingTrack().getInfo().title
                 + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + rm.user.username + "**)")).complete();
         handler.getPlayer().stopTrack();
         event.getReaction().removeReaction(user).queue(s -> {}, t -> {});

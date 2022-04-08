@@ -22,6 +22,7 @@ import com.eme22.bolo.commands.DJCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -47,11 +48,10 @@ public class VolumeCmd extends DJCommand
     public void doCommand(CommandEvent event)
     {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
         int volume = handler.getPlayer().getVolume();
         if(event.getArgs().isEmpty())
         {
-            event.reply(FormatUtil.volumeIcon(volume)+" Current volume is `"+volume+"`");
+            event.reply(FormatUtil.volumeIcon(volume)+" El volumen es `"+volume+"`");
         }
         else
         {
@@ -59,21 +59,46 @@ public class VolumeCmd extends DJCommand
             try{
                 nvolume = Integer.parseInt(event.getArgs());
             }catch(NumberFormatException e){
-                nvolume = -1;
+                event.reply(event.getClient().getError()+" El volumen debe ser un numero!");
+                return;
             }
-            if(nvolume<0 || nvolume>99999)
-                event.reply(event.getClient().getError()+" Volume must be a valid integer between 0 and 99999!");
+            if(nvolume<0 || nvolume>999)
+                event.reply(event.getClient().getError()+" El volumen debe estar entre  0 y 999!");
             else
             {
                 handler.getPlayer().setVolume(nvolume);
+                Settings settings = event.getClient().getSettingsFor(event.getGuild());
                 settings.setVolume(nvolume);
-                event.reply(FormatUtil.volumeIcon(nvolume)+" Volume changed from `"+volume+"` to `"+nvolume+"`");
+                event.reply(FormatUtil.volumeIcon(nvolume)+" Volumen cambiado de `"+volume+"` a `"+nvolume+"`");
             }
         }
     }
 
     @Override
     public void doCommand(SlashCommandEvent event) {
+
+        OptionMapping option = event.getOption("volumen");
+        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+
+        int volume = handler.getPlayer().getVolume();
+        if(option == null) {
+            event.reply(FormatUtil.volumeIcon(volume)+" El volumen es `"+volume+"`").queue();
+        }
+        else {
+            int nvolume = Integer.parseInt(option.getAsString());
+            if(nvolume<0 || nvolume>999)
+                event.reply(getClient().getError()+" El volumen debe estar entre  0 y 999!").setEphemeral(true).queue();
+            else
+            {
+                handler.getPlayer().setVolume(nvolume);
+                Settings settings = getClient().getSettingsFor(event.getGuild());
+                settings.setVolume(nvolume);
+                event.reply(FormatUtil.volumeIcon(nvolume)+" Volume cambiado de `"+volume+"` a `"+nvolume+"`").queue();
+            }
+        }
+
+
+
 
     }
 
