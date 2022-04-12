@@ -157,7 +157,9 @@ public class Bolo
                         new RepeatCmd(bot),
                         new SkiptoCmd(bot),
                         new StopCmd(bot),
-                        new VolumeCmd(bot)
+                        new VolumeCmd(bot),
+
+                        new BotFixedMessageCmd(bot)
 
                 )
                 .addCommands(aboutCommand,
@@ -198,6 +200,7 @@ public class Bolo
                         new PollCmd(bot),
                         new AddMemeCmd(bot),
                         new BotMessageCmd(bot),
+                        new BotFixedMessageCmd(bot),
                         new BotEmbbedMessageCmd(bot),
                         new RemoveMemeCmd(bot),
                         new AddImageChannel(bot),
