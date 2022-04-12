@@ -10,25 +10,30 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.commons.lang3.time.DateUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
-import java.util.*;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BotFixedMessageCmd extends SlashCommand {
 
 
     public BotFixedMessageCmd(Bot bot) {
-        this.name = "messageExt";
+        this.name = "messagext";
         this.help = "hace hablar al bot con opciones extendidas";
-        this.arguments = "-t <tiempo> -u <unidad S (Segundo) | M (Minuto) | H (Hora) | D (Dia)> -f <finalizacion (DD/MM/AAAA)> -h <hh:mm> -m <mensaje (Comandos especiales %day% %month% %date% %time% %who% )>";
+        this.arguments = "[intervalo: 30S = 30 segundos, 1H = 1 hora, 2D = 2 dias ] [fecha de inicio dd/mm hh:mm:ss] [fecha de fin dd/mm hh:mm:ss] [mensaje (Comandos especiales %day% %month% %date% %time% %who%)]";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.category = new Category("Admin", event ->
         {
@@ -49,10 +54,9 @@ public class BotFixedMessageCmd extends SlashCommand {
 
     private List<OptionData> createOptions() {
         final ArrayList<OptionData> optionsList = new ArrayList<>();
-        optionsList.add(new OptionData(OptionType.INTEGER, "tiempo", "fija el numero de tiempo de intervalo a mostrar el mensaje").setRequiredRange(1, 9999).setRequired(false));
-        optionsList.add(new OptionData(OptionType.STRING, "unidad", "fija la unidad de intervalo: S (Segundo) | M (Minuto) | H (Hora) | D (Dia)").setRequired(false));
-        optionsList.add(new OptionData(OptionType.STRING, "fecha", "fija una fecha de finalizacion (DD/MM/AAAA) (MAÑANA por defecto)").setRequired(false));
-        optionsList.add(new OptionData(OptionType.STRING, "hora", "fija una hora de finalizacion en la fecha  de finalizacion (HH:MM) (00:00 por defecto)").setRequired(false));
+        optionsList.add(new OptionData(OptionType.STRING, "intervalo", "intervalo: Ejemplo: 10S: S (Segundo) | M (Minuto) | H (Hora) | D (Dia) ").setRequired(true));
+        optionsList.add(new OptionData(OptionType.STRING, "inicio", "fecha de inicio dd/mm hh:mm:ss").setRequired(true));
+        optionsList.add(new OptionData(OptionType.STRING, "fin", "fecha de fin dd/mm hh:mm:ss").setRequired(true));
         optionsList.add(new OptionData(OptionType.STRING, "message", "mensaje a decir (Comandos especiales %day% %month% %date% %time% %who% )").setRequired(true));
         return optionsList;
     }
@@ -60,85 +64,83 @@ public class BotFixedMessageCmd extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
 
-        OptionMapping tiempo = event.getOption("tiempo");
-        OptionMapping unidad = event.getOption("unidad");
-        OptionMapping fecha = event.getOption("fecha");
-        OptionMapping hora = event.getOption("hora");
+        OptionMapping intervalo = event.getOption("intervalo");
+        OptionMapping inicio = event.getOption("inicio");
+        OptionMapping fin = event.getOption("fin");
         OptionMapping message = event.getOption("message");
 
-        int tiempo2;
-        long time = -1;
-        LocalDate fecha2 = LocalDate.now().plusDays(1);
-        LocalDateTime fecha3 = LocalDateTime.from(fecha2);
-        if (tiempo != null){
-            tiempo2 = Integer.parseInt(tiempo.getAsString());
-            if (unidad != null){
-                switch (unidad.getAsString().charAt(0)){
-                    default: break;
-                    case 'S': time = TimeUnit.SECONDS.toMillis(tiempo2); break;
-                    case 'M': time = TimeUnit.MINUTES.toMillis(tiempo2); break;
-                    case 'H': time = TimeUnit.HOURS.toMillis(tiempo2); break;
-                    case 'D': time = TimeUnit.DAYS.toMillis(tiempo2); break;
-                }
+        long interval = 0;
 
-                if (fecha != null){
-
-                    try {
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                        DateTimeFormatter formatter1 = new DateTimeFormatterBuilder().append(formatter)
-                                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
-                                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
-                                .toFormatter();
-                        fecha2 = LocalDate.parse(fecha.getAsString(), formatter1);
-                    } catch (DateTimeParseException e) {
-                        e.printStackTrace();
-                    }
-
-                    fecha3 = LocalDateTime.from(fecha2);
-
-                    if (hora != null){
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-                        DateTimeFormatter formatter1 = new DateTimeFormatterBuilder().append(formatter)
-                                .parseDefaulting(ChronoField.YEAR, fecha3.getYear())
-                                .parseDefaulting(ChronoField.MONTH_OF_YEAR, fecha3.getMonthValue())
-                                .parseDefaulting(ChronoField.DAY_OF_MONTH, fecha2.getDayOfMonth())
-                                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-                                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
-                                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
-                                .toFormatter();
-
-                        fecha3 =  LocalDateTime.parse(hora.getAsString(), formatter1);
-                    }
-                }
-            }
-        }
-
-        String message2 = "";
-        if (message != null) {
-            message2 = message.getAsString();
-        }
-
-        if (time != -1){
-            Timer timer = new Timer();
-            String finalMessage = message2;
-            LocalDateTime finalFecha = fecha3;
-            timer.schedule(new TimerTask() {
-                public void run() {
-                    LocalDateTime now = LocalDateTime.now();
-                    if (now.isAfter(finalFecha))
-                        timer.cancel();
-                    else
-                        event.getChannel().sendMessage(buildMessage(finalMessage, finalFecha, event.getUser())).queue();
-                }
-            }, 0, time);
+        Pattern pattern = Pattern.compile("(\\d?\\d?\\d?\\d)([DHMS])");
+        Matcher matcher = pattern.matcher(intervalo.getAsString());
+        if (matcher.matches()){
+            interval = getInterval(matcher.group(1), matcher.group(2));
         }
         else {
-            event.getChannel().sendMessage(buildMessage(message2 ,fecha3, event.getUser())).queue();
+                event.reply(client.getError() + " Inserte un intervalo valido").setEphemeral(true).queue();
         }
 
+        LocalDateTime inicio2;
+        LocalDateTime fin2;
 
+        try {
+            inicio2 = parseWithDefaultYear( inicio.getAsString());
+        }
+        catch (DateTimeParseException e){
+            event.reply(client.getError() + " Inserte una fecha de inicio validamente formateada, ejemplo: 15/06 20:00:00").setEphemeral(true).queue();
+            return;
+        }
 
+        try {
+            fin2 = parseWithDefaultYear( fin.getAsString());
+        }
+        catch (DateTimeParseException e){
+            event.reply(client.getError() + " Inserte una fecha de finalizacion validamente formateada, ejemplo: 15/06 20:00:00").setEphemeral(true).queue();
+            return;
+        }
+
+        if (inicio2.isBefore(LocalDateTime.now())) {
+            event.reply(client.getError() + " La fecha de inicio no puede ser en el pasado").setEphemeral(true).queue();
+            return;
+        }
+
+        if (inicio2.isAfter(fin2)) {
+            event.reply(client.getError() + " La fecha de inicio no puede ser despues de la fecha de fin").setEphemeral(true).queue();
+            return;
+        }
+
+        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+
+        Runnable task = () -> {
+
+            if (LocalDateTime.now().isAfter(fin2)) {
+                scheduler.shutdownNow();
+            }
+            else{
+                event.getChannel().sendMessage(buildMessage(message.getAsString(), fin2, event.getUser())).queue();
+            }
+
+        };
+
+        scheduler.scheduleAtFixedRate(
+                task,
+                LocalDateTime.now().until(inicio2, ChronoUnit.MILLIS),
+                interval,
+                TimeUnit.MILLISECONDS);
+
+        event.reply("Task Created starting at: "+ inicio2+ "Now: "+LocalDateTime.now()+"Every: "+TimeUnit.MILLISECONDS.toSeconds(interval)+" seconds").setEphemeral(true).queue();
+
+    }
+
+    private long getInterval(String number, String timeunit) {
+        switch (timeunit.charAt(0)){
+            default: break;
+            case 'S': return TimeUnit.SECONDS.toMillis(Long.parseLong(number));
+            case 'M': return TimeUnit.MINUTES.toMillis(Long.parseLong(number));
+            case 'H': return TimeUnit.HOURS.toMillis(Long.parseLong(number));
+            case 'D': return TimeUnit.DAYS.toMillis(Long.parseLong(number));
+        }
+        return 0;
     }
 
     private String buildMessage(String message2, LocalDateTime fecha3, User user) {
@@ -152,8 +154,10 @@ public class BotFixedMessageCmd extends SlashCommand {
 
     private String getDay(LocalDateTime fecha){
 
-        boolean today = DateUtils.isSameDay(new Date(),Date.from(fecha.atZone(ZoneId.systemDefault()).toInstant()));
-        boolean tomorrow = DateUtils.isSameDay(Date.from(LocalDateTime.from(new Date().toInstant()).plusDays(1).atZone(ZoneId.systemDefault()).toInstant()),Date.from(fecha.atZone(ZoneId.systemDefault()).toInstant()));
+        LocalDateTime now = LocalDateTime.now();
+
+        boolean today = now.getMonthValue() == fecha.getMonthValue() && now.getDayOfMonth() == fecha.getDayOfMonth();
+        boolean tomorrow = now.plusDays(1).getMonthValue() == fecha.getMonthValue() && now.plusDays(1).getDayOfMonth() == fecha.getDayOfMonth();
 
         if (today)
             return  "HOY";
@@ -175,14 +179,24 @@ public class BotFixedMessageCmd extends SlashCommand {
 
     private String getDate(LocalDateTime fecha){
 
-        boolean today = DateUtils.isSameDay(new Date(),Date.from(fecha.atZone(ZoneId.systemDefault()).toInstant()));
-        boolean tomorrow = DateUtils.isSameDay(Date.from(LocalDateTime.from(new Date().toInstant()).plusDays(1).atZone(ZoneId.systemDefault()).toInstant()),Date.from(fecha.atZone(ZoneId.systemDefault()).toInstant()));
+        LocalDateTime now = LocalDateTime.now();
+
+        boolean today = now.getMonthValue() == fecha.getMonthValue() && now.getDayOfMonth() == fecha.getDayOfMonth();
+        boolean tomorrow = now.plusDays(1).getMonthValue() == fecha.getMonthValue() && now.plusDays(1).getDayOfMonth() == fecha.getDayOfMonth();
 
         if (today || tomorrow)
             return  "";
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return fecha.format(formatter);
+    }
+
+    private static LocalDateTime parseWithDefaultYear(String stringWithoutYear) {
+        DateTimeFormatter parseFormatter = new DateTimeFormatterBuilder()
+                .appendPattern("dd/MM HH:mm:ss")
+                .parseDefaulting(ChronoField.YEAR, Calendar.getInstance().get(Calendar.YEAR))
+                .toFormatter(Locale.ENGLISH);
+        return LocalDateTime.parse(stringWithoutYear, parseFormatter);
     }
 
     private String getTime(LocalDateTime fecha){

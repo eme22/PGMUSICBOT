@@ -78,24 +78,26 @@ public class Bolo
         // load settings from git
 
 
+        /*
         try {
             OtherUtil.loadFileFromGit(new File("serversettings.json"));
         } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
             LoggerFactory.getLogger("Settings").warn("Se ha fallado en cargar las opciones del servidor, se usaran las locales: "+e);
 
         }
+        */
 
         // create settings
         SettingsManager settings = new SettingsManager();
 
         //save settings on shutdown
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {/*
             try {
                 settings.writeSettings();
                 OtherUtil.writeFileToGitHub(new File("serversettings.json"));
             } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
                 e.printStackTrace();
-            }
+            }*/
         }));
 
         // check for valid java version
@@ -160,7 +162,6 @@ public class Bolo
                         new VolumeCmd(bot),
 
                         new BotFixedMessageCmd(bot)
-
                 )
                 .addCommands(aboutCommand,
                         new PingCommand(),
@@ -228,6 +229,7 @@ public class Bolo
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot)
                 );
+
         if(config.isUseEval())
             cb.addCommand(new EvalCmd(bot));
         boolean nogame = false;
