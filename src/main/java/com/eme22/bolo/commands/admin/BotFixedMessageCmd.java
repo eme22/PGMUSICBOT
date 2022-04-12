@@ -144,10 +144,11 @@ public class BotFixedMessageCmd extends SlashCommand {
     }
 
     private String buildMessage(String message2, LocalDateTime fecha3, User user) {
-        message2 = message2.replaceAll("%day%", getDay(fecha3));
-        message2 = message2.replaceAll("%date%", getDate(fecha3));
-        message2 = message2.replaceAll("%time%", getTime(fecha3));
-        message2 = message2.replaceAll("%who%", user.getAsMention());
+        message2 = message2.replace("%day%", getDay(fecha3));
+        message2 = message2.replace("%date%", getDate(fecha3));
+        message2 = message2.replace("%time%", getTime(fecha3));
+        message2 = message2.replace("%who%", user.getAsMention());
+        message2 = message2.replace("\\n", "\n");
         return message2;
     }
 
