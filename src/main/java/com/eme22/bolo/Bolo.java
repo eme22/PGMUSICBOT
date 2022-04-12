@@ -159,9 +159,7 @@ public class Bolo
                         new RepeatCmd(bot),
                         new SkiptoCmd(bot),
                         new StopCmd(bot),
-                        new VolumeCmd(bot),
-
-                        new BotFixedMessageCmd(bot)
+                        new VolumeCmd(bot)
                 )
                 .addCommands(aboutCommand,
                         new PingCommand(),
@@ -229,6 +227,8 @@ public class Bolo
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot)
                 );
+
+        cb.addSlashCommands(new BotFixedMessageCmd(bot)).forceGuildOnly("796234198200483850");
 
         if(config.isUseEval())
             cb.addCommand(new EvalCmd(bot));
