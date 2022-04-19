@@ -287,7 +287,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                     + " `[" + FormatUtil.formatTime(track.getPosition()) + "/" + FormatUtil.formatTime(track.getDuration()) + "]` "
                     + FormatUtil.volumeIcon(audioPlayer.getVolume()));
 
-            eb.setImage("https://cdn.discordapp.com/attachments/911474101388976150/966019009281679420/disc.gif?size=256");
+            eb.setImage("https://cdn.discordapp.com/attachments/911474101388976150/966022797040185454/disc2.gif");
             
             return mb.setEmbeds(eb.build()).build();
         }
