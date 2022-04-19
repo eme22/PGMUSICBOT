@@ -18,7 +18,8 @@ public class PipilinCmd extends Command {
 
         final String[] images = {
                 "https://media.discordapp.net/attachments/948076380040605726/966047815434399804/unknown.png",
-                "https://media.discordapp.net/attachments/948076380040605726/966047829833433108/unknown.png"
+                "https://media.discordapp.net/attachments/948076380040605726/966047829833433108/unknown.png",
+                "https://cdn.discordapp.com/attachments/940039489781383198/966047755158044723/IMG_0860.png"
         };
 
         String pickRandomImage = images[(int) (Math.random() * images.length)];
