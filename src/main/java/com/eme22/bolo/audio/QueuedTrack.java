@@ -18,42 +18,36 @@ package com.eme22.bolo.audio;
 import com.eme22.bolo.queue.Queueable;
 import com.eme22.bolo.utils.FormatUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class QueuedTrack implements Queueable
-{
+public class QueuedTrack implements Queueable {
     private final AudioTrack track;
-    
-    public QueuedTrack(AudioTrack track, User owner)
-    {
+
+    public QueuedTrack(AudioTrack track, User owner) {
         this(track, new RequestMetadata(owner));
     }
-    
-    public QueuedTrack(AudioTrack track, RequestMetadata rm)
-    {
+
+    public QueuedTrack(AudioTrack track, RequestMetadata rm) {
         this.track = track;
         this.track.setUserData(rm);
     }
-    
+
     @Override
-    public long getIdentifier() 
-    {
+    public long getIdentifier() {
         return track.getUserData(RequestMetadata.class).getOwner();
     }
-    
-    public AudioTrack getTrack()
-    {
+
+    public AudioTrack getTrack() {
         return track;
     }
 
     @Override
-    public String toString() 
-    {
-        return "`[" + FormatUtil.formatTime(track.getDuration()) + "]` [**" + track.getInfo().title + "**]("+track.getInfo().uri+") - <@" + track.getUserData(RequestMetadata.class).getOwner() + ">";
+    public String toString() {
+        return "`[" + FormatUtil.formatTime(track.getDuration()) + "]` [**" + track.getInfo().title + "**]("
+                + track.getInfo().uri + ") - <@" + track.getUserData(RequestMetadata.class).getOwner() + ">";
     }
 }

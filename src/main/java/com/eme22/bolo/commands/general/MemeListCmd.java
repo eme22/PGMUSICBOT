@@ -3,18 +3,16 @@ package com.eme22.bolo.commands.general;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.settings.Settings;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 import java.util.List;
-import java.util.Map;
 
 public class MemeListCmd extends SlashCommand {
 
-    public MemeListCmd(Bot bot){
+    public MemeListCmd(Bot bot) {
         this.name = "memelist";
         this.help = "muestra la lista de memes del servidor";
         this.aliases = bot.getConfig().getAliases(this.name);

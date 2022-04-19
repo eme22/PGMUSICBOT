@@ -3,7 +3,6 @@ package com.eme22.bolo.commands.general;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.settings.Settings;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -13,18 +12,18 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 
 public class MemeCmd extends SlashCommand {
 
-    public MemeCmd(Bot bot){
+    public MemeCmd(Bot bot) {
         this.name = "meme";
         this.arguments = "NONE o <posicion>";
         this.help = "muestra un meme al azar del servidor";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
-        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "posicion", "posicion del meme").setRequired(false));
+        this.options = Collections
+                .singletonList(new OptionData(OptionType.INTEGER, "posicion", "posicion del meme").setRequired(false));
 
     }
 
@@ -36,12 +35,13 @@ public class MemeCmd extends SlashCommand {
 
         try {
             pos = Integer.parseInt(Objects.requireNonNull(event.getOption("posicion")).getAsString());
-        } catch (NullPointerException | NumberFormatException ignore) {}
+        } catch (NullPointerException | NumberFormatException ignore) {
+        }
 
         MemeImage data;
         try {
             if (pos != null)
-                data = s.getMemeImages().get(pos-1);
+                data = s.getMemeImages().get(pos - 1);
             else
                 data = s.getRandomMemeImages();
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
@@ -63,12 +63,13 @@ public class MemeCmd extends SlashCommand {
 
         try {
             pos = Integer.parseInt(event.getArgs());
-        } catch (NumberFormatException ignore) {}
+        } catch (NumberFormatException ignore) {
+        }
 
         MemeImage data;
         try {
             if (pos != null)
-                data = s.getMemeImages().get(pos-1);
+                data = s.getMemeImages().get(pos - 1);
             else
                 data = s.getRandomMemeImages();
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {

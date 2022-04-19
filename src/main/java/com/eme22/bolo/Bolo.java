@@ -52,45 +52,46 @@ import java.util.Arrays;
  *
  * @author John Grosh (jagrosh)
  */
-public class Bolo
-{
-    public final static String PLAY_EMOJI  = "\u25B6"; // ▶
+public class Bolo {
+    public final static String PLAY_EMOJI = "\u25B6"; // ▶
     public final static String PAUSE_EMOJI = "\u23F8"; // ⏸
-    public final static String STOP_EMOJI  = "\u23F9"; // ⏹
-    public final static Permission[] RECOMMENDED_PERMS = {Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
-                                Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EXT_EMOJI,
-                                Permission.MANAGE_CHANNEL, Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE};
-    public final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS};
+    public final static String STOP_EMOJI = "\u23F9"; // ⏹
+    public final static Permission[] RECOMMENDED_PERMS = { Permission.MESSAGE_READ, Permission.MESSAGE_WRITE,
+            Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
+            Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE,
+            Permission.MESSAGE_EXT_EMOJI,
+            Permission.MANAGE_CHANNEL, Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE };
+    public final static GatewayIntent[] INTENTS = { GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES,
+            GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS };
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         // startup log
         Logger log = LoggerFactory.getLogger("Startup");
 
         // create prompt to handle startup
-        Prompt prompt = new Prompt("JMusicBot", "Switching to nogui mode. You can manually start in nogui mode by including the -Dnogui=true flag.");
-        
+        Prompt prompt = new Prompt("JMusicBot",
+                "Switching to nogui mode. You can manually start in nogui mode by including the -Dnogui=true flag.");
+
         // get and check latest version
         String version = OtherUtil.checkVersion(prompt);
 
         // load settings from git
 
-
-
         try {
             OtherUtil.loadFileFromGit(new File("serversettings.json"));
         } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
-            LoggerFactory.getLogger("Settings").warn("Se ha fallado en cargar las opciones del servidor, se usaran las locales: "+e);
+            LoggerFactory.getLogger("Settings")
+                    .warn("Se ha fallado en cargar las opciones del servidor, se usaran las locales: " + e);
 
         }
-
 
         // create settings
         SettingsManager settings = new SettingsManager();
 
-        //save settings on shutdown
+        // save settings on shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 settings.writeSettings();
@@ -101,26 +102,28 @@ public class Bolo
         }));
 
         // check for valid java version
-        if(!System.getProperty("java.vm.name").contains("64"))
-            prompt.alert(Prompt.Level.WARNING, "Java Version", "It appears that you may not be using a supported Java version. Please use 64-bit java.");
-        
+        if (!System.getProperty("java.vm.name").contains("64"))
+            prompt.alert(Prompt.Level.WARNING, "Java Version",
+                    "It appears that you may not be using a supported Java version. Please use 64-bit java.");
+
         // load config
         BotConfig config = new BotConfig(prompt);
         config.load();
-        if(!config.isValid())
+        if (!config.isValid())
             return;
-        
+
         // set up the listener
         EventWaiter waiter = new EventWaiter();
         Bot bot = new Bot(waiter, config, settings);
-        
+
         AboutCommand aboutCommand = new AboutCommand(Color.BLUE.brighter(),
-                                "Hola soy Bolo' un BOT con lag) (v"+version+") [Status: https://bolo2022.herokuapp.com/]",
-                                new String[]{"Musica en HQ", "Mensaje de bienvenida y despedida configurables", "Limpiar mensajes", "Votaciones", "Memes", "Manejo de roles"},
-                                RECOMMENDED_PERMS);
+                "Hola soy Bolo' un BOT con lag) (v" + version + ") [Status: https://bolo2022.herokuapp.com/]",
+                new String[] { "Musica en HQ", "Mensaje de bienvenida y despedida configurables", "Limpiar mensajes",
+                        "Votaciones", "Memes", "Manejo de roles" },
+                RECOMMENDED_PERMS);
         aboutCommand.setIsAuthor(false);
         aboutCommand.setReplacementCharacter("\uD83C\uDFB6"); // 🎶
-        
+
         // set up the command client
         CommandClientBuilder cb = new CommandClientBuilder()
                 .setPrefix(config.getPrefix())
@@ -130,7 +133,7 @@ public class Bolo
                 .setHelpWord(config.getHelpWord())
                 .setLinkedCacheSize(200)
                 .setGuildSettingsManager(settings)
-                .addSlashCommands( new AvatarCmd(bot),
+                .addSlashCommands(new AvatarCmd(bot),
                         new SettingsCmd(bot),
                         new BiteCmd(bot),
                         new KissCmd(bot),
@@ -161,8 +164,7 @@ public class Bolo
                         new StopCmd(bot),
                         new VolumeCmd(bot),
 
-                        new BotFixedMessageCmd(bot)
-                )
+                        new BotFixedMessageCmd(bot))
                 .addCommands(aboutCommand,
                         new PingCommand(),
                         new SettingsCmd(bot),
@@ -221,7 +223,7 @@ public class Bolo
                         new SetRoleManagerCmd(bot),
                         new SetWelcomeImageCmd(bot),
                         new SetGoodByeImageCmd(bot),
-                        
+
                         new AutoplaylistCmd(bot),
                         new DebugCmd(bot),
                         new PlaylistCmd(bot),
@@ -229,65 +231,58 @@ public class Bolo
                         new SetgameCmd(bot),
                         new SetnameCmd(bot),
                         new SetstatusCmd(bot),
-                        new ShutdownCmd(bot)
-                );
+                        new ShutdownCmd(bot),
 
-        if(config.isUseEval())
+                        new PipilinCmd());
+
+        if (config.isUseEval())
             cb.addCommand(new EvalCmd(bot));
         boolean nogame = false;
-        if(config.getStatus()!=OnlineStatus.UNKNOWN)
+        if (config.getStatus() != OnlineStatus.UNKNOWN)
             cb.setStatus(config.getStatus());
-        if(config.getGame()==null)
+        if (config.getGame() == null)
             cb.useDefaultGame();
-        else if(config.getGame().getName().equalsIgnoreCase("none"))
-        {
+        else if (config.getGame().getName().equalsIgnoreCase("none")) {
             cb.setActivity(null);
             nogame = true;
-        }
-        else
+        } else
             cb.setActivity(config.getGame());
-        
-        if(!prompt.isNoGUI())
-        {
-            try 
-            {
+
+        if (!prompt.isNoGUI()) {
+            try {
                 GUI gui = new GUI(bot);
                 bot.setGUI(gui);
                 gui.init();
-            } 
-            catch(Exception e) 
-            {
+            } catch (Exception e) {
                 log.error("Could not start GUI. If you are "
                         + "running on a server or in a location where you cannot display a "
                         + "window, please run in nogui mode using the -Dnogui=true flag.");
             }
         }
-        
+
         log.info("Loaded config from " + config.getConfigLocation());
-        
+
         // attempt to log in and start
-        try
-        {
+        try {
             JDA jda = JDABuilder.create(config.getToken(), Arrays.asList(INTENTS))
                     .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOTE, CacheFlag.ONLINE_STATUS)
                     .setActivity(nogame ? null : Activity.playing("loading..."))
-                    .setStatus(config.getStatus()==OnlineStatus.INVISIBLE || config.getStatus()==OnlineStatus.OFFLINE 
-                            ? OnlineStatus.INVISIBLE : OnlineStatus.DO_NOT_DISTURB)
-                    .addEventListeners(cb.build(), waiter, new Listener(bot), new MusicListener(bot), new PollListener(bot))
+                    .setStatus(
+                            config.getStatus() == OnlineStatus.INVISIBLE || config.getStatus() == OnlineStatus.OFFLINE
+                                    ? OnlineStatus.INVISIBLE
+                                    : OnlineStatus.DO_NOT_DISTURB)
+                    .addEventListeners(cb.build(), waiter, new Listener(bot), new MusicListener(bot),
+                            new PollListener(bot))
                     .setBulkDeleteSplittingEnabled(true)
                     .build();
             bot.setJDA(jda);
-        }
-        catch (LoginException ex)
-        {
+        } catch (LoginException ex) {
             prompt.alert(Prompt.Level.ERROR, "JMusicBot", ex + "\nPlease make sure you are "
                     + "editing the correct config.txt file, and that you have used the "
                     + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
-        }
-        catch(IllegalArgumentException ex)
-        {
+        } catch (IllegalArgumentException ex) {
             prompt.alert(Prompt.Level.ERROR, "JMusicBot", "Some aspect of the configuration is "
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);

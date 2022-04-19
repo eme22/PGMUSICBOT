@@ -2,7 +2,6 @@ package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
@@ -25,7 +24,8 @@ public class KissCmd extends SlashCommand {
         this.arguments = "<user>";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
-        this.options = Collections.singletonList(new OptionData(OptionType.USER, "usuario", "busca el usuario a besar.").setRequired(true));
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.USER, "usuario", "busca el usuario a besar.").setRequired(true));
 
     }
 
@@ -35,31 +35,30 @@ public class KissCmd extends SlashCommand {
         Member memberKissed = event.getOption("usuario").getAsMember();
 
         if (memberKissed.getUser().isBot()) {
-            event.reply(getClient().getError()+ " Asegurese de que el usuario no sea un bot").setEphemeral(true).queue();
+            event.reply(getClient().getError() + " Asegurese de que el usuario no sea un bot").setEphemeral(true)
+                    .queue();
             return;
         }
         if (memberKisser.equals(memberKissed)) {
-            event.reply(getClient().getError()+ "Asegurese de que el usuario no sea usted").setEphemeral(true).queue();
+            event.reply(getClient().getError() + "Asegurese de que el usuario no sea usted").setEphemeral(true).queue();
             return;
         }
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention()+ NSFWStrings.getRandomKiss() + memberKissed.getAsMention());
+        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomKiss() + memberKissed.getAsMention());
         builder.setImage(new WaifuClient().getSFWImage(Endpoints.SFW.KISS));
         event.replyEmbeds(builder.build()).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        if(event.getArgs().isEmpty())
-        {
+        if (event.getArgs().isEmpty()) {
             event.replyError("Por favor incluya un nombre");
             return;
         }
 
         List<Member> member = FinderUtil.findMembers(event.getArgs(), event.getGuild());
 
-        if (member.isEmpty())
-        {
+        if (member.isEmpty()) {
             event.replyError("Asegurese de que el usuario exista y no sea un bot");
             return;
         }
@@ -67,15 +66,13 @@ public class KissCmd extends SlashCommand {
         Member memberKisser = event.getMember();
         Member memberKissed = member.get(0);
 
-        if (memberKisser.equals(memberKissed))
-        {
+        if (memberKisser.equals(memberKissed)) {
             event.replyError("Asegurese de que el usuario no sea usted");
             return;
         }
 
-
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention()+ NSFWStrings.getRandomKiss() + memberKissed.getAsMention());
+        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomKiss() + memberKissed.getAsMention());
         builder.setImage(new WaifuClient().getSFWImage(Endpoints.SFW.KISS));
         event.reply(builder.build());
     }
