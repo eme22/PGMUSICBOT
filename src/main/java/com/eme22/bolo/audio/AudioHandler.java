@@ -45,6 +45,8 @@ import net.dv8tion.jda.api.exceptions.ContextException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
@@ -284,6 +286,8 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
                     + " "+FormatUtil.progressBar(progress)
                     + " `[" + FormatUtil.formatTime(track.getPosition()) + "/" + FormatUtil.formatTime(track.getDuration()) + "]` "
                     + FormatUtil.volumeIcon(audioPlayer.getVolume()));
+
+            eb.setImage("https://cdn.discordapp.com/attachments/911474101388976150/966019009281679420/disc.gif?size=512");
             
             return mb.setEmbeds(eb.build()).build();
         }
