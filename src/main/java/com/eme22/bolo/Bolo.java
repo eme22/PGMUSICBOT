@@ -219,6 +219,8 @@ public class Bolo
                         new SetGoodByeMessageCmd(bot),
                         new SetWelcomeMessageCmd(bot),
                         new SetRoleManagerCmd(bot),
+                        new SetWelcomeImageCmd(bot),
+                        new SetGoodByeImageCmd(bot),
                         
                         new AutoplaylistCmd(bot),
                         new DebugCmd(bot),
