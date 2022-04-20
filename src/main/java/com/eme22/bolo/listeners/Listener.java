@@ -51,72 +51,61 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author John Grosh (john.a.grosh@gmail.com)
  */
 @SuppressWarnings("ConstantConditions")
-public class Listener extends ListenerAdapter
-{
+public class Listener extends ListenerAdapter {
     private final Bot bot;
     private static final Logger log = LoggerFactory.getLogger("BoloBot - Listener");
 
-    public Listener(Bot bot)
-    {
+    public Listener(Bot bot) {
         this.bot = bot;
     }
 
     private final HashMap<String, Integer> tempChannels = new HashMap<>();
 
     @Override
-    public void onReady(ReadyEvent event) 
-    {
-        if(event.getJDA().getGuildCache().isEmpty())
-        {
-            
+    public void onReady(ReadyEvent event) {
+        if (event.getJDA().getGuildCache().isEmpty()) {
+
             log.warn("This bot is not on any guilds! Use the following link to add the bot to your guilds!");
             log.warn(event.getJDA().getInviteUrl(Bolo.RECOMMENDED_PERMS));
         }
-        //credit(event.getJDA());
-        event.getJDA().getGuilds().forEach((guild) -> 
-        {
-            try
-            {
+        // credit(event.getJDA());
+        event.getJDA().getGuilds().forEach((guild) -> {
+            try {
                 String defpl = bot.getSettingsManager().getSettings(guild).getDefaultPlaylist();
                 VoiceChannel vc = bot.getSettingsManager().getSettings(guild).getVoiceChannel(guild);
-                if(defpl!=null && vc!=null && bot.getPlayerManager().setUpHandler(guild).playFromDefault())
-                {
+                if (defpl != null && vc != null && bot.getPlayerManager().setUpHandler(guild).playFromDefault()) {
                     guild.getAudioManager().openAudioConnection(vc);
                 }
+            } catch (Exception ignore) {
             }
-            catch(Exception ignore) {}
         });
-        if(bot.getConfig().isUpdatealerts())
-        {
-            bot.getThreadpool().scheduleWithFixedDelay(() -> 
-            {
-                try
-                {
+        if (bot.getConfig().isUpdatealerts()) {
+            bot.getThreadpool().scheduleWithFixedDelay(() -> {
+                try {
                     User owner = bot.getJDA().retrieveUserById(bot.getConfig().getOwner()).complete();
                     String currentVersion = OtherUtil.getCurrentVersion();
                     String latestVersion = OtherUtil.getLatestVersion();
-                    if(latestVersion!=null && !currentVersion.equalsIgnoreCase(latestVersion))
-                    {
+                    if (latestVersion != null && !currentVersion.equalsIgnoreCase(latestVersion)) {
                         String msg = String.format(OtherUtil.NEW_VERSION_AVAILABLE, currentVersion, latestVersion);
                         owner.openPrivateChannel().queue(pc -> pc.sendMessage(msg).queue());
                     }
-                }
-                catch(Exception ignored) {} // ignored
+                } catch (Exception ignored) {
+                } // ignored
             }, 0, 24, TimeUnit.HOURS);
         }
     }
 
     @Override
     public void onGuildMessageEmbed(@NotNull GuildMessageEmbedEvent event) {
-        ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild()).getOnlyImageChannels(event.getGuild());
+        ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild())
+                .getOnlyImageChannels(event.getGuild());
 
         if (bannedTextChannels.contains(event.getChannel())) {
             List<MessageEmbed> message = event.getMessageEmbeds();
 
             AtomicBoolean deletable = new AtomicBoolean(true);
 
-
-            message.forEach( messageEmbed -> {
+            message.forEach(messageEmbed -> {
                 if (messageEmbed.getImage() != null || messageEmbed.getVideoInfo() != null)
                     deletable.set(false);
             });
@@ -127,17 +116,17 @@ public class Listener extends ListenerAdapter
     }
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event)
-    {
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         if (event.getAuthor().isBot())
             return;
 
-       ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild()).getOnlyImageChannels(event.getGuild());
+        ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild())
+                .getOnlyImageChannels(event.getGuild());
 
         if (bannedTextChannels.contains(event.getChannel())) {
             Message message = event.getMessage();
 
-            if(message.getContentRaw().contains("delimagechannel"))
+            if (message.getContentRaw().contains("delimagechannel"))
                 return;
 
             if (message.getContentRaw().contains("https://"))
@@ -150,21 +139,18 @@ public class Listener extends ListenerAdapter
     }
 
     @Override
-    public void onGuildMessageDelete(GuildMessageDeleteEvent event) 
-    {
+    public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         bot.getNowPlayingHandler().onMessageDelete(event.getGuild(), event.getMessageIdLong());
 
     }
 
     @Override
-    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event)
-    {
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
         bot.getAloneInVoiceHandler().onVoiceUpdate(event);
     }
 
     @Override
-    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event)
-    {
+    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
         if (event.getMember().getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong())
             return;
 
@@ -174,43 +160,39 @@ public class Listener extends ListenerAdapter
     }
 
     @Override
-    public void onShutdown(@NotNull ShutdownEvent event)
-    {
+    public void onShutdown(@NotNull ShutdownEvent event) {
         bot.shutdown();
     }
 
     @Override
-    public void onGuildJoin(GuildJoinEvent event) 
-    {
+    public void onGuildJoin(GuildJoinEvent event) {
         Guild guild = event.getGuild();
-        try
-            {
-                TextChannel commandsChannel = bot.getSettingsManager().getSettings(guild).getTextChannel(guild);
-                TextChannel bienvenidasChannel = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
-                TextChannel despedidasChannel = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
-                TextChannel defaultChannel = guild.getDefaultChannel();
-                List<TextChannel> channels = guild.getTextChannels();
+        try {
+            TextChannel commandsChannel = bot.getSettingsManager().getSettings(guild).getTextChannel(guild);
+            TextChannel bienvenidasChannel = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
+            TextChannel despedidasChannel = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
+            TextChannel defaultChannel = guild.getDefaultChannel();
+            List<TextChannel> channels = guild.getTextChannels();
 
-                if (commandsChannel == null){
-                    setupChannel("Comandos de Musica",defaultChannel, channels, 0);
-                }
-                if (bienvenidasChannel == null){
-                    setupChannel("Bienvenidas", defaultChannel, channels, 1);
-                }
-                if (despedidasChannel == null){
-                    setupChannel("Despedidas", defaultChannel, channels, 2);
-                }
+            if (commandsChannel == null) {
+                setupChannel("Comandos de Musica", defaultChannel, channels, 0);
             }
-        catch(Exception exception) {
-            
-            log.error("Error: "+ exception.getMessage(), exception);
+            if (bienvenidasChannel == null) {
+                setupChannel("Bienvenidas", defaultChannel, channels, 1);
+            }
+            if (despedidasChannel == null) {
+                setupChannel("Despedidas", defaultChannel, channels, 2);
+            }
+        } catch (Exception exception) {
+
+            log.error("Error: " + exception.getMessage(), exception);
         }
 
     }
 
     private void setupChannel(String title, TextChannel defaultChannel, List<TextChannel> channels, int channel) {
         ArrayList<Message> pages = new ArrayList<>();
-        int calculatedPages = (int) Math.ceil( (double) channels.size() / 10);
+        int calculatedPages = (int) Math.ceil((double) channels.size() / 10);
         MessageBuilder mb = new MessageBuilder();
         for (int i = 1; i <= calculatedPages; i++) {
             StringBuilder sb = new StringBuilder();
@@ -222,12 +204,11 @@ public class Listener extends ListenerAdapter
             pages.add(mb.build());
         }
 
-
-        pages.forEach( page -> defaultChannel.sendMessage(page).queue(success -> {
+        pages.forEach(page -> defaultChannel.sendMessage(page).queue(success -> {
 
             tempChannels.put(success.getId(), channel);
             for (int i = 0; i < getMessageItems(page); i++) {
-                success.addReaction("U+003"+i+" U+FE0F U+20E3").queue();
+                success.addReaction("U+003" + i + " U+FE0F U+20E3").queue();
             }
         }));
 
@@ -244,7 +225,7 @@ public class Listener extends ListenerAdapter
         if (event.getUser().isBot())
             return;
 
-        if (tempChannels.containsKey(event.getMessageId())){
+        if (tempChannels.containsKey(event.getMessageId())) {
 
             String reaction = event.getReactionEmote().getName();
             int channel = Integer.parseInt(reaction.replaceAll("[^\\d.]", ""));
@@ -252,7 +233,7 @@ public class Listener extends ListenerAdapter
             if (channelId != null) {
 
                 int mode = tempChannels.get(event.getMessageId());
-                if (mode == 0){
+                if (mode == 0) {
                     for (String key : getKeys(tempChannels, 0)) {
 
                         Message msgToDelete = event.getTextChannel().retrieveMessageById(key).complete();
@@ -261,43 +242,46 @@ public class Listener extends ListenerAdapter
                     }
                     bot.getSettingsManager().getSettings(event.getGuild()).setTextChannelId(channelId.getIdLong());
                 }
-                if (mode == 1){
+                if (mode == 1) {
                     for (String key : getKeys(tempChannels, 1)) {
 
                         Message msgToDelete = event.getTextChannel().retrieveMessageById(key).complete();
                         msgToDelete.delete().complete();
 
                     }
-                    bot.getSettingsManager().getSettings(event.getGuild()).setBienvenidasChannelId(channelId.getIdLong());
+                    bot.getSettingsManager().getSettings(event.getGuild())
+                            .setBienvenidasChannelId(channelId.getIdLong());
                 }
-                if (mode == 2){
+                if (mode == 2) {
                     for (String key : getKeys(tempChannels, 2)) {
 
                         Message msgToDelete = event.getTextChannel().retrieveMessageById(key).complete();
                         msgToDelete.delete().complete();
 
                     }
-                    bot.getSettingsManager().getSettings(event.getGuild()).setDespedidasChannelId(channelId.getIdLong());
+                    bot.getSettingsManager().getSettings(event.getGuild())
+                            .setDespedidasChannelId(channelId.getIdLong());
                 }
             }
 
-
         }
 
-        RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).getRoleManager(event.getMessageIdLong());
+        RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong())
+                .getRoleManager(event.getMessageIdLong());
 
         if (manager != null) {
             String reaction = event.getReactionEmote().getAsReactionCode();
-            //System.out.println("Emote for Search: "+event.getReactionEmote().getAsReactionCode());
+            // System.out.println("Emote for Search:
+            // "+event.getReactionEmote().getAsReactionCode());
             HashMap<String, String> datas = manager.getEmoji();
             //datas.forEach((key, value) -> System.out.println(key + " " + value));
 
-             if (datas.containsKey(event.getReactionEmote().getAsReactionCode())){
-                 String roleT = datas.get(reaction);
-                 //System.out.println("Role:"+ roleT);
-                 List<Role> list = FinderUtil.findRoles(roleT, event.getGuild());
-                 event.getGuild().addRoleToMember(event.getUserId(), list.get(0)).queue();
-             }
+            if (datas.containsKey(event.getReactionEmote().getAsReactionCode())) {
+                String roleT = datas.get(reaction);
+                // System.out.println("Role:"+ roleT);
+                List<Role> list = FinderUtil.findRoles(roleT, event.getGuild());
+                event.getGuild().addRoleToMember(event.getUserId(), list.get(0)).queue();
+            }
         }
     }
 
@@ -306,13 +290,14 @@ public class Listener extends ListenerAdapter
         if (event.getUser().isBot())
             return;
 
-        RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).getRoleManager(event.getMessageIdLong());
+        RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong())
+                .getRoleManager(event.getMessageIdLong());
 
         if (manager != null) {
             String reaction = event.getReactionEmote().getAsReactionCode();
             HashMap<String, String> datas = manager.getEmoji();
 
-            if (datas.containsKey(reaction)){
+            if (datas.containsKey(reaction)) {
                 List<Role> list = FinderUtil.findRoles(datas.get(reaction), event.getGuild());
                 event.getGuild().removeRoleFromMember(event.getUserId(), list.get(0)).complete();
             }
@@ -349,39 +334,41 @@ public class Listener extends ListenerAdapter
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         Guild guild = event.getGuild();
         User member = event.getMember().getUser();
-            try
-            {
-                TextChannel bienvenidas = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
+        try {
+            TextChannel bienvenidas = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
 
-                if(bienvenidas != null)
-                {
-                    InputStream bienvenida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), true);
-                    String userImage = getUserImage(member);
-                    File converted = getMemberFile(member);
+            if (bienvenidas != null) {
+                InputStream bienvenida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), true);
+                String userImage = getUserImage(member);
+                File converted = getMemberFile(member);
 
-                    OtherUtil.createImage( "BIENVENIDO", member.getName(), member.getId(), bienvenida, userImage, converted);
-                    if (!converted.exists()){
-                        
-                        log.error("Image not created");
-                    }
+                OtherUtil.createImage("BIENVENIDO", member.getName(), member.getId(), bienvenida, userImage, converted);
+                if (!converted.exists()) {
 
-                    String message = OtherUtil.getMessage(bot, guild, true );
-                    message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername", guild.getName());
-
-                    //builder.setThumbnail("attachment://bienvenida.png");
-                    bienvenidas.sendMessage( message ).addFile(converted).queue( sucess -> {
-                        if (converted.delete()){
-                            
-                            log.error("Image deleted from memory after succes sended");
-                        }
-                    });
-                    
+                    log.error("Image not created");
                 }
+
+                String message = OtherUtil.getMessage(bot, guild, true);
+
+                if (member.isBot())
+                    message = "Ptmr otro bot en este server conchasumare";
+
+                message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername",
+                        guild.getName());
+
+                // builder.setThumbnail("attachment://bienvenida.png");
+                bienvenidas.sendMessage(message).addFile(converted).queue(sucess -> {
+                    if (converted.delete()) {
+
+                        log.error("Image deleted from memory after succes sended");
+                    }
+                });
+
             }
-            catch(Exception exception) {
-                
-                log.error("Error: "+ exception.getMessage(), exception);
-            }
+        } catch (Exception exception) {
+
+            log.error("Error: " + exception.getMessage(), exception);
+        }
     }
 
     private String getUserImage(User member) {
@@ -398,50 +385,48 @@ public class Listener extends ListenerAdapter
         Guild guild = event.getGuild();
         User member = event.getMember().getUser();
 
-            try
-            {
-                TextChannel despedidas = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
-                if(despedidas!=null)
-                {
-                    InputStream despedida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), false);
+        try {
+            TextChannel despedidas = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
+            if (despedidas != null) {
+                InputStream despedida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), false);
 
-                    String userImage = getUserImage(member);
-                    
-                    File converted = getMemberFile(member);
+                String userImage = getUserImage(member);
 
-                    OtherUtil.createImage( "SE VA", member.getName(), member.getId(), despedida, userImage, converted);
-                    if (!converted.exists()){
-                        
-                        log.error("Image not created");
-                    }
+                File converted = getMemberFile(member);
 
-                    String message = OtherUtil.getMessage(bot, guild, false );
-                    message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername", guild.getName());
-                    despedidas.sendMessage(message).addFile(converted).queue( sucess -> {
-                        if (converted.delete()){
-                            log.error("Image deleted from memory after succes sended");
-                        }
-                    });
+                OtherUtil.createImage("SE VA", member.getName(), member.getId(), despedida, userImage, converted);
+                if (!converted.exists()) {
 
+                    log.error("Image not created");
                 }
+
+                String message = OtherUtil.getMessage(bot, guild, false);
+                message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername",
+                        guild.getName());
+                despedidas.sendMessage(message).addFile(converted).queue(sucess -> {
+                    if (converted.delete()) {
+                        log.error("Image deleted from memory after succes sended");
+                    }
+                });
+
             }
-            catch(Exception exception) {
-                log.error("Error: "+ exception.getMessage(), exception);
-            }
+        } catch (Exception exception) {
+            log.error("Error: " + exception.getMessage(), exception);
+        }
     }
 
     @NotNull
     private File getMemberFile(User member) {
-        
+
         File parent = new File("temp");
-        if(!parent.exists()) {
-            if (parent.mkdirs()){
+        if (!parent.exists()) {
+            if (parent.mkdirs()) {
                 log.error("Temp folder successfully created");
             }
         }
-        
-        File converted = new File(parent, member.getId()+".png");
-        if (converted.delete()){
+
+        File converted = new File(parent, member.getId() + ".png");
+        if (converted.delete()) {
             log.error("Image deleted from memory before new image");
         }
         return converted;
