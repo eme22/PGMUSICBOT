@@ -79,6 +79,7 @@ public class MemeCmd extends SlashCommand {
         MessageBuilder builder = new MessageBuilder().append(data.getMessage());
         EmbedBuilder eb = new EmbedBuilder().setImage(data.getMeme());
         builder.setEmbeds(eb.build());
-        event.getTextChannel().sendMessage(builder.build()).complete();
+        event.reply(builder.build());
+        event.getMessage().delete().queue();
     }
 }

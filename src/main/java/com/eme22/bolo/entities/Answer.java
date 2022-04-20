@@ -23,6 +23,6 @@ public class Answer {
     @JsonProperty("answer")
     public String answer;
     @JsonProperty("votes")
-    public HashSet<Long> votes = new HashSet<>();
+    public final HashSet<Long> votes = new HashSet<>();
 
 }

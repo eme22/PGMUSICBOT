@@ -5,6 +5,11 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.Collections;
 
 public class SetGoodByeImageCmd extends AdminCommand {
 
@@ -14,7 +19,29 @@ public class SetGoodByeImageCmd extends AdminCommand {
         this.help = "cambia la imagen de despedidas a una personalizada";
         this.arguments = "<link|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.STRING, "imagen", "imagen de fondo del mensaje de despedidas.").setRequired(true));
+
     }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        String image = event.getOption("imagen").getAsString();
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        if(image.equalsIgnoreCase("none"))
+        {
+            s.setDespedidasChannelImage(null);
+            event.reply(getClient().getSuccess()+" La imagen de despedidas se ha quitado.").queue();
+            return;
+        }
+        if (OtherUtil.checkImage(image)){
+            s.setDespedidasChannelImage(image);
+            event.reply(getClient().getSuccess()+"La imagen de despedidas es ahora "+image).queue();
+        }
+        else {
+            event.reply(getClient().getError()+ " Incluya un link a una imagen valida o NONE para usar la imagen por defecto").setEphemeral(true).queue();
+        }
+    }
+    
     @Override
     protected void execute(CommandEvent event)
     {
@@ -28,12 +55,12 @@ public class SetGoodByeImageCmd extends AdminCommand {
         if(image.equalsIgnoreCase("none"))
         {
             s.setDespedidasChannelImage(null);
-            event.reply(event.getClient().getSuccess()+" La imagen de despedidas se ha quitado.");
+            event.replySuccess(" La imagen de despedidas se ha quitado.");
             return;
         }
         if (OtherUtil.checkImage(image)){
             s.setDespedidasChannelImage(image);
-            event.reply(event.getClient().getSuccess()+"La imagen de despedidas es ahora "+image);
+            event.replySuccess(" La imagen de despedidas es ahora "+image);
         }
         else {
             event.replyError(" Incluya un link a una imagen valida o NONE para usar la imagen por defecto");

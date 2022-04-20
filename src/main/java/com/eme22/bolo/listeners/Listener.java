@@ -290,7 +290,7 @@ public class Listener extends ListenerAdapter
             String reaction = event.getReactionEmote().getAsReactionCode();
             //System.out.println("Emote for Search: "+event.getReactionEmote().getAsReactionCode());
             HashMap<String, String> datas = manager.getEmoji();
-            datas.forEach((key, value) -> System.out.println(key + " " + value));
+            //datas.forEach((key, value) -> System.out.println(key + " " + value));
 
              if (datas.containsKey(event.getReactionEmote().getAsReactionCode())){
                  String roleT = datas.get(reaction);

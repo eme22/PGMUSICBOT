@@ -4,8 +4,13 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ClearMessagesCmd extends AdminCommand {
@@ -16,6 +21,16 @@ public class ClearMessagesCmd extends AdminCommand {
         this.help = "limpia los mensajes especificados";
         this.arguments = "<2 - 100>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "mensajes", "numero entre 1 al 100").setMinValue(1).setMaxValue(100).setRequired(true));
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        int values = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(event.getOption("mensajes")).getAsString()));
+        List<Message> messages = event.getChannel().getHistory().retrievePast(values+1).complete();
+        event.getTextChannel().deleteMessages(messages).queue();
+        event.getChannel().sendMessage( getClient().getSuccess() +" " + values + " mensajes borrados!").queue(m ->
+                m.delete().queueAfter(5, TimeUnit.SECONDS));
     }
 
     @Override
@@ -28,7 +43,7 @@ public class ClearMessagesCmd extends AdminCommand {
                 return;
             }
 
-            event.getMessage().delete();
+            //event.getMessage().delete();
             List<Message> messages = event.getChannel().getHistory().retrievePast(values+1).complete();
             event.getTextChannel().deleteMessages(messages).queue();
             event.getChannel().sendMessage( event.getClient().getSuccess() +" " + values + " mensajes borrados!").queue(m ->

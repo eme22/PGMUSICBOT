@@ -22,7 +22,12 @@ import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,35 +42,50 @@ public class SetAdminCmd extends AdminCommand
         this.help = "actualiza el rol de Admin";
         this.arguments = "<rolename|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.ROLE, "rol", "rol a poner de admib. Ponga @Everyone para limpiar").setRequired(true));
+
     }
-    
+
     @Override
-    protected void execute(CommandEvent event) 
-    {
+    protected void execute(SlashCommandEvent event) {
+        Role role = event.getOption("rol").getAsRole();
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        if(role.getIdLong() == event.getGuild().getIdLong()) {
+            s.setAdminRoleId(0);
+            event.reply(getClient().getSuccess()+"Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.").setEphemeral(true).queue();
+        }
+        else {
+            s.setAdminRoleId(role.getIdLong());
+            event.reply(getClient().getSuccess()+" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"** role.").queue();
+        }
+    }
+
+    @Override
+    protected void execute(CommandEvent event) {
         try
         {
         if(event.getArgs().isEmpty())
         {
-            event.reply(event.getClient().getError()+" Ponga un rol o NONE para ninguno");
+            event.replyError(" Ponga un rol o NONE para ninguno");
             return;
         }
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
-            s.setDjRoleId(0);
-            event.reply(event.getClient().getSuccess()+"Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.");
+            s.setAdminRoleId(0);
+            event.replySuccess(" Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.");
         }
         else
         {
             List<Role> list = FinderUtil.findRoles(event.getArgs(), event.getGuild());
             if(list.isEmpty())
-                event.reply(event.getClient().getWarning()+" No Roles found matching \""+event.getArgs()+"\"");
+                event.replyWarning(" No Roles found matching \""+event.getArgs()+"\"");
             else if (list.size()>1)
-                event.reply(event.getClient().getWarning()+FormatUtil.listOfRoles(list, event.getArgs()));
+                event.replyWarning(FormatUtil.listOfRoles(list, event.getArgs()));
             else
             {
                 s.setAdminRoleId(list.get(0).getIdLong());
-                event.reply(event.getClient().getSuccess()+" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+list.get(0).getName()+"** role.");
+                event.replySuccess(" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+list.get(0).getName()+"** role.");
             }
         }
         }

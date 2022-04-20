@@ -23,6 +23,7 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  *
@@ -36,21 +37,27 @@ public class SetvcCmd extends AdminCommand
         this.help = "especifica un canal para la musica";
         this.arguments = "<channel|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
+
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        event.reply(getClient().getWarning()+"En espera de implementacion use "+ getClient().getPrefix()+"setvc en su lugar" ).setEphemeral(true).queue();
+    }
+
     @Override
     protected void execute(CommandEvent event) 
     {
         if(event.getArgs().isEmpty())
         {
-            event.reply(event.getClient().getError()+" Please include a voice channel or NONE");
+            event.reply(event.getClient().getError()+" Por favor, incluya un canal de voz o NONE para ninguno");
             return;
         }
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
             s.setVoiceChannelId(0);
-            event.reply(event.getClient().getSuccess()+" Music can now be played in any channel");
+            event.reply(event.getClient().getSuccess()+" Ahora se puede reproducir música en cualquier canal");
         }
         else
         {
@@ -62,7 +69,7 @@ public class SetvcCmd extends AdminCommand
             else
             {
                 s.setVoiceChannelId(list.get(0).getIdLong());
-                event.reply(event.getClient().getSuccess()+" Music can now only be played in "+list.get(0).getAsMention());
+                event.reply(event.getClient().getSuccess()+" Ahora la música sólo puede reproducirse en "+list.get(0).getAsMention());
             }
         }
     }

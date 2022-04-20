@@ -21,8 +21,13 @@ import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +42,17 @@ public class SetGoodByeCmd extends AdminCommand
         this.help = "especifica un canal para las despedidas";
         this.arguments = "<channel|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "canal", "canal a poner para mensaje de despedidas. Se utilizara el canal por defecto si esta activado.").setRequired(true));
+
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        MessageChannel channel = event.getOption("canal").getAsMessageChannel();
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        s.setDespedidasChannelId(channel.getIdLong());
+        event.reply(getClient().getSuccess()+" El canal de las despedidas es ahora <#"+channel.getId()+">").queue();
+
     }
     
     @Override

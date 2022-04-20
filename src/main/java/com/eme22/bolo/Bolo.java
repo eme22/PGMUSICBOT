@@ -133,40 +133,10 @@ public class Bolo {
                 .setHelpWord(config.getHelpWord())
                 .setLinkedCacheSize(200)
                 .setGuildSettingsManager(settings)
-                .addSlashCommands(new AvatarCmd(bot),
-                        new SettingsCmd(bot),
-                        new BiteCmd(bot),
-                        new KissCmd(bot),
-                        new LickCmd(bot),
-                        new SlapCmd(bot),
-                        new MemeCmd(bot),
-                        new MemeListCmd(bot),
-                        new ShowImageChannelsCmd(bot),
+                .addSlashCommands(
 
-                        new LyricsCmd(bot),
-                        new NowplayingCmd(bot),
-                        new PlayCmd(bot),
-                        new PlaylistsCmd(bot),
-                        new QueueCmd(bot),
-                        new RemoveCmd(bot),
-                        new SearchCmd(bot),
-                        new SCSearchCmd(bot),
-                        new ShuffleCmd(bot),
-                        new SkipCmd(bot),
+                        // NORMAL COMMANDS
 
-                        new ForceRemoveCmd(bot),
-                        new ForceskipCmd(bot),
-                        new MoveTrackCmd(bot),
-                        new PauseCmd(bot),
-                        new PlaynextCmd(bot),
-                        new RepeatCmd(bot),
-                        new SkiptoCmd(bot),
-                        new StopCmd(bot),
-                        new VolumeCmd(bot),
-
-                        new BotFixedMessageCmd(bot))
-                .addCommands(aboutCommand,
-                        new PingCommand(),
                         new SettingsCmd(bot),
                         new AvatarCmd(bot),
                         new BiteCmd(bot),
@@ -177,6 +147,8 @@ public class Bolo {
                         new MemeListCmd(bot),
                         new ShowImageChannelsCmd(bot),
 
+                        //MUSIC COMMANDS
+
                         new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
@@ -188,6 +160,8 @@ public class Bolo {
                         new ShuffleCmd(bot),
                         new SkipCmd(bot),
 
+                        // DJ COMMANDS
+
                         new ForceRemoveCmd(bot),
                         new ForceskipCmd(bot),
                         new MoveTrackCmd(bot),
@@ -197,6 +171,78 @@ public class Bolo {
                         new SkiptoCmd(bot),
                         new StopCmd(bot),
                         new VolumeCmd(bot),
+
+                        //ADMIN COMMANDS
+
+                        new PrefixCmd(bot),
+                        new SetdjCmd(bot),
+                        new PollCmd(bot),
+                        new AddMemeCmd(bot),
+                        new BotMessageCmd(bot),
+                        new BotFixedMessageCmd(bot),
+                        new BotEmbbedMessageCmd(bot),
+                        new RemoveMemeCmd(bot),
+                        new AddImageChannel(bot),
+                        new DeleteImageChannel(bot),
+                        new SetWelcomeCmd(bot),
+                        new SetGoodByeCmd(bot),
+                        new CloneChannelCmd(bot),
+                        new CloneAndDeleteChannel(bot),
+                        new SetAdminCmd(bot),
+                        new SkipratioCmd(bot),
+                        new SettcCmd(bot),
+                        new SetvcCmd(bot),
+                        new ClearDataCmd(bot),
+                        new ClearMessagesCmd(bot),
+                        new SetGoodByeMessageCmd(bot),
+                        new SetWelcomeMessageCmd(bot),
+                        new SetRoleManagerCmd(bot),
+                        new SetWelcomeImageCmd(bot),
+                        new SetGoodByeImageCmd(bot))
+
+                .addCommands(
+
+                        // NORMAL COMMANDS
+
+                        aboutCommand,
+                        new PingCommand(),
+                        new SettingsCmd(bot),
+                        new AvatarCmd(bot),
+                        new BiteCmd(bot),
+                        new KissCmd(bot),
+                        new LickCmd(bot),
+                        new SlapCmd(bot),
+                        new MemeCmd(bot),
+                        new MemeListCmd(bot),
+                        new ShowImageChannelsCmd(bot),
+                        new PipilinCmd(),
+
+                        //MUSIC COMMANDS
+
+                        new LyricsCmd(bot),
+                        new NowplayingCmd(bot),
+                        new PlayCmd(bot),
+                        new PlaylistsCmd(bot),
+                        new QueueCmd(bot),
+                        new RemoveCmd(bot),
+                        new SearchCmd(bot),
+                        new SCSearchCmd(bot),
+                        new ShuffleCmd(bot),
+                        new SkipCmd(bot),
+
+                        // DJ COMMANDS
+
+                        new ForceRemoveCmd(bot),
+                        new ForceskipCmd(bot),
+                        new MoveTrackCmd(bot),
+                        new PauseCmd(bot),
+                        new PlaynextCmd(bot),
+                        new RepeatCmd(bot),
+                        new SkiptoCmd(bot),
+                        new StopCmd(bot),
+                        new VolumeCmd(bot),
+
+                        //ADMIN COMMANDS
 
                         new PrefixCmd(bot),
                         new SetdjCmd(bot),
@@ -224,6 +270,8 @@ public class Bolo {
                         new SetWelcomeImageCmd(bot),
                         new SetGoodByeImageCmd(bot),
 
+                        // OWNER COMMANDS
+
                         new AutoplaylistCmd(bot),
                         new DebugCmd(bot),
                         new PlaylistCmd(bot),
@@ -232,8 +280,8 @@ public class Bolo {
                         new SetnameCmd(bot),
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot),
-
-                        new PipilinCmd());
+                        new SendGlobalMessageCmd(bot)
+                );
 
         if (config.isUseEval())
             cb.addCommand(new EvalCmd(bot));

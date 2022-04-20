@@ -15,6 +15,7 @@
  */
 package com.eme22.bolo.commands.admin;
 
+import java.util.Collections;
 import java.util.List;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
@@ -22,7 +23,11 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 /**
  *
@@ -36,21 +41,32 @@ public class SettcCmd extends AdminCommand
         this.help = "especifica un canal para los comandos de musica";
         this.arguments = "<channel|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "canal", "canal a poner para solo comandos de musica.").setRequired(true));
+
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        MessageChannel channel = event.getOption("canal").getAsMessageChannel();
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        s.setTextChannelId(channel.getIdLong());
+        event.reply(getClient().getSuccess()+" Music commands can now only be used in <#"+channel.getId()+">").queue();
+
+    }
+
     @Override
     protected void execute(CommandEvent event) 
     {
         if(event.getArgs().isEmpty())
         {
-            event.reply(event.getClient().getError()+" Please include a text channel or NONE");
+            event.reply(event.getClient().getError()+" Por favor, incluya un canal de texto o NONE");
             return;
         }
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
             s.setTextChannelId(0);
-            event.reply(event.getClient().getSuccess()+" Music commands can now be used in any channel");
+            event.reply(event.getClient().getSuccess()+" Los comandos de música se pueden utilizar ahora en cualquier canal");
         }
         else
         {
@@ -62,7 +78,7 @@ public class SettcCmd extends AdminCommand
             else
             {
                 s.setTextChannelId(list.get(0).getIdLong());
-                event.reply(event.getClient().getSuccess()+" Music commands can now only be used in <#"+list.get(0).getId()+">");
+                event.reply(event.getClient().getSuccess()+" Los comandos de música ahora sólo se pueden utilizar en <#"+list.get(0).getId()+">");
             }
         }
     }

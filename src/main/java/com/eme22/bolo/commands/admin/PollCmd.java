@@ -7,8 +7,12 @@ import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.util.HashSet;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +27,51 @@ public class PollCmd extends AdminCommand {
         this.help = "crea una votacion con los datos enviados";
         this.arguments = "[Question] [Answer 1] [Answer 2]...[Answer 9]";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Arrays.asList(
+                new OptionData(OptionType.STRING, "pregunta", "pregunta a hacer").setRequired(true),
+                new OptionData(OptionType.STRING, "respuesta1", "respuesta u opcion").setRequired(true),
+                new OptionData(OptionType.STRING, "respuesta2", "respuesta u opcion").setRequired(true),
+                new OptionData(OptionType.STRING, "respuesta3", "respuesta u opcion").setRequired(false),
+                new OptionData(OptionType.STRING, "respuesta4", "respuesta u opcion").setRequired(false),
+                new OptionData(OptionType.STRING, "respuesta5", "respuesta u opcion").setRequired(false),
+                new OptionData(OptionType.STRING, "respuesta6", "respuesta u opcion").setRequired(false),
+                new OptionData(OptionType.STRING, "respuesta7", "respuesta u opcion").setRequired(false),
+                new OptionData(OptionType.STRING, "respuesta8", "respuesta u opcion").setRequired(false),
+                new OptionData(OptionType.STRING, "respuesta9", "respuesta u opcion").setRequired(false)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        OptionMapping questionOption = event.getOption("pregunta");
+
+        List<Answer> responses = new ArrayList<>();
+        for (int i = 1; i < 10; i++) {
+            OptionMapping responseOption = event.getOption("pregunta" + i);
+            if (responseOption != null) {
+                responses.add(new Answer(responseOption.getAsString()));
+            }
+        }
+
+        Poll poll = new Poll();
+        poll.setQuestion(questionOption.getAsString());
+        poll.setAnswers(responses);
+
+        EmbedBuilder eb = new EmbedBuilder();
+
+        int answers = responses.size();
+        eb.setDescription(OtherUtil.makePollString(poll));
+        event.getTextChannel().sendMessageEmbeds(eb.build()).queue(success -> {
+
+            for (int j = 0; j < answers; j++) {
+                success.addReaction("U+003" + j + " U+FE0F U+20E3").queue();
+            }
+            bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addPollForGuild(success.getIdLong(),
+                    poll);
+
+            event.reply(getClient().getSuccess()+ " Encuesta creada con exito. Puedes cancelarla borrando el mensaje.").setEphemeral(true).queue();
+        });
+
     }
 
     @Override
@@ -46,7 +95,7 @@ public class PollCmd extends AdminCommand {
             if (i[0] == 1) {
                 poll.setQuestion(m.group(1));
             } else {
-                Answer answers = new Answer(m.group(1), new HashSet<>());
+                Answer answers = new Answer(m.group(1));
                 poll.addAnswer(answers);
             }
 
@@ -60,16 +109,12 @@ public class PollCmd extends AdminCommand {
 
         int answers = poll.getAnswers().size();
         eb.setDescription(OtherUtil.makePollString(poll));
-        event.getTextChannel().sendMessageEmbeds(eb.build()).queue(success -> {
-
+        event.reply(eb.build(), success -> {
             for (int j = 0; j < answers; j++) {
                 success.addReaction("U+003" + j + " U+FE0F U+20E3").queue();
             }
-
-            // success.addReaction("\uD83D\uDCDD").queue();
             bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addPollForGuild(success.getIdLong(),
                     poll);
-            // pollManager.addPollForGuild(event.getGuild(), success.getIdLong(), poll);
         });
 
     }

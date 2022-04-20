@@ -4,6 +4,12 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.Collections;
+import java.util.Objects;
 
 public class RemoveMemeCmd extends AdminCommand {
 
@@ -13,6 +19,21 @@ public class RemoveMemeCmd extends AdminCommand {
         this.help = "borra un meme de la lista de memes";
         this.arguments = "<posicion>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "posicion", "posicion en la que esta el meme a borrar").setRequired(true));
+
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        int a = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(event.getOption("posicion")).getAsString()));
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        try {
+            s.deleteFromMemeImages(a-1);
+        } catch (IndexOutOfBoundsException exception) {
+            event.reply(getClient().getError()+ " Numero incorrecto").setEphemeral(true).queue();
+            return;
+        }
+        event.reply(getClient().getSuccess()+" Imagen "+ a +" borrada de la lista de memes").queue();
     }
 
     @Override
@@ -32,7 +53,7 @@ public class RemoveMemeCmd extends AdminCommand {
             a = Integer.parseInt(args);
         }
         catch (NumberFormatException e){
-            event.reply(event.getClient().getError()+" Incluya un numero");
+            event.replyError(" Incluya un numero");
             return;
         }
 
@@ -44,7 +65,7 @@ public class RemoveMemeCmd extends AdminCommand {
             return;
         }
 
-        event.reply(event.getClient().getSuccess()+" Imagen "+ a +" borrada de la lista de memes");
+        event.replySuccess(" Imagen "+ a +" borrada de la lista de memes");
 
 
     }

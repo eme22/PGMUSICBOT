@@ -19,6 +19,12 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.Collections;
+import java.util.Objects;
 
 /**
  *
@@ -32,8 +38,19 @@ public class SkipratioCmd extends AdminCommand
         this.help = "pone un radio para el comando skip";
         this.arguments = "<0 - 100>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "radio", "porcentaje de aprobacion para comando voteskip").setMinValue(0).setMaxValue(100).setRequired(true));
+
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        int val = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(event.getOption("radio")).getAsString()));
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        s.setSkipRatio(val / 100.0);
+        event.reply(getClient().getSuccess()+ " Skip percentage has been set to `" + val + "%` of listeners on *" + event.getGuild().getName() + "*").queue();
+
+    }
+
     @Override
     protected void execute(CommandEvent event) 
     {

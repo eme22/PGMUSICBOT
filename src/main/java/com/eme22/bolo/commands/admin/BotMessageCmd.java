@@ -3,7 +3,12 @@ package com.eme22.bolo.commands.admin;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Collections;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +19,14 @@ public class BotMessageCmd extends AdminCommand {
         this.help = "hace hablar al bot";
         this.arguments = "<mensaje>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.STRING, "mensaje", "mensaje a decir").setRequired(true));
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        String message = Objects.requireNonNull(event.getOption("mensaje")).getAsString();
+        event.reply(getClient().getSuccess()+ " Mensaje Enviado").setEphemeral(true).queue();
+        event.getChannel().sendMessage(message).queue();
     }
 
     @Override
@@ -24,21 +37,6 @@ public class BotMessageCmd extends AdminCommand {
             event.replyError(" Incluya un mensaje");
             return;
         }
-
-        Pattern regex = Pattern.compile("(.+?(?=]).|.*)", Pattern.DOTALL);
-        Matcher matcher = regex.matcher(message);
-        while (matcher.find()){
-            String nextmessage = matcher.group(1);
-            if (nextmessage == null || nextmessage.isBlank())
-                continue;
-            Pattern regex1 = Pattern.compile("\\[([^\\[]*)\\]");
-            Matcher matcher1 = regex1.matcher(nextmessage);
-            if (matcher1.find()){
-                nextmessage = nextmessage.replace(matcher1.group(), "");
-                event.getTextChannel().sendMessage(nextmessage + " " + matcher1.group(1) ).complete();
-            } else {
-                event.getTextChannel().sendMessage(nextmessage).complete();
-            }
-        }
+        event.reply(message);
     }
 }

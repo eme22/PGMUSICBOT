@@ -17,10 +17,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -49,16 +46,13 @@ public class BotFixedMessageCmd extends SlashCommand {
         });
         this.guildOnly = true;
 
-        this.options = createOptions();
-    }
+        this.options = Arrays.asList(
+                new OptionData(OptionType.STRING, "intervalo", "intervalo: Ejemplo: 10S: S (Segundo) | M (Minuto) | H (Hora) | D (Dia) ").setRequired(true),
+                new OptionData(OptionType.STRING, "inicio", "fecha de inicio dd/mm hh:mm:ss").setRequired(true),
+                new OptionData(OptionType.STRING, "fin", "fecha de fin dd/mm hh:mm:ss").setRequired(true),
+                new OptionData(OptionType.STRING, "message", "mensaje a decir (Comandos especiales %day% %month% %date% %time% %who% )").setRequired(true)
+        );
 
-    private List<OptionData> createOptions() {
-        final ArrayList<OptionData> optionsList = new ArrayList<>();
-        optionsList.add(new OptionData(OptionType.STRING, "intervalo", "intervalo: Ejemplo: 10S: S (Segundo) | M (Minuto) | H (Hora) | D (Dia) ").setRequired(true));
-        optionsList.add(new OptionData(OptionType.STRING, "inicio", "fecha de inicio dd/mm hh:mm:ss").setRequired(true));
-        optionsList.add(new OptionData(OptionType.STRING, "fin", "fecha de fin dd/mm hh:mm:ss").setRequired(true));
-        optionsList.add(new OptionData(OptionType.STRING, "message", "mensaje a decir (Comandos especiales %day% %month% %date% %time% %who% )").setRequired(true));
-        return optionsList;
     }
 
     @Override

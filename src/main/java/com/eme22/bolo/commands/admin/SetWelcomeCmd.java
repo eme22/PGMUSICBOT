@@ -21,8 +21,13 @@ import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,33 +42,46 @@ public class SetWelcomeCmd extends AdminCommand
         this.help = "especifica un canal para las bienvenidas";
         this.arguments = "<channel|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "canal", "canal a poner para mensaje de bienvenidas. Se utilizara el canal por defecto si esta activado.").setRequired(true));
+
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        MessageChannel channel = event.getOption("canal").getAsMessageChannel();
+
+        Settings s = getClient().getSettingsFor(event.getGuild());
+
+        s.setBienvenidasChannelId(channel.getIdLong());
+        event.reply(getClient().getSuccess()+" El canal de las bienvenidas es ahora <#"+channel.getId()+">").queue();
+
+    }
+
     @Override
     protected void execute(CommandEvent event) 
     {
         if(event.getArgs().isEmpty())
         {
-            event.reply(event.getClient().getError()+" Ponga un canal de texto o NONE");
+            event.replyError(" Ponga un canal de texto o NONE");
             return;
         }
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
             s.setBienvenidasChannelId(0);
-            event.reply(event.getClient().getSuccess()+" El canal de las bienvenidas ha sido quitado.");
+            event.replySuccess(" El canal de las bienvenidas ha sido quitado.");
         }
         else
         {
             List<TextChannel> list = FinderUtil.findTextChannels(event.getArgs(), event.getGuild());
             if(list.isEmpty())
-                event.reply(event.getClient().getWarning()+" No Text Channels found matching \""+event.getArgs()+"\"");
+                event.replyWarning(" No Text Channels found matching \""+event.getArgs()+"\"");
             else if (list.size()>1)
-                event.reply(event.getClient().getWarning()+FormatUtil.listOfTChannels(list, event.getArgs()));
+                event.replyWarning(FormatUtil.listOfTChannels(list, event.getArgs()));
             else
             {
                 s.setBienvenidasChannelId(list.get(0).getIdLong());
-                event.reply(event.getClient().getSuccess()+" El canal de las bienvenidas es ahora <#"+list.get(0).getId()+">");
+                event.replySuccess(" El canal de las bienvenidas es ahora <#"+list.get(0).getId()+">");
             }
         }
     }

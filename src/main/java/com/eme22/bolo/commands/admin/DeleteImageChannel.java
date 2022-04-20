@@ -21,8 +21,13 @@ import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -36,25 +41,45 @@ public class DeleteImageChannel extends AdminCommand
         this.help = "elimina un canal de la lista de no texto";
         this.arguments = "<channel>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "canal", "selecciona el canal a quitar.").setRequired(true));
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        TextChannel textChannel = Objects.requireNonNull(event.getGuild()).getTextChannelById(Objects.requireNonNull(event.getOption("canal")).getAsMessageChannel().getId());
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        if (s.isOnlyImageChannel(textChannel)){
+            s.removeFromOnlyImageChannels(textChannel);
+            event.reply(getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> quitado de la lista de canales sin texto").queue();
+        }
+        else {
+            event.reply(getClient().getError() + " Canal <#"+textChannel.getId()+"> no esta en la lista de canales sin texto").setEphemeral(true).queue();
+        }
+
+    }
+
     @Override
     protected void execute(CommandEvent event) 
     {
         if(event.getArgs().isEmpty())
         {
-            event.reply(event.getClient().getError()+" Incluya un canal de Texto");
+            event.replyError(" Incluya un canal de Texto");
             return;
         }
         Settings s = event.getClient().getSettingsFor(event.getGuild());
         List<TextChannel> list = FinderUtil.findTextChannels(event.getArgs(), event.getGuild());
         if(list.isEmpty())
-            event.reply(event.getClient().getWarning()+" No Text Channels found matching \""+event.getArgs()+"\"");
+            event.replyWarning(" No se han encontrado canales de texto que coincidan con \""+event.getArgs()+"\"");
         else
         {
             list.forEach( textChannel -> {
-                s.removeFromOnlyImageChannels(textChannel);
-                event.reply(event.getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> quitado de la lista de canales sin texto");
+                if (s.isOnlyImageChannel(textChannel)) {
+                    s.removeFromOnlyImageChannels(textChannel);
+                    event.replySuccess(" Canal <#" + textChannel.getId() + "> quitado de la lista de canales sin texto");
+                }
+                else {
+                    event.replyError(" Canal <#"+textChannel.getId()+"> no esta en la lista de canales sin texto");
+                }
             });
 
         }

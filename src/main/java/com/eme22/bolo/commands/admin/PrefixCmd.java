@@ -19,6 +19,11 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.Collections;
 
 /**
  *
@@ -32,8 +37,28 @@ public class PrefixCmd extends AdminCommand
         this.help = "pone un prefijo por servidor";
         this.arguments = "<prefix|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "prefix", "selecciona el prefijo de los comandos (none = limpiar prefijo) (modo antiguo, es preferible usar el sistema de discord).").setRequired(true));
+
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        String prefix = event.getOption("prefix").getAsString();
+
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        if(prefix.equalsIgnoreCase("none"))
+        {
+            s.setPrefix(null);
+            event.reply(getClient().getSuccess()+ " Prefijo del servidor limpiado.").queue();
+        }
+        else
+        {
+            s.setPrefix(prefix);
+            event.reply(getClient().getSuccess()+" Prefijo personalizado fijado en `" + prefix + "` en *" + event.getGuild().getName() + "*").queue();
+        }
+
+    }
+
     @Override
     protected void execute(CommandEvent event) 
     {
@@ -47,12 +72,12 @@ public class PrefixCmd extends AdminCommand
         if(event.getArgs().equalsIgnoreCase("none"))
         {
             s.setPrefix(null);
-            event.replySuccess("Prefix cleared.");
+            event.replySuccess("Prefijo del servidor limpiado.");
         }
         else
         {
             s.setPrefix(event.getArgs());
-            event.replySuccess("Custom prefix set to `" + event.getArgs() + "` on *" + event.getGuild().getName() + "*");
+            event.replySuccess("Prefijo personalizado fijado en `" + event.getArgs() + "` en *" + event.getGuild().getName() + "*");
         }
     }
 }

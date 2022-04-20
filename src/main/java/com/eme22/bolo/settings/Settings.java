@@ -136,6 +136,10 @@ public class Settings implements GuildSettingsProvider {
         imageOnlyChannelsIds.removeIf(element -> element.equals(channel));
     }
 
+    public boolean isOnlyImageChannel(TextChannel textChannel) {
+        return imageOnlyChannelsIds.stream().anyMatch( channel -> channel.equals(textChannel.getIdLong()));
+    }
+
     @JsonIgnore
     public MemeImage getRandomMemeImages() {
         int rand = new Random().nextInt(this.memeImages.size());

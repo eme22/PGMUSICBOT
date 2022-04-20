@@ -20,9 +20,15 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -36,21 +42,36 @@ public class AddImageChannel extends AdminCommand
         this.help = "agrega un canal a la lista de no texto";
         this.arguments = "<channel>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "canal", "selecciona el canal a agregar.").setRequired(true));
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+
+        TextChannel textChannel = Objects.requireNonNull(event.getGuild()).getTextChannelById(Objects.requireNonNull(event.getOption("canal")).getAsMessageChannel().getId());
+
+        Settings s = getClient().getSettingsFor(event.getGuild());
+
+        if (textChannel != null) {
+            s.addOnlyImageChannels(textChannel);
+            event.reply(getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> Agregado a la lista de canales sin texto").setEphemeral(true).queue();
+        }
+
+    }
+
     @Override
     protected void execute(CommandEvent event) 
     {
         if(event.getArgs().isEmpty())
         {
-            event.reply(event.getClient().getError()+" Incluya un canal de Texto");
+            event.replyError(" Incluya un canal de Texto");
             return;
         }
         Settings s = event.getClient().getSettingsFor(event.getGuild());
 
         List<TextChannel> list = FinderUtil.findTextChannels(event.getArgs(), event.getGuild());
         if(list.isEmpty())
-            event.reply(event.getClient().getWarning()+" No Text Channels found matching \""+event.getArgs()+"\"");
+            event.replyError(" No se han encontrado canales de texto que coincidan con: \""+event.getArgs()+"\"");
         else
         {
             list.forEach( textChannel -> {

@@ -15,6 +15,7 @@
  */
 package com.eme22.bolo.commands.admin;
 
+import java.util.Collections;
 import java.util.List;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
@@ -23,6 +24,9 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 /**
  *
@@ -36,8 +40,24 @@ public class SetdjCmd extends AdminCommand
         this.help = "actualiza el rol de DJ";
         this.arguments = "<rolename|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.ROLE, "rol", "rol a poner de dj. Ponga @Everyone para limpiar").setRequired(true));
+
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        Role role = event.getOption("rol").getAsRole();
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        if(role.getIdLong() == event.getGuild().getIdLong()) {
+            s.setDjRoleId(0);
+            event.reply(getClient().getSuccess()+"Rol de DJ limpiado. Todos pueden usar los comandos de DJ.").setEphemeral(true).queue();
+        }
+        else {
+            s.setDjRoleId(role.getIdLong());
+            event.reply(getClient().getSuccess()+" Los comandos de dj ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"** role.").queue();
+        }
+    }
+
     @Override
     protected void execute(CommandEvent event) 
     {
