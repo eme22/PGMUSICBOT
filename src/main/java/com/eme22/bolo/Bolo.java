@@ -57,6 +57,7 @@ import java.util.Arrays;
  * @author John Grosh (jagrosh)
  */
 public class Bolo {
+
     public final static String PLAY_EMOJI = "\u25B6"; // ▶
     public final static String PAUSE_EMOJI = "\u23F8"; // ⏸
     public final static String STOP_EMOJI = "\u23F9"; // ⏹
@@ -75,6 +76,9 @@ public class Bolo {
         // startup log
         Logger log = LoggerFactory.getLogger("Startup");
 
+        // dev check
+        boolean dev = checkDev(args);
+
         // create prompt to handle startup
         Prompt prompt = new Prompt("JMusicBot",
                 "Switching to nogui mode. You can manually start in nogui mode by including the -Dnogui=true flag.");
@@ -83,27 +87,34 @@ public class Bolo {
         String version = OtherUtil.checkVersion(prompt);
 
         // load settings from git
+        if (!dev){
+            try {
+                OtherUtil.loadFileFromGit(new File("serversettings.json"));
+            } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
+                LoggerFactory.getLogger("Settings")
+                        .warn("Se ha fallado en cargar las opciones del servidor, se usaran las locales: " + e);
 
-        try {
-            OtherUtil.loadFileFromGit(new File("serversettings.json"));
-        } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
-            LoggerFactory.getLogger("Settings")
-                    .warn("Se ha fallado en cargar las opciones del servidor, se usaran las locales: " + e);
-
+            }
         }
+
 
         // create settings
         SettingsManager settings = new SettingsManager();
 
         // save settings on shutdown
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                settings.writeSettings();
-                OtherUtil.writeFileToGitHub(new File("serversettings.json"));
-            } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
-                e.printStackTrace();
-            }
-        }));
+
+        if (!dev) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    settings.writeSettings();
+                    OtherUtil.writeFileToGitHub(new File("serversettings.json"));
+                } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }));
+        }
+
+
 
         // check for valid java version
         if (!System.getProperty("java.vm.name").contains("64"))
@@ -353,6 +364,14 @@ public class Bolo {
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
+    }
+
+    private static boolean checkDev(String[] args) {
+        for (String arg : args) {
+            if (arg.equals("-dev"))
+                return true;
+        }
+        return false;
     }
 
 }
