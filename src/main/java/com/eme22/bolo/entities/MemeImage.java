@@ -21,8 +21,8 @@ import lombok.*;
 public class MemeImage {
 
     @JsonProperty("message")
-    public String message;
+    private String message;
     @JsonProperty("meme")
-    public String meme;
+    private String meme;
 
 }
