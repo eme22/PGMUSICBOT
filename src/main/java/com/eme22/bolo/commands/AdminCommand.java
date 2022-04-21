@@ -16,7 +16,6 @@
 package com.eme22.bolo.commands;
 
 import com.eme22.bolo.settings.Settings;
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.entities.Role;
 

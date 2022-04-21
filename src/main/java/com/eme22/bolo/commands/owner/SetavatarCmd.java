@@ -15,13 +15,14 @@
  */
 package com.eme22.bolo.commands.owner;
 
-import java.io.IOException;
-import java.io.InputStream;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.OwnerCommand;
 import com.eme22.bolo.utils.OtherUtil;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.entities.Icon;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *

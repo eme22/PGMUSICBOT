@@ -15,11 +15,12 @@
  */
 package com.eme22.bolo.commands.owner;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.OwnerCommand;
+import com.jagrosh.jdautilities.command.CommandEvent;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 /**
  *

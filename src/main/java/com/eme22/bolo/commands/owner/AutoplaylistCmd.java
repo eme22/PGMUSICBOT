@@ -15,10 +15,10 @@
  */
 package com.eme22.bolo.commands.owner;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.OwnerCommand;
 import com.eme22.bolo.settings.Settings;
+import com.jagrosh.jdautilities.command.CommandEvent;
 
 /**
  *

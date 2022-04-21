@@ -1,5 +1,7 @@
 package com.eme22.bolo.commands.general;
 
+import com.eme22.anime.Endpoints;
+import com.eme22.anime.WaifuClient;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -10,8 +12,6 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import pics.waifu.Endpoints;
-import pics.waifu.WaifuClient;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +45,7 @@ public class BiteCmd extends SlashCommand {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomBite() + memberKissed.getAsMention());
-        builder.setImage(new WaifuClient().getSFWImage(Endpoints.SFW.BITE));
+        builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.BITE));
         event.replyEmbeds(builder.build()).queue();
     }
 
@@ -73,7 +73,7 @@ public class BiteCmd extends SlashCommand {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomBite() + memberKissed.getAsMention());
-        builder.setImage(new WaifuClient().getSFWImage(Endpoints.SFW.BITE));
+        builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.BITE));
         event.reply(builder.build());
     }
 }

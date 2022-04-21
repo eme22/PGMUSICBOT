@@ -15,11 +15,11 @@
  */
 package com.eme22.bolo.commands.dj;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.RequestMetadata;
 import com.eme22.bolo.commands.DJCommand;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**

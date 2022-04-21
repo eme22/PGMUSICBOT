@@ -1,8 +1,7 @@
-package com.eme22.bolo.commands.general;
+package com.eme22.bolo.commands.general.nsfw;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class PipilinCmd extends Command {
@@ -10,6 +9,7 @@ public class PipilinCmd extends Command {
     public PipilinCmd() {
         this.name = "pipilin";
         this.help = "OwO";
+        this.nsfwOnly = true;
     }
 
     @Override

@@ -1,8 +1,7 @@
-package com.eme22.bolo.commands.general;
+package com.eme22.bolo.commands.general.nsfw;
 
 import com.eme22.anime.Endpoints;
 import com.eme22.anime.NekosClient;
-import com.eme22.anime.WaifuClient;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -16,18 +15,18 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
-public class SlapCmd extends SlashCommand {
+public class CumCmd extends SlashCommand {
 
-    public SlapCmd(Bot bot) {
-        this.name = "slap";
-        this.help = "abofetea al usuario seleccionado";
+    public CumCmd(Bot bot) {
+        this.name = "cum";
+        this.help = "cum en el usuario seleccionado";
         this.arguments = "<user>";
         this.aliases = bot.getConfig().getAliases(this.name);
+        this.nsfwOnly = true;
         this.guildOnly = true;
         this.options = Collections.singletonList(
-                new OptionData(OptionType.USER, "usuario", "busca el usuario a abofetear.").setRequired(true));
+                new OptionData(OptionType.USER, "usuario", "busca el usuario a hacer cum.").setRequired(true));
 
     }
 
@@ -45,14 +44,9 @@ public class SlapCmd extends SlashCommand {
             event.reply(getClient().getError() + "Asegurese de que el usuario no sea usted").setEphemeral(true).queue();
             return;
         }
-
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomSlap() + memberKissed.getAsMention());
-
-        if (new Random().nextBoolean())
-            builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.SLAP));
-        else
-            builder.setImage(new NekosClient().getImage(Endpoints.NEKO.SLAP));
+        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomCum() + memberKissed.getAsMention());
+        builder.setImage(new NekosClient().getImage(Endpoints.NEKO.CUM));
         event.replyEmbeds(builder.build()).queue();
     }
 
@@ -79,11 +73,9 @@ public class SlapCmd extends SlashCommand {
         }
 
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomSlap() + memberKissed.getAsMention());
-        if (new Random().nextBoolean())
-            builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.SLAP));
-        else
-            builder.setImage(new NekosClient().getImage(Endpoints.NEKO.SLAP));
+        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomCum() + memberKissed.getAsMention());
+        builder.setImage(new NekosClient().getImage(Endpoints.NEKO.CUM));
         event.reply(builder.build());
     }
+
 }

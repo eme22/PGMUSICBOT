@@ -11,9 +11,6 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static com.eme22.bolo.commands.music.QueueCmd.getQueueTitle;
 
 public class MemeListCmd extends SlashCommand {
 

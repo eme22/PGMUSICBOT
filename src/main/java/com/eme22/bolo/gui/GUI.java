@@ -15,12 +15,11 @@
  */
 package com.eme22.bolo.gui;
 
+import com.eme22.bolo.Bot;
+
+import javax.swing.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
-import com.eme22.bolo.Bot;
 
 
 /**

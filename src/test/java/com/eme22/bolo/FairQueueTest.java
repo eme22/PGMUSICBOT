@@ -18,7 +18,8 @@ package com.eme22.bolo;
 import com.eme22.bolo.queue.FairQueue;
 import com.eme22.bolo.queue.Queueable;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

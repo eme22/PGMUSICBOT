@@ -15,10 +15,11 @@
  */
 package com.eme22.bolo.utils;
 
-import java.util.List;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
+
+import java.util.List;
 
 /**
  *

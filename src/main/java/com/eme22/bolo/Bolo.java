@@ -18,6 +18,10 @@ package com.eme22.bolo;
 import com.eme22.bolo.commands.admin.*;
 import com.eme22.bolo.commands.dj.*;
 import com.eme22.bolo.commands.general.*;
+import com.eme22.bolo.commands.general.nsfw.AnalCmd;
+import com.eme22.bolo.commands.general.nsfw.CumCmd;
+import com.eme22.bolo.commands.general.nsfw.FuckCmd;
+import com.eme22.bolo.commands.general.nsfw.PipilinCmd;
 import com.eme22.bolo.commands.music.*;
 import com.eme22.bolo.commands.owner.*;
 import com.eme22.bolo.entities.Prompt;
@@ -143,9 +147,16 @@ public class Bolo {
                         new KissCmd(bot),
                         new LickCmd(bot),
                         new SlapCmd(bot),
+                        new PokeCmd(bot),
                         new MemeCmd(bot),
                         new MemeListCmd(bot),
                         new ShowImageChannelsCmd(bot),
+
+                        //NSFW COMMANDS
+
+                        new AnalCmd(bot),
+                        new CumCmd(bot),
+                        new FuckCmd(bot),
 
                         //MUSIC COMMANDS
 
@@ -213,8 +224,15 @@ public class Bolo {
                         new LickCmd(bot),
                         new SlapCmd(bot),
                         new MemeCmd(bot),
+                        new PokeCmd(bot),
                         new MemeListCmd(bot),
                         new ShowImageChannelsCmd(bot),
+
+                        //NSFW COMMANDS
+
+                        new AnalCmd(bot),
+                        new CumCmd(bot),
+                        new FuckCmd(bot),
                         new PipilinCmd(),
 
                         //MUSIC COMMANDS

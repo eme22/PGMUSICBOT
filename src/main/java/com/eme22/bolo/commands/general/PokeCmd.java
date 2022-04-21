@@ -2,7 +2,6 @@ package com.eme22.bolo.commands.general;
 
 import com.eme22.anime.Endpoints;
 import com.eme22.anime.NekosClient;
-import com.eme22.anime.WaifuClient;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -16,18 +15,17 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
-public class SlapCmd extends SlashCommand {
+public class PokeCmd extends SlashCommand {
 
-    public SlapCmd(Bot bot) {
-        this.name = "slap";
-        this.help = "abofetea al usuario seleccionado";
+    public PokeCmd(Bot bot) {
+        this.name = "poke";
+        this.help = "toca al usuario seleccionado";
         this.arguments = "<user>";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
         this.options = Collections.singletonList(
-                new OptionData(OptionType.USER, "usuario", "busca el usuario a abofetear.").setRequired(true));
+                new OptionData(OptionType.USER, "usuario", "busca el usuario a tocar.").setRequired(true));
 
     }
 
@@ -47,12 +45,9 @@ public class SlapCmd extends SlashCommand {
         }
 
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomSlap() + memberKissed.getAsMention());
+        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomPoke() + memberKissed.getAsMention());
 
-        if (new Random().nextBoolean())
-            builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.SLAP));
-        else
-            builder.setImage(new NekosClient().getImage(Endpoints.NEKO.SLAP));
+        builder.setImage(new NekosClient().getImage(Endpoints.NEKO.POKE));
         event.replyEmbeds(builder.build()).queue();
     }
 
@@ -79,11 +74,8 @@ public class SlapCmd extends SlashCommand {
         }
 
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomSlap() + memberKissed.getAsMention());
-        if (new Random().nextBoolean())
-            builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.SLAP));
-        else
-            builder.setImage(new NekosClient().getImage(Endpoints.NEKO.SLAP));
+        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomPoke() + memberKissed.getAsMention());
+        builder.setImage(new NekosClient().getImage(Endpoints.NEKO.POKE));
         event.reply(builder.build());
     }
 }

@@ -15,9 +15,9 @@
  */
 package com.eme22.bolo;
 
+import com.eme22.bolo.entities.Prompt;
 import com.eme22.bolo.utils.FormatUtil;
 import com.eme22.bolo.utils.OtherUtil;
-import com.eme22.bolo.entities.Prompt;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;

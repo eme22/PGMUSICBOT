@@ -120,8 +120,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.eme22</groupId>
-            <artifactId>Waifus4J</artifactId>
-            <version>0.1</version>
+            <artifactId>anime-image-api</artifactId>
+            <version>0.2</version>
         </dependency>
     </dependencies>
     
