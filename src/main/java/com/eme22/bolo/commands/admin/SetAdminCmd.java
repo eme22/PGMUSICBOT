@@ -51,11 +51,11 @@ public class SetAdminCmd extends AdminCommand
         Settings s = getClient().getSettingsFor(event.getGuild());
         if(role.getIdLong() == event.getGuild().getIdLong()) {
             s.setAdminRoleId(0);
-            event.reply(getClient().getSuccess()+"Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.").setEphemeral(true).queue();
+            event.reply(getClient().getSuccess()+"Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.").queue();
         }
         else {
             s.setAdminRoleId(role.getIdLong());
-            event.reply(getClient().getSuccess()+" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"** role.").queue();
+            event.reply(getClient().getSuccess()+" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"**.").queue();
         }
     }
 

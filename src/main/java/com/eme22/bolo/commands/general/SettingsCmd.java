@@ -49,7 +49,7 @@ public class SettingsCmd extends SlashCommand {
                 Settings s = getClient().getSettingsFor(event.getGuild());
                 MessageBuilder builder = new MessageBuilder()
                                 .append(EMOJI + " **")
-                                .append(FormatUtil.filter(event.getGuild().getSelfMember().getNickname()))
+                                .append(FormatUtil.filter(event.getGuild().getSelfMember().getUser().getName()))
                                 .append("** settings:");
                 TextChannel wchan = s.getHelloChannel(event.getGuild());
                 TextChannel dchan = s.getGoodbyeChannel(event.getGuild());

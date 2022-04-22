@@ -24,6 +24,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -48,10 +49,20 @@ public class SettcCmd extends AdminCommand
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        MessageChannel channel = event.getOption("canal").getAsMessageChannel();
-        Settings s = getClient().getSettingsFor(event.getGuild());
-        s.setTextChannelId(channel.getIdLong());
-        event.reply(getClient().getSuccess()+" Music commands can now only be used in <#"+channel.getId()+">").queue();
+        OptionMapping option = event.getOption("canal");
+        MessageChannel channel = null;
+        if (option != null){
+            channel = option.getAsMessageChannel();
+        }
+
+        if (channel != null) {
+            Settings s = getClient().getSettingsFor(event.getGuild());
+            s.setTextChannelId(channel.getIdLong());
+            event.reply(getClient().getSuccess()+" Music commands can now only be used in <#"+channel.getId()+">").queue();
+        }
+        else
+            event.reply("Asegurese de que es un canal de texto").setEphemeral(true).queue();
+
 
     }
 

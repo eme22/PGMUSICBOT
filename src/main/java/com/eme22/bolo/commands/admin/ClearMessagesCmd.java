@@ -19,18 +19,17 @@ public class ClearMessagesCmd extends AdminCommand {
     {
         this.name = "clear";
         this.help = "limpia los mensajes especificados";
-        this.arguments = "<2 - 100>";
+        this.arguments = "<1 - 100>";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "mensajes", "numero entre 1 al 100").setMinValue(1).setMaxValue(100).setRequired(true));
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        int values = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(event.getOption("mensajes")).getAsString()));
-        List<Message> messages = event.getChannel().getHistory().retrievePast(values+1).complete();
+        int values = Integer.parseInt(event.getOption("mensajes").getAsString());
+        List<Message> messages = event.getChannel().getHistory().retrievePast(values).complete();
         event.getTextChannel().deleteMessages(messages).queue();
-        event.getChannel().sendMessage( getClient().getSuccess() +" " + values + " mensajes borrados!").queue(m ->
-                m.delete().queueAfter(5, TimeUnit.SECONDS));
+        event.reply(getClient().getSuccess() +" " + values + " mensajes borrados!").setEphemeral(true).queue();
     }
 
     @Override

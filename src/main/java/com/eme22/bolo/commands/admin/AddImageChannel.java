@@ -20,8 +20,10 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -47,13 +49,20 @@ public class AddImageChannel extends AdminCommand
     @Override
     protected void execute(SlashCommandEvent event) {
 
-        TextChannel textChannel = Objects.requireNonNull(event.getGuild()).getTextChannelById(Objects.requireNonNull(event.getOption("canal")).getAsMessageChannel().getId());
+        OptionMapping canal = event.getOption("canal");
+        MessageChannel textChannel = null;
+        if (canal != null){
+            textChannel = canal.getAsMessageChannel();
+        }
 
         Settings s = getClient().getSettingsFor(event.getGuild());
 
         if (textChannel != null) {
             s.addOnlyImageChannels(textChannel);
             event.reply(getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> Agregado a la lista de canales sin texto").setEphemeral(true).queue();
+        }
+        else {
+            event.reply(getClient().getError()+" Asegurese de que es un canal de texto").setEphemeral(true).queue();
         }
 
     }

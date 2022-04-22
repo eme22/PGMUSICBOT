@@ -49,11 +49,13 @@ public class PollCmd extends AdminCommand {
 
         List<Answer> responses = new ArrayList<>();
         for (int i = 1; i < 10; i++) {
-            OptionMapping responseOption = event.getOption("pregunta" + i);
+            OptionMapping responseOption = event.getOption("respuesta" + i);
             if (responseOption != null) {
                 responses.add(new Answer(responseOption.getAsString()));
             }
         }
+
+        System.out.println(responses.size());
 
         Poll poll = new Poll();
         poll.setQuestion(questionOption.getAsString());

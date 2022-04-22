@@ -51,11 +51,11 @@ public class SetdjCmd extends AdminCommand
         Settings s = getClient().getSettingsFor(event.getGuild());
         if(role.getIdLong() == event.getGuild().getIdLong()) {
             s.setDjRoleId(0);
-            event.reply(getClient().getSuccess()+"Rol de DJ limpiado. Todos pueden usar los comandos de DJ.").setEphemeral(true).queue();
+            event.reply(getClient().getSuccess()+" Rol de DJ limpiado. Todos pueden usar los comandos de DJ.").queue();
         }
         else {
             s.setDjRoleId(role.getIdLong());
-            event.reply(getClient().getSuccess()+" Los comandos de dj ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"** role.").queue();
+            event.reply(getClient().getSuccess()+" Los comandos de dj ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"**.").queue();
         }
     }
 

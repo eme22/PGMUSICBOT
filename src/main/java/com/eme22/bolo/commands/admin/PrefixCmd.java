@@ -37,7 +37,7 @@ public class PrefixCmd extends AdminCommand
         this.help = "pone un prefijo por servidor";
         this.arguments = "<prefix|NONE>";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "prefix", "selecciona el prefijo de los comandos (none = limpiar prefijo) (modo antiguo, es preferible usar el sistema de discord).").setRequired(true));
+        this.options = Collections.singletonList(new OptionData(OptionType.STRING, "prefix", "Selecciona el prefijo de los comandos (none = limpiar prefijo).").setRequired(true));
 
     }
 

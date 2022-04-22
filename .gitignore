@@ -8,3 +8,4 @@ nb*.xml
 /out/
 /.idea/
 /.github/
+/.run/

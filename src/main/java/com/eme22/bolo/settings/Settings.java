@@ -11,10 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
 import lombok.*;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -132,6 +129,16 @@ public class Settings implements GuildSettingsProvider {
         this.imageOnlyChannelsIds.add(channel);
     }
 
+    public void addOnlyImageChannels(MessageChannel onlyImageChannel) {
+
+        Long channel = onlyImageChannel.getIdLong();
+
+        if (imageOnlyChannelsIds.contains(channel))
+            return;
+
+        this.imageOnlyChannelsIds.add(channel);
+    }
+
     public void removeFromOnlyImageChannels(TextChannel onlyImageChannel) {
 
         Long channel = onlyImageChannel.getIdLong();
@@ -139,7 +146,18 @@ public class Settings implements GuildSettingsProvider {
         imageOnlyChannelsIds.removeIf(element -> element.equals(channel));
     }
 
+    public void removeFromOnlyImageChannels(MessageChannel onlyImageChannel) {
+
+        Long channel = onlyImageChannel.getIdLong();
+
+        imageOnlyChannelsIds.removeIf(element -> element.equals(channel));
+    }
+
     public boolean isOnlyImageChannel(TextChannel textChannel) {
+        return imageOnlyChannelsIds.stream().anyMatch( channel -> channel.equals(textChannel.getIdLong()));
+    }
+
+    public boolean isOnlyImageChannel(MessageChannel textChannel) {
         return imageOnlyChannelsIds.stream().anyMatch( channel -> channel.equals(textChannel.getIdLong()));
     }
 

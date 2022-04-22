@@ -78,6 +78,7 @@ public class Bolo {
 
         // dev check
         boolean dev = checkDev(args);
+        log.info("Developer Mode: " + dev);
 
         // create prompt to handle startup
         Prompt prompt = new Prompt("JMusicBot",

@@ -44,19 +44,19 @@ public class MemeListCmd extends SlashCommand {
 
         List<MemeImage> data = s.getMemeImages();
 
-        EmbedBuilder builder = new EmbedBuilder();
-        StringBuilder stringBuilder = new StringBuilder();
-
-        int j = 0;
-        for (MemeImage datum : data) {
-            j++;
-            int finalJ = j;
-            stringBuilder.append(finalJ).append(": ").append(datum.getMessage()).append("\n");
-
+        String[] songs = new String[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+            songs[i] = data.get(i).getMeme();
         }
 
-        builder.setDescription(stringBuilder.toString());
-        event.replyEmbeds(builder.build()).queue();
+        if (songs.length == 0){
+            event.reply( getClient().getError()+ "No hay memes para mostrar").setEphemeral(true).queue();
+            return;
+        }
+
+        event.reply(getClient().getSuccess()+ " Lista de memes").queue();
+        builder.setText("").setItems(songs);
+        builder.build().paginate(event.getChannel(), 1);
     }
 
     @Override
@@ -68,29 +68,17 @@ public class MemeListCmd extends SlashCommand {
 
         String[] songs = new String[data.size()];
         for (int i = 0; i < data.size(); i++) {
-            songs[i] = (i+1)+": "+data.get(i).getMeme();
+            songs[i] = data.get(i).getMeme();
         }
 
-        builder.setText((i1, i2) -> "AAA")
-                .setItems(songs)
-        ;
+        if (songs.length == 0){
+            event.replyError(" No hay memes para mostrar");
+            return;
+        }
+
+        builder.setText(getClient().getSuccess()+ " Lista de memes")
+                .setItems(songs);
         builder.build().paginate(event.getChannel(), 1);
-
-        /*
-        EmbedBuilder builder = new EmbedBuilder();
-        StringBuilder stringBuilder = new StringBuilder();
-
-        int j = 0;
-        for (MemeImage datum : data) {
-            j++;
-            int finalJ = j;
-            stringBuilder.append(finalJ).append(": ").append(datum.getMessage()).append("\n");
-
-        }
-
-        builder.setDescription(stringBuilder.toString());
-        event.getTextChannel().sendMessageEmbeds(builder.build()).queue();
-         */
     }
 
 }
