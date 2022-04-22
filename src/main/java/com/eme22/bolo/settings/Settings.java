@@ -18,24 +18,24 @@ import java.util.*;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-    "text_channel_id",
-    "voice_channel_id",
-    "dj_role_id",
-    "admin_role_id",
-    "default_playlist",
-    "repeat_mode",
-    "prefix",
-    "skip_ratio",
-    "bienvenidas_channel_id",
-    "bienvenidas_channel_image",
-    "bienvenidas_channel_message",
-    "despedidas_channel_id",
-    "despedidas_channel_image",
-    "despedidas_channel_message",
-    "image_only_channels_ids",
-    "meme_images",
-    "polls",
-    "role_manager"
+        "text_channel_id",
+        "voice_channel_id",
+        "dj_role_id",
+        "admin_role_id",
+        "default_playlist",
+        "repeat_mode",
+        "prefix",
+        "skip_ratio",
+        "bienvenidas_channel_id",
+        "bienvenidas_channel_image",
+        "bienvenidas_channel_message",
+        "despedidas_channel_id",
+        "despedidas_channel_image",
+        "despedidas_channel_message",
+        "image_only_channels_ids",
+        "meme_images",
+        "polls",
+        "role_manager"
 })
 
 @AllArgsConstructor
@@ -85,15 +85,17 @@ public class Settings implements GuildSettingsProvider {
     private List<Poll> polls;
     @JsonProperty("role_manager")
     private List<RoleManager> roleManagerList;
+    @JsonProperty("8ball_answers")
+    private List<String> eightBallAnswers;
 
-    public void addPollForGuild(Long messageId, Poll poll){
-        if (this.polls.stream().anyMatch( poll1 -> poll1.getId() == messageId))
+    public void addPollForGuild(Long messageId, Poll poll) {
+        if (this.polls.stream().anyMatch(poll1 -> poll1.getId() == messageId))
             return;
         this.polls.add(poll.withId(messageId));
     }
 
-    public void removePollFromGuild(Long messageId){
-        this.polls.removeIf( poll -> poll.getId() == messageId);
+    public void removePollFromGuild(Long messageId) {
+        this.polls.removeIf(poll -> poll.getId() == messageId);
     }
 
     public TextChannel getTextChannel(Guild guild) {
@@ -115,7 +117,8 @@ public class Settings implements GuildSettingsProvider {
     public ArrayList<TextChannel> getOnlyImageChannels(Guild guild) {
 
         ArrayList<TextChannel> channels = new ArrayList<>();
-        this.imageOnlyChannelsIds.forEach(channelid -> channels.add(guild.getTextChannelById(String.valueOf(channelid))));
+        this.imageOnlyChannelsIds
+                .forEach(channelid -> channels.add(guild.getTextChannelById(String.valueOf(channelid))));
         return channels;
     }
 
@@ -154,11 +157,11 @@ public class Settings implements GuildSettingsProvider {
     }
 
     public boolean isOnlyImageChannel(TextChannel textChannel) {
-        return imageOnlyChannelsIds.stream().anyMatch( channel -> channel.equals(textChannel.getIdLong()));
+        return imageOnlyChannelsIds.stream().anyMatch(channel -> channel.equals(textChannel.getIdLong()));
     }
 
     public boolean isOnlyImageChannel(MessageChannel textChannel) {
-        return imageOnlyChannelsIds.stream().anyMatch( channel -> channel.equals(textChannel.getIdLong()));
+        return imageOnlyChannelsIds.stream().anyMatch(channel -> channel.equals(textChannel.getIdLong()));
     }
 
     @JsonIgnore
@@ -180,6 +183,17 @@ public class Settings implements GuildSettingsProvider {
         this.memeImages.remove(position);
     }
 
+    public String getRandomAnswer() {
+        String[] defaultAnswers = { "Sí", "No" };
+
+        if (this.eightBallAnswers.size() == 0)
+            return defaultAnswers[new Random().nextInt(defaultAnswers.length)];
+        else {
+            int rand = new Random().nextInt(this.eightBallAnswers.size());
+            return this.eightBallAnswers.get(rand);
+        }
+    }
+
     public void addToRoleManagers(RoleManager manager) {
         this.roleManagerList.add(manager);
     }
@@ -190,7 +204,7 @@ public class Settings implements GuildSettingsProvider {
     }
 
     public void deleteRoleManagers(Long messageID) {
-        this.roleManagerList.removeIf( memeImage -> memeImage.getId() == messageID);
+        this.roleManagerList.removeIf(memeImage -> memeImage.getId() == messageID);
     }
 
     public void clearServerData(Guild guild) {
