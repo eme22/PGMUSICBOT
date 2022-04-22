@@ -88,7 +88,7 @@ public class Bolo {
         String version = OtherUtil.checkVersion(prompt);
 
         // load settings from git
-        if (!dev){
+        if (!dev) {
             try {
                 OtherUtil.loadFileFromGit(new File("serversettings.json"));
             } catch (IOException | NoSuchAlgorithmException | NullPointerException e) {
@@ -97,7 +97,6 @@ public class Bolo {
 
             }
         }
-
 
         // create settings
         SettingsManager settings = new SettingsManager();
@@ -114,8 +113,6 @@ public class Bolo {
                 }
             }));
         }
-
-
 
         // check for valid java version
         if (!System.getProperty("java.vm.name").contains("64"))
@@ -163,14 +160,15 @@ public class Bolo {
                         new MemeCmd(bot),
                         new MemeListCmd(bot),
                         new ShowImageChannelsCmd(bot),
+                        new EightBallCmd(bot),
 
-                        //NSFW COMMANDS
+                        // NSFW COMMANDS
 
                         new AnalCmd(bot),
                         new CumCmd(bot),
                         new FuckCmd(bot),
 
-                        //MUSIC COMMANDS
+                        // MUSIC COMMANDS
 
                         new LyricsCmd(bot),
                         new NowplayingCmd(bot),
@@ -195,7 +193,7 @@ public class Bolo {
                         new StopCmd(bot),
                         new VolumeCmd(bot),
 
-                        //ADMIN COMMANDS
+                        // ADMIN COMMANDS
 
                         new PrefixCmd(bot),
                         new SetdjCmd(bot),
@@ -221,7 +219,8 @@ public class Bolo {
                         new SetWelcomeMessageCmd(bot),
                         new SetRoleManagerCmd(bot),
                         new SetWelcomeImageCmd(bot),
-                        new SetGoodByeImageCmd(bot))
+                        new SetGoodByeImageCmd(bot),
+                        new AddEightBallAnswer(bot))
 
                 .addCommands(
 
@@ -240,14 +239,14 @@ public class Bolo {
                         new MemeListCmd(bot),
                         new ShowImageChannelsCmd(bot),
 
-                        //NSFW COMMANDS
+                        // NSFW COMMANDS
 
                         new AnalCmd(bot),
                         new CumCmd(bot),
                         new FuckCmd(bot),
                         new PipilinCmd(),
 
-                        //MUSIC COMMANDS
+                        // MUSIC COMMANDS
 
                         new LyricsCmd(bot),
                         new NowplayingCmd(bot),
@@ -272,7 +271,7 @@ public class Bolo {
                         new StopCmd(bot),
                         new VolumeCmd(bot),
 
-                        //ADMIN COMMANDS
+                        // ADMIN COMMANDS
 
                         new PrefixCmd(bot),
                         new SetdjCmd(bot),
@@ -310,8 +309,7 @@ public class Bolo {
                         new SetnameCmd(bot),
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot),
-                        new SendGlobalMessageCmd(bot)
-                );
+                        new SendGlobalMessageCmd(bot));
 
         if (config.isUseEval())
             cb.addCommand(new EvalCmd(bot));

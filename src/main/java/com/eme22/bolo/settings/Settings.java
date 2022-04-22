@@ -194,6 +194,13 @@ public class Settings implements GuildSettingsProvider {
         }
     }
 
+    public void addToEightBallAnswers(String answer) {
+        if (this.eightBallAnswers.contains(answer))
+            return;
+
+        this.eightBallAnswers.add(answer);
+    }
+
     public void addToRoleManagers(RoleManager manager) {
         this.roleManagerList.add(manager);
     }

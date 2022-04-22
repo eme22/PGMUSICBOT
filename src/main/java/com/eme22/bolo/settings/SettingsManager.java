@@ -32,29 +32,28 @@ import java.util.HashMap;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class SettingsManager implements GuildSettingsManager<Settings>
-{
+public class SettingsManager implements GuildSettingsManager<Settings> {
     private final static double SKIP_RATIO = .55;
     private final HashMap<Long, Settings> settings;
 
-    public SettingsManager()
-    {
+    public SettingsManager() {
         this.settings = new HashMap<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
             File file = new File("serversettings.json");
             if (!file.exists())
                 throw new IOException();
-            HashMap<Long, Settings> temp_Settings = mapper.readValue(file, new TypeReference<>() {});
-            temp_Settings.forEach( (aLong, settingsTEST) -> this.settings.put(aLong, settingsTEST.withManager(this)));
+            HashMap<Long, Settings> temp_Settings = mapper.readValue(file, new TypeReference<>() {
+            });
+            temp_Settings.forEach((aLong, settingsTEST) -> this.settings.put(aLong, settingsTEST.withManager(this)));
 
-        } catch( IOException e) {
-            LoggerFactory.getLogger("Settings").warn("Failed to load server settings (this is normal if no settings have been set yet): "+e);
+        } catch (IOException e) {
+            LoggerFactory.getLogger("Settings")
+                    .warn("Failed to load server settings (this is normal if no settings have been set yet): " + e);
         }
 
-
     }
-    
+
     /**
      * Gets non-null settings for a Guild
      * 
@@ -62,30 +61,27 @@ public class SettingsManager implements GuildSettingsManager<Settings>
      * @return the existing settings, or new settings for that guild
      */
     @Override
-    public Settings getSettings(Guild guild)
-    {
+    public Settings getSettings(Guild guild) {
         return getSettings(guild.getIdLong());
     }
-    
-    public Settings getSettings(long guildId)
-    {
+
+    public Settings getSettings(long guildId) {
         Settings data = null;
         try {
             data = settings.computeIfAbsent(guildId, id -> createDefaultSettings());
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return data;
     }
 
-    protected Settings createDefaultSettings()
-    {
-        return new Settings(this, 0, 0, 0, 0, BotConfig.DEFAULT_VOLUME, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null, null,0, null,null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    protected Settings createDefaultSettings() {
+        return new Settings(this, 0, 0, 0, 0, BotConfig.DEFAULT_VOLUME, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null,
+                null, 0, null, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>());
     }
-    
-    public void writeSettings()
-    {
 
+    public void writeSettings() {
 
         // convert book object to JSON file
         try {
@@ -98,8 +94,7 @@ public class SettingsManager implements GuildSettingsManager<Settings>
 
     }
 
-    protected void deleteSettings(String guild)
-    {
+    protected void deleteSettings(String guild) {
         settings.remove(Long.parseLong(guild));
     }
 }
