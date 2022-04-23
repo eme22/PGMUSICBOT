@@ -240,6 +240,7 @@ public class Bolo {
                         new PokeCmd(bot),
                         new MemeListCmd(bot),
                         new ShowImageChannelsCmd(bot),
+                        new EightBallCmd(bot),
 
                         // NSFW COMMANDS
 
