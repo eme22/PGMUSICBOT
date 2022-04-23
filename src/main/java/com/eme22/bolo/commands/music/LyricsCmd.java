@@ -71,16 +71,23 @@ public class LyricsCmd extends MusicCommand
         else
             title = event.getArgs();
         event.getChannel().sendTyping().queue();
-        client.getLyrics(title).thenAccept(lyrics -> 
-        {
-            if(lyrics == null)
-            {
-                event.replyError("Lyrics for `" + title + "` could not be found!" + (event.getArgs().isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : ""));
-                return;
-            }
+        // client.getLyrics(title).thenAccept(lyrics -> 
+        // {
+        //     if(lyrics == null)
+        //     {
+        //         event.replyError("Lyrics for `" + title + "` could not be found!" + (event.getArgs().isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : ""));
+        //         return;
+        //     }
 
-            showLyrics(event, event.getSelfMember().getColor(), null, title, lyrics);
-        });
+        //     showLyrics(event, event.getSelfMember().getColor(), null, title, lyrics);
+        // });
+        Lyrics lyrics = this.getLyrics(title);
+        if(lyrics == null)
+        {
+            event.replyError("Lyrics for `" + title + "` could not be found!" + (event.getArgs().isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : ""));
+            return;
+        }
+        showLyrics(event, event.getSelfMember().getColor(), null, title, lyrics);
     }
 
     @Override
@@ -102,16 +109,28 @@ public class LyricsCmd extends MusicCommand
         }
         else
             title = option.getAsString();
-        event.deferReply().queue( interactionHook -> client.getLyrics(title).thenAccept(lyrics ->
-        {
+        // event.deferReply().queue( interactionHook -> client.getLyrics(title).thenAccept(lyrics ->
+        // {
+        //     if(lyrics == null)
+        //     {
+        //         interactionHook.editOriginal (getClient().getError()+ "Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
+        //         return;
+        //     }
+
+        //     showLyrics(event, event.getGuild().getSelfMember().getColor(), null, title, lyrics);
+        // }));
+
+        event.deferReply().queue(interaction -> {
+            Lyrics lyrics = this.getLyrics(title);
             if(lyrics == null)
             {
-                interactionHook.editOriginal (getClient().getError()+ "Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
+                interaction.editOriginal(getClient().getError()+ "Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
                 return;
             }
 
             showLyrics(event, event.getGuild().getSelfMember().getColor(), null, title, lyrics);
-        }));
+        });
+
     }
 
     public static void showLyrics(@Nullable CommandEvent event, Color color, TextChannel channel, String title, Lyrics lyrics) {
@@ -194,5 +213,31 @@ public class LyricsCmd extends MusicCommand
             channel.sendMessageEmbeds(eb.setDescription(lyrics.getContent()).build()).complete();
         else
             event.replyEmbeds(eb.setDescription(lyrics.getContent()).build()).queue();
+    }
+
+    private String formatTitleSong(String title) {
+        // Remove words between parentheses
+        title = title.replaceAll("\\(.*\\)", "");
+        // Remove words between brackets
+        title = title.replaceAll("\\[.*\\]", "");
+        // Remove words between curly braces
+        title = title.replaceAll("\\{.*\\}", "");
+        return title;
+    }
+
+    private Lyrics getLyrics(String title) {
+        String formattedTitle = formatTitleSong(title);
+        String[] sources = { "A-Z Lyrics", "Genius", "MusixMatch", "LyricsFreak" };
+        
+        try {
+            for (String source : sources) {
+                Lyrics lyrics = client.getLyrics(formattedTitle, source).get();
+                if (lyrics != null)
+                    return lyrics;
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

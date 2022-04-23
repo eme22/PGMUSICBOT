@@ -196,7 +196,7 @@ public class Settings implements GuildSettingsProvider {
 
     @JsonIgnore
     private void addDefault8BallAnswers() {
-        this.eightBallAnswers.add("Si");
+        this.eightBallAnswers.add("Sí");
         this.eightBallAnswers.add("No");
     }
 
@@ -220,7 +220,9 @@ public class Settings implements GuildSettingsProvider {
         return roleManagerList.stream().filter(manager -> manager.getId() == messageID).findFirst().orElse(null);
     }
 
-    public void deleteRoleManagers(Long messageID) { this.roleManagerList.removeIf(memeImage -> memeImage.getId() == messageID); }
+    public void deleteRoleManagers(Long messageID) {
+        this.roleManagerList.removeIf(memeImage -> memeImage.getId() == messageID);
+    }
 
     public void clearServerData(Guild guild) {
         this.manager.deleteSettings(guild.getId());

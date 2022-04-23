@@ -29,9 +29,14 @@ public class EightBallCmd extends SlashCommand {
 
 		String question = event.getOption("pregunta").getAsString();
 
+		if (question.trim().isEmpty()) {
+			event.reply("¡Escribe una pregunta!").complete();
+			return;
+		}
+
 		EmbedBuilder response = new EmbedBuilder()
 				.setTitle("Pregúntale a " + event.getGuild().getSelfMember().getUser().getName()).setDescription(
-						"**" + question + "**\n>" + settings.getRandomAnswer());
+						"**" + question + "**\n> " + settings.getRandomAnswer());
 
 		event.replyEmbeds(response.build()).queue();
 	}
@@ -42,9 +47,14 @@ public class EightBallCmd extends SlashCommand {
 
 		String question = event.getArgs();
 
+		if (question.trim().isEmpty()) {
+			event.reply("¡Escribe una pregunta!");
+			return;
+		}
+
 		EmbedBuilder response = new EmbedBuilder()
 				.setTitle("Pregúntale a " + event.getGuild().getSelfMember().getUser().getName()).setDescription(
-						"**" + question + "**\n>" + settings.getRandomAnswer());
+						"**" + question + "**\n> " + settings.getRandomAnswer());
 
 		event.reply(response.build());
 	}
