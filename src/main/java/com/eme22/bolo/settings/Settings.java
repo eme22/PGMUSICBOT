@@ -184,6 +184,7 @@ public class Settings implements GuildSettingsProvider {
         this.memeImages.remove(position);
     }
 
+    @JsonIgnore
     public String getRandomAnswer() {
 
         if (this.eightBallAnswers.isEmpty())
@@ -193,6 +194,7 @@ public class Settings implements GuildSettingsProvider {
         return this.eightBallAnswers.get(rand);
     }
 
+    @JsonIgnore
     private void addDefault8BallAnswers() {
         this.eightBallAnswers.add("Si");
         this.eightBallAnswers.add("No");
