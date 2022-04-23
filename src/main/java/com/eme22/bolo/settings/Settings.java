@@ -79,15 +79,15 @@ public class Settings implements GuildSettingsProvider {
     @JsonProperty("despedidas_channel_message")
     private String despedidasChannelMessage;
     @JsonProperty("image_only_channels_ids")
-    private List<Long> imageOnlyChannelsIds;
+    private List<Long> imageOnlyChannelsIds = new ArrayList<>();
     @JsonProperty("meme_images")
-    private List<MemeImage> memeImages;
+    private List<MemeImage> memeImages = new ArrayList<>();
     @JsonProperty("polls")
-    private List<Poll> polls;
+    private List<Poll> polls = new ArrayList<>();
     @JsonProperty("role_manager")
-    private List<RoleManager> roleManagerList;
+    private List<RoleManager> roleManagerList = new ArrayList<>();
     @JsonProperty("8ball_answers")
-    private List<String> eightBallAnswers;
+    private List<String> eightBallAnswers = new ArrayList<>();
 
     public void addPollForGuild(Long messageId, Poll poll) {
         if (this.polls.stream().anyMatch(poll1 -> poll1.getId() == messageId))
