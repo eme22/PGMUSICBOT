@@ -25,8 +25,9 @@ public class MemeListCmd extends SlashCommand {
                 .setColumns(1)
                 .setFinalAction(m -> {
                     try {
-                        m.delete().queue();
-                    } catch (PermissionException ignore) { }
+                        m.clearReactions().queue();
+                    } catch (PermissionException ignore) {
+                    }
                 })
                 .setItemsPerPage(20)
                 .waitOnSinglePage(false)

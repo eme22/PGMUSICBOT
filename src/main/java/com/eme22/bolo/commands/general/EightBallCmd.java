@@ -38,7 +38,7 @@ public class EightBallCmd extends SlashCommand {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		Settings settings = getClient().getSettingsFor(event.getGuild());
+		Settings settings = event.getClient().getSettingsFor(event.getGuild());
 
 		String question = event.getArgs();
 

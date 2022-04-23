@@ -36,7 +36,7 @@ public class DeleteEightBallAnswer extends AdminCommand {
 
 	@Override
 	protected void execute(CommandEvent event) {
-		Settings settings = getClient().getSettingsFor(event.getGuild());
+		Settings settings = event.getClient().getSettingsFor(event.getGuild());
 		int answer = Integer.parseInt(event.getArgs());
 
 		if (answer >= settings.getEightBallAnswers().size()) {

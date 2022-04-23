@@ -24,8 +24,9 @@ public class EightBallAnswerList extends AdminCommand {
                 .setColumns(1)
                 .setFinalAction(m -> {
                     try {
-                        m.delete().queue();
-                    } catch (PermissionException ignore) { }
+                        m.clearReactions().queue();
+                    } catch (PermissionException ignore) {
+                    }
                 })
                 .setItemsPerPage(20)
                 .waitOnSinglePage(false)
@@ -53,7 +54,7 @@ public class EightBallAnswerList extends AdminCommand {
 
     @Override
     protected void execute(CommandEvent event) {
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         List<String> data = s.getEightBallAnswers();
         if (data.isEmpty()){
             event.replyError(" No hay respuestas para mostrar");

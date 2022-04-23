@@ -301,6 +301,9 @@ public class Bolo {
                         new SetRoleManagerCmd(bot),
                         new SetWelcomeImageCmd(bot),
                         new SetGoodByeImageCmd(bot),
+                        new AddEightBallAnswer(bot),
+                        new DeleteEightBallAnswer(bot),
+                        new EightBallAnswerList(bot),
 
                         // OWNER COMMANDS
 
@@ -312,7 +315,8 @@ public class Bolo {
                         new SetnameCmd(bot),
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot),
-                        new SendGlobalMessageCmd(bot));
+                        new SendGlobalMessageCmd(bot),
+                        new ReloadSettings(bot));
 
         if (config.isUseEval())
             cb.addCommand(new EvalCmd(bot));

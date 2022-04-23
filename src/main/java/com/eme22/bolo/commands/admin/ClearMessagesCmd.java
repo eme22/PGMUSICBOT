@@ -19,9 +19,9 @@ public class ClearMessagesCmd extends AdminCommand {
     {
         this.name = "clear";
         this.help = "limpia los mensajes especificados";
-        this.arguments = "<1 - 100>";
+        this.arguments = "<2 - 100>";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "mensajes", "numero entre 1 al 100").setMinValue(1).setMaxValue(100).setRequired(true));
+        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "mensajes", "numero entre 2 al 100").setMinValue(2).setMaxValue(100).setRequired(true));
     }
 
     @Override

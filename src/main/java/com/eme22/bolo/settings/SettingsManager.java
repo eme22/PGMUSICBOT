@@ -38,6 +38,11 @@ public class SettingsManager implements GuildSettingsManager<Settings> {
 
     public SettingsManager() {
         this.settings = new HashMap<>();
+        loadSettings();
+
+    }
+
+    public void loadSettings() {
         try {
             ObjectMapper mapper = new ObjectMapper();
             File file = new File("serversettings.json");
@@ -51,7 +56,6 @@ public class SettingsManager implements GuildSettingsManager<Settings> {
             LoggerFactory.getLogger("Settings")
                     .warn("Failed to load server settings (this is normal if no settings have been set yet): " + e);
         }
-
     }
 
     /**
