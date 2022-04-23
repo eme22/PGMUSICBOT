@@ -1,10 +1,9 @@
-package com.eme22.bolo.commands.general;
+package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.entities.MemeImage;
+import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.menu.Paginator;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -12,13 +11,13 @@ import net.dv8tion.jda.api.exceptions.PermissionException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MemeListCmd extends SlashCommand {
+public class EightBallAnswerList extends AdminCommand {
 
     private final Paginator.Builder builder;
 
-    public MemeListCmd(Bot bot) {
-        this.name = "memelist";
-        this.help = "muestra la lista de memes del servidor";
+    public EightBallAnswerList(Bot bot) {
+        this.name = "8ballanswers";
+        this.help = "muestra la lista de respuestas del comando 8ball del servidor";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
         this.builder = new Paginator.Builder()
@@ -35,50 +34,34 @@ public class MemeListCmd extends SlashCommand {
                 .wrapPageEnds(true)
                 .setEventWaiter(bot.getWaiter())
                 .setTimeout(10, TimeUnit.MINUTES);
+
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-
         Settings s = getClient().getSettingsFor(event.getGuild());
-
-        List<MemeImage> data = s.getMemeImages();
-
-        String[] songs = new String[data.size()];
-        for (int i = 0; i < data.size(); i++) {
-            songs[i] = data.get(i).getMessage();
-        }
-
-        if (songs.length == 0){
-            event.reply( getClient().getError()+ "No hay memes para mostrar").setEphemeral(true).queue();
+        List<String> data = s.getEightBallAnswers();
+        if (data.isEmpty()){
+            event.reply( getClient().getError()+ " No hay respuestas para mostrar").setEphemeral(true).queue();
             return;
         }
 
-        event.reply(getClient().getSuccess()+ " Lista de memes").queue();
-        builder.setText("").setItems(songs);
+        event.reply(getClient().getSuccess()+ " Lista de respuestas del comando 8ball").queue();
+        builder.setText("").setItems(data.toArray(new String[0]));
         builder.build().paginate(event.getChannel(), 1);
     }
 
     @Override
     protected void execute(CommandEvent event) {
-
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
-
-        List<MemeImage> data = s.getMemeImages();
-
-        String[] songs = new String[data.size()];
-        for (int i = 0; i < data.size(); i++) {
-            songs[i] = data.get(i).getMessage();
-        }
-
-        if (songs.length == 0){
-            event.replyError(" No hay memes para mostrar");
+        Settings s = getClient().getSettingsFor(event.getGuild());
+        List<String> data = s.getEightBallAnswers();
+        if (data.isEmpty()){
+            event.replyError(" No hay respuestas para mostrar");
             return;
         }
 
-        builder.setText(getClient().getSuccess()+ " Lista de memes")
-                .setItems(songs);
+        event.replySuccess( " Lista de respuestas del comando 8ball");
+        builder.setText("").setItems(data.toArray(new String[0]));
         builder.build().paginate(event.getChannel(), 1);
     }
-
 }

@@ -220,7 +220,9 @@ public class Bolo {
                         new SetRoleManagerCmd(bot),
                         new SetWelcomeImageCmd(bot),
                         new SetGoodByeImageCmd(bot),
-                        new AddEightBallAnswer(bot))
+                        new AddEightBallAnswer(bot),
+                        new DeleteEightBallAnswer(bot),
+                        new EightBallAnswerList(bot))
 
                 .addCommands(
 

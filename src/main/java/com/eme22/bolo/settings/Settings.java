@@ -35,7 +35,8 @@ import java.util.*;
         "image_only_channels_ids",
         "meme_images",
         "polls",
-        "role_manager"
+        "role_manager",
+        "8ball_answers"
 })
 
 @AllArgsConstructor
@@ -184,14 +185,17 @@ public class Settings implements GuildSettingsProvider {
     }
 
     public String getRandomAnswer() {
-        String[] defaultAnswers = { "Sí", "No" };
 
-        if (this.eightBallAnswers.size() == 0)
-            return defaultAnswers[new Random().nextInt(defaultAnswers.length)];
-        else {
-            int rand = new Random().nextInt(this.eightBallAnswers.size());
-            return this.eightBallAnswers.get(rand);
-        }
+        if (this.eightBallAnswers.isEmpty())
+            addDefault8BallAnswers();
+
+        int rand = new Random().nextInt(this.eightBallAnswers.size());
+        return this.eightBallAnswers.get(rand);
+    }
+
+    private void addDefault8BallAnswers() {
+        this.eightBallAnswers.add("Si");
+        this.eightBallAnswers.add("No");
     }
 
     public void addToEightBallAnswers(String answer) {
@@ -199,6 +203,10 @@ public class Settings implements GuildSettingsProvider {
             return;
 
         this.eightBallAnswers.add(answer);
+    }
+
+    public void removeFrom8BallAnswers(int answer) {
+        this.eightBallAnswers.remove(answer);
     }
 
     public void addToRoleManagers(RoleManager manager) {
@@ -210,9 +218,7 @@ public class Settings implements GuildSettingsProvider {
         return roleManagerList.stream().filter(manager -> manager.getId() == messageID).findFirst().orElse(null);
     }
 
-    public void deleteRoleManagers(Long messageID) {
-        this.roleManagerList.removeIf(memeImage -> memeImage.getId() == messageID);
-    }
+    public void deleteRoleManagers(Long messageID) { this.roleManagerList.removeIf(memeImage -> memeImage.getId() == messageID); }
 
     public void clearServerData(Guild guild) {
         this.manager.deleteSettings(guild.getId());
