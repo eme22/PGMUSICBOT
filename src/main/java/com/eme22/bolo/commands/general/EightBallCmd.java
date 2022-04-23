@@ -1,16 +1,15 @@
 package com.eme22.bolo.commands.general;
 
-import java.util.Collections;
-import java.util.Random;
-
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.settings.Settings;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
-
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.Collections;
 
 public class EightBallCmd extends SlashCommand {
 
@@ -31,10 +30,22 @@ public class EightBallCmd extends SlashCommand {
 		String question = event.getOption("pregunta").getAsString();
 
 		EmbedBuilder response = new EmbedBuilder()
-				.setTitle("Pregúntale a " + event.getGuild().getSelfMember().getNickname()).setDescription(
+				.setTitle("Pregúntale a " + event.getGuild().getSelfMember().getUser().getName()).setDescription(
 						"**" + question + "**\n>" + settings.getRandomAnswer());
 
 		event.replyEmbeds(response.build()).queue();
 	}
 
+	@Override
+	protected void execute(CommandEvent event) {
+		Settings settings = getClient().getSettingsFor(event.getGuild());
+
+		String question = event.getArgs();
+
+		EmbedBuilder response = new EmbedBuilder()
+				.setTitle("Pregúntale a " + event.getGuild().getSelfMember().getUser().getName()).setDescription(
+						"**" + question + "**\n>" + settings.getRandomAnswer());
+
+		event.reply(response.build());
+	}
 }
