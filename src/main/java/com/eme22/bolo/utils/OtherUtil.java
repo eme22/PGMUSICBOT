@@ -23,6 +23,8 @@ import com.eme22.bolo.entities.Pair;
 import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.entities.Prompt;
 import com.eme22.bolo.settings.Settings;
+import com.jagrosh.jlyrics.Lyrics;
+import com.jagrosh.jlyrics.LyricsClient;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import okhttp3.OkHttpClient;
@@ -676,5 +678,28 @@ public class OtherUtil
             return 1;
         }
         return 0;
+    }
+
+    public static Lyrics getLyrics(String title) {
+
+        // Remove words between parentheses
+        title = title.replaceAll("\\(.*\\)", "");
+        // Remove words between brackets
+        title = title.replaceAll("\\[.*\\]", "");
+        // Remove words between curly braces
+        title = title.replaceAll("\\{.*\\}", "");
+
+        String[] sources = { "A-Z Lyrics", "Genius", "MusixMatch", "LyricsFreak" };
+        final LyricsClient client = new LyricsClient();
+        try {
+            for (String source : sources) {
+                Lyrics lyrics = client.getLyrics(title, source).get();
+                if (lyrics != null)
+                    return lyrics;
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

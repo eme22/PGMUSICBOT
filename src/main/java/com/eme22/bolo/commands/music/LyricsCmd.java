@@ -18,9 +18,9 @@ package com.eme22.bolo.commands.music;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.MusicCommand;
+import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jlyrics.Lyrics;
-import com.jagrosh.jlyrics.LyricsClient;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -39,7 +39,6 @@ import java.util.Collections;
  */
 public class LyricsCmd extends MusicCommand
 {
-    private final LyricsClient client = new LyricsClient();
     
     public LyricsCmd(Bot bot)
     {
@@ -81,7 +80,7 @@ public class LyricsCmd extends MusicCommand
 
         //     showLyrics(event, event.getSelfMember().getColor(), null, title, lyrics);
         // });
-        Lyrics lyrics = this.getLyrics(title);
+        Lyrics lyrics = OtherUtil.getLyrics(title);
         if(lyrics == null)
         {
             event.replyError("Lyrics for `" + title + "` could not be found!" + (event.getArgs().isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : ""));
@@ -121,7 +120,7 @@ public class LyricsCmd extends MusicCommand
         // }));
 
         event.deferReply().queue(interaction -> {
-            Lyrics lyrics = this.getLyrics(title);
+            Lyrics lyrics = OtherUtil.getLyrics(title);
             if(lyrics == null)
             {
                 interaction.editOriginal(getClient().getError()+ "Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
@@ -215,29 +214,4 @@ public class LyricsCmd extends MusicCommand
             event.replyEmbeds(eb.setDescription(lyrics.getContent()).build()).queue();
     }
 
-    private String formatTitleSong(String title) {
-        // Remove words between parentheses
-        title = title.replaceAll("\\(.*\\)", "");
-        // Remove words between brackets
-        title = title.replaceAll("\\[.*\\]", "");
-        // Remove words between curly braces
-        title = title.replaceAll("\\{.*\\}", "");
-        return title;
-    }
-
-    private Lyrics getLyrics(String title) {
-        String formattedTitle = formatTitleSong(title);
-        String[] sources = { "A-Z Lyrics", "Genius", "MusixMatch", "LyricsFreak" };
-        
-        try {
-            for (String source : sources) {
-                Lyrics lyrics = client.getLyrics(formattedTitle, source).get();
-                if (lyrics != null)
-                    return lyrics;
-            }
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

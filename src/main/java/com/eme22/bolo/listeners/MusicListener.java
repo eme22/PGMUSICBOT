@@ -9,7 +9,7 @@ import com.eme22.bolo.entities.MusicPlayerEmoji;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.menu.Paginator;
-import com.jagrosh.jlyrics.LyricsClient;
+import com.jagrosh.jlyrics.Lyrics;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -118,17 +118,19 @@ public class MusicListener extends ListenerAdapter {
         }
 
         event.getChannel().sendTyping().queue();
-        String finalTitle = formatTitle(title);
-        new LyricsClient().getLyrics(title).thenAccept(lyrics ->
+
+        Lyrics lyrics = OtherUtil.getLyrics(title);
+
+        if(lyrics == null)
         {
-            if (lyrics == null)
-                event.getTextChannel().sendMessage("Lyrics for `" + finalTitle + "` could not be found!" + (finalTitle.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
-            else
-                LyricsCmd.showLyrics(null, event.getGuild().getSelfMember().getColor(), event.getTextChannel(), finalTitle, lyrics);
-        });
+            event.getTextChannel().sendMessage("Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
+            return;
+        }
+        LyricsCmd.showLyrics(null, event.getGuild().getSelfMember().getColor(), event.getTextChannel(), title, lyrics);
         try {
             event.getReaction().removeReaction(user).queue(s -> {}, t -> {});
         } catch (ErrorResponseException ignore) {}
+
     }
 
     private void showQueueListPlayer(@NotNull MessageReactionAddEvent event, User user) {
