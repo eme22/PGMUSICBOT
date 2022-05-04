@@ -77,7 +77,7 @@ public class MemeListCmd extends SlashCommand {
             return;
         }
 
-        builder.setText(getClient().getSuccess()+ " Lista de memes")
+        builder.setText(event.getClient().getSuccess()+ " Lista de memes")
                 .setItems(songs);
         builder.build().paginate(event.getChannel(), 1);
     }
