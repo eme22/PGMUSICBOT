@@ -36,7 +36,8 @@ import java.util.*;
         "meme_images",
         "polls",
         "role_manager",
-        "8ball_answers"
+        "8ball_answers",
+        "locale"
 })
 
 @AllArgsConstructor
@@ -88,6 +89,8 @@ public class Settings implements GuildSettingsProvider {
     private List<RoleManager> roleManagerList = new ArrayList<>();
     @JsonProperty("8ball_answers")
     private List<String> eightBallAnswers = new ArrayList<>();
+    @JsonProperty("locale")
+    private String locale;
 
     public void addPollForGuild(Long messageId, Poll poll) {
         if (this.polls.stream().anyMatch(poll1 -> poll1.getId() == messageId))
