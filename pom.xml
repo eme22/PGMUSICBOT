@@ -121,7 +121,7 @@
         <dependency>
             <groupId>com.github.eme22</groupId>
             <artifactId>anime-image-api</artifactId>
-            <version>0.3</version>
+            <version>0.4</version>
         </dependency>
     </dependencies>
     
