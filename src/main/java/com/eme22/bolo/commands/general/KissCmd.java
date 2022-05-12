@@ -1,8 +1,7 @@
 package com.eme22.bolo.commands.general;
 
+import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
-import com.eme22.anime.NekosClient;
-import com.eme22.anime.WaifuClient;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -47,10 +46,7 @@ public class KissCmd extends SlashCommand {
         }
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomKiss() + memberKissed.getAsMention());
-        if (new Random().nextBoolean())
-            builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.KISS));
-        else
-            builder.setImage(new NekosClient().getImage(Endpoints.NEKO.KISS));
+        builder.setImage(getRandomImage());
         event.replyEmbeds(builder.build()).queue();
     }
 
@@ -78,10 +74,23 @@ public class KissCmd extends SlashCommand {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomKiss() + memberKissed.getAsMention());
-        if (new Random().nextBoolean())
-            builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.KISS));
-        else
-            builder.setImage(new NekosClient().getImage(Endpoints.NEKO.KISS));
+        builder.setImage(getRandomImage());
         event.reply(builder.build());
+    }
+
+    private String getRandomImage() {
+        AnimeImageClient animeImageClient = new AnimeImageClient();
+        try {
+            if (new Random().nextBoolean())
+                return animeImageClient.getImage(Endpoints.WAIFU_SFW.KISS);
+            else
+                if (new Random().nextBoolean())
+                    return animeImageClient.getImage(Endpoints.KAWAII_SFW.KISS);
+                else
+                    return animeImageClient.getImage(Endpoints.NEKO.KISS);
+        }
+        catch (Exception e) {
+            return getRandomImage();
+        }
     }
 }

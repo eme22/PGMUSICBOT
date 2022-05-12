@@ -247,7 +247,7 @@ public class Bolo {
                         new AnalCmd(bot),
                         new CumCmd(bot),
                         new FuckCmd(bot),
-                        new PipilinCmd(),
+                        //new PipilinCmd(),
 
                         // MUSIC COMMANDS
 

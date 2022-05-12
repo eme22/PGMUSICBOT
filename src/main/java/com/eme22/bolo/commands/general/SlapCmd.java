@@ -1,8 +1,7 @@
 package com.eme22.bolo.commands.general;
 
+import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
-import com.eme22.anime.NekosClient;
-import com.eme22.anime.WaifuClient;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -49,10 +48,7 @@ public class SlapCmd extends SlashCommand {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomSlap() + memberKissed.getAsMention());
 
-        if (new Random().nextBoolean())
-            builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.SLAP));
-        else
-            builder.setImage(new NekosClient().getImage(Endpoints.NEKO.SLAP));
+        builder.setImage(getRandomImage());
         event.replyEmbeds(builder.build()).queue();
     }
 
@@ -80,10 +76,29 @@ public class SlapCmd extends SlashCommand {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomSlap() + memberKissed.getAsMention());
-        if (new Random().nextBoolean())
-            builder.setImage(new WaifuClient().getSFWImage(Endpoints.WAIFU_SFW.SLAP));
-        else
-            builder.setImage(new NekosClient().getImage(Endpoints.NEKO.SLAP));
+        builder.setImage(getRandomImage());
         event.reply(builder.build());
+
+    }
+
+    private String getRandomImage() {
+        AnimeImageClient animeImageClient = new AnimeImageClient();
+        try {
+            if (new Random().nextBoolean()) {
+                if (new Random().nextBoolean())
+                    return animeImageClient.getImage(Endpoints.KAWAII_SFW.SLAP);
+                else
+                    return animeImageClient.getImage(Endpoints.WAIFU_SFW.SLAP);
+            } else {
+                if (new Random().nextBoolean())
+                    return animeImageClient.getImage(Endpoints.HM_SFW.SLAP);
+                else
+                    return animeImageClient.getImage(Endpoints.NEKO.SLAP);
+            }
+
+        }
+        catch (Exception e) {
+            return getRandomImage();
+        }
     }
 }

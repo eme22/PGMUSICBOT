@@ -1,7 +1,7 @@
 package com.eme22.bolo.commands.general.nsfw;
 
+import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
-import com.eme22.anime.NekosClient;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -46,7 +46,10 @@ public class AnalCmd extends SlashCommand {
         }
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomAnal() + memberKissed.getAsMention());
-        builder.setImage(new NekosClient().getImage(Endpoints.NEKO.ANAL));
+        try {
+            builder.setImage(new AnimeImageClient().getImage(Endpoints.KAWAII_NSFW.ANAL));
+        }
+        catch (Exception ignored) {}
         event.replyEmbeds(builder.build()).queue();
     }
 
@@ -74,7 +77,21 @@ public class AnalCmd extends SlashCommand {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomAnal() + memberKissed.getAsMention());
-        builder.setImage(new NekosClient().getImage(Endpoints.NEKO.ANAL));
+        try {
+            builder.setImage(new AnimeImageClient().getImage(Endpoints.KAWAII_NSFW.ANAL));
+        }
+        catch (Exception ignored) {}
         event.reply(builder.build());
+    }
+
+    private String getRandomImage() {
+        AnimeImageClient animeImageClient = new AnimeImageClient();
+        try {
+            return animeImageClient.getImage(Endpoints.KAWAII_NSFW.ANAL);
+
+        }
+        catch (Exception e) {
+            return getRandomImage();
+        }
     }
 }

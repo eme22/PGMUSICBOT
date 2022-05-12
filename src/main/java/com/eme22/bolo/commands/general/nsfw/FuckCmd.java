@@ -1,7 +1,7 @@
 package com.eme22.bolo.commands.general.nsfw;
 
+import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
-import com.eme22.anime.NekosClient;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class FuckCmd extends SlashCommand {
 
@@ -46,7 +47,7 @@ public class FuckCmd extends SlashCommand {
         }
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomFuck() + memberKissed.getAsMention());
-        builder.setImage(new NekosClient().getImage(Endpoints.NEKO.CLASSIC));
+        builder.setImage(getRandomImage());
         event.replyEmbeds(builder.build()).queue();
     }
 
@@ -74,7 +75,20 @@ public class FuckCmd extends SlashCommand {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomFuck() + memberKissed.getAsMention());
-        builder.setImage(new NekosClient().getImage(Endpoints.NEKO.CLASSIC));
+        builder.setImage(getRandomImage());
         event.reply(builder.build());
+    }
+
+    private String getRandomImage() {
+        AnimeImageClient animeImageClient = new AnimeImageClient();
+        try {
+            if (new Random().nextBoolean())
+                return animeImageClient.getImage(Endpoints.HM_NSFW.HENTAI);
+            else
+                return animeImageClient.getImage(Endpoints.KAWAII_NSFW.FUCK);
+        }
+        catch (Exception e) {
+            return animeImageClient.getImage(Endpoints.HM_NSFW.HENTAI);
+        }
     }
 }
