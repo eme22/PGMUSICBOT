@@ -212,7 +212,7 @@ public class Bolo {
                         new SkipratioCmd(bot),
                         new SettcCmd(bot),
                         new SetvcCmd(bot),
-                        new ClearDataCmd(bot),
+                        //new ClearDataCmd(bot),
                         new ClearMessagesCmd(bot),
                         new SetGoodByeMessageCmd(bot),
                         new SetWelcomeMessageCmd(bot),
