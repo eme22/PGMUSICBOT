@@ -21,7 +21,6 @@ import com.eme22.bolo.commands.general.*;
 import com.eme22.bolo.commands.general.nsfw.AnalCmd;
 import com.eme22.bolo.commands.general.nsfw.CumCmd;
 import com.eme22.bolo.commands.general.nsfw.FuckCmd;
-import com.eme22.bolo.commands.general.nsfw.PipilinCmd;
 import com.eme22.bolo.commands.music.*;
 import com.eme22.bolo.commands.owner.*;
 import com.eme22.bolo.entities.Prompt;
@@ -63,7 +62,7 @@ public class Bolo {
     public final static String STOP_EMOJI = "\u23F9"; // ⏹
     public final static Permission[] RECOMMENDED_PERMS = { Permission.MESSAGE_READ, Permission.MESSAGE_WRITE,
             Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
-            Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE,
+            Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.ADMINISTRATOR,
             Permission.MESSAGE_EXT_EMOJI,
             Permission.MANAGE_CHANNEL, Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE };
     public final static GatewayIntent[] INTENTS = { GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES,
@@ -217,9 +216,12 @@ public class Bolo {
                         new ClearMessagesCmd(bot),
                         new SetGoodByeMessageCmd(bot),
                         new SetWelcomeMessageCmd(bot),
+                        new SetWelcomeEnabledCmd(bot),
                         new SetRoleManagerCmd(bot),
+                        new SetRoleManagerToggledCmd(bot),
                         new SetWelcomeImageCmd(bot),
                         new SetGoodByeImageCmd(bot),
+                        new SetGoodByeEnabledCmd(bot),
                         new AddEightBallAnswer(bot),
                         new DeleteEightBallAnswer(bot),
                         new EightBallAnswerList(bot))
@@ -297,8 +299,11 @@ public class Bolo {
                         new ClearDataCmd(bot),
                         new ClearMessagesCmd(bot),
                         new SetGoodByeMessageCmd(bot),
+                        new SetWelcomeEnabledCmd(bot),
                         new SetWelcomeMessageCmd(bot),
                         new SetRoleManagerCmd(bot),
+                        new SetRoleManagerToggledCmd(bot),
+                        new SetGoodByeEnabledCmd(bot),
                         new SetWelcomeImageCmd(bot),
                         new SetGoodByeImageCmd(bot),
                         new AddEightBallAnswer(bot),
@@ -361,12 +366,12 @@ public class Bolo {
                     .build();
             bot.setJDA(jda);
         } catch (LoginException ex) {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", ex + "\nPlease make sure you are "
+            prompt.alert(Prompt.Level.ERROR, "Franquito", ex + "\nPlease make sure you are "
                     + "editing the correct config.txt file, and that you have used the "
                     + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         } catch (IllegalArgumentException ex) {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", "Some aspect of the configuration is "
+            prompt.alert(Prompt.Level.ERROR, "Franquito", "Some aspect of the configuration is "
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }

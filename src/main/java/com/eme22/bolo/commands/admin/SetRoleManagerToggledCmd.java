@@ -12,22 +12,20 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.internal.utils.Checks;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class SetRoleManagerCmd extends AdminCommand {
+public class SetRoleManagerToggledCmd extends AdminCommand {
 
     protected final Bot bot;
 
-    public SetRoleManagerCmd(Bot bot)
+    public SetRoleManagerToggledCmd(Bot bot)
     {
         this.bot = bot;
-        this.name = "rolemsgbuild";
+        this.name = "rolemsgtoggledbuild";
         this.help = "crea un mensaje en el cual los usuarios pueden reaccionar para obtener un rol determinado";
         this.arguments = "[Mensaje] emoji rol emoji rol... emoji rol";
         this.aliases = bot.getConfig().getAliases(this.name);
@@ -96,7 +94,6 @@ public class SetRoleManagerCmd extends AdminCommand {
                 if (emoji.startsWith("<"))
                     emoji = emoji.substring(2, emoji.length()-1);
                 success.addReaction( emoji ).queue();
-
                 Role role = roles.get(i);
 
                 if (!event.getGuild().getSelfMember().canInteract(role)) {
@@ -109,8 +106,8 @@ public class SetRoleManagerCmd extends AdminCommand {
             }
 
             manager.setId(success.getIdLong());
+            manager.setToggled(true);
             manager.setEmoji(map);
-            manager.setToggled(false);
             bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addToRoleManagers(manager);
             event.reply(getClient().getSuccess()+ " Administrador de roles creado!").setEphemeral(true).queue();
         });
@@ -168,12 +165,10 @@ public class SetRoleManagerCmd extends AdminCommand {
 
             manager.setId(success.getIdLong());
             manager.setEmoji(map);
-            manager.setToggled(false);
+            manager.setToggled(true);
             bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addToRoleManagers(manager);
             event.getMessage().delete().queue();
         });
 
     }
-
-
 }

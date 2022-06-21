@@ -27,6 +27,7 @@ import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.internal.utils.Checks;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -41,6 +42,7 @@ import org.kohsuke.github.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -211,13 +213,14 @@ public class OtherUtil
         else
             return "UNKNOWN";
     }
-    
+
+
     public static String getLatestVersion()
     {
         try
         {
             Response response = new OkHttpClient.Builder().build()
-                    .newCall(new Request.Builder().get().url("https://api.github.com/repos/jagrosh/MusicBot/releases/latest").build())
+                    .newCall(new Request.Builder().get().url("https://api.github.com/repos/eme22/PGMUSICBOT/releases/latest").build())
                     .execute();
             ResponseBody body = response.body();
             if(body != null)
@@ -701,5 +704,56 @@ public class OtherUtil
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static boolean isRoleHierarchyLower(@Nonnull List<Role> roles, @Nonnull Role matchRole) {
+        Checks.notNull(matchRole, "Match roles can not be null");
+        return isRoleHierarchyLower(roles, matchRole.getPosition());
+    }
+
+    public static boolean isRoleHierarchyLower(@Nonnull List<Role> roles, int hierarchyPosition) {
+        for (Role role : roles) {
+            if (role.getPosition() < hierarchyPosition) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isRoleHierarchyLower(@Nonnull Role role, @Nonnull Role roleToCompare) {
+        return role.getPosition() < roleToCompare.getPosition();
+    }
+
+    /**
+     * Get the role that is position highest in the role hierarchy for the given member.
+     *
+     * @param member The member whos roles should be used.
+     * @return Possibly-null, if the user has any roles the role that is ranked highest in the role hierarchy will be returned.
+     */
+    public static Role getHighestFrom(@Nonnull Member member) {
+        Checks.notNull(member, "Member object can not be null");
+        List<Role> roles = member.getRoles();
+        if (roles.isEmpty()) {
+            return null;
+        }
+        return roles.stream().sorted((first, second) -> {
+            if (first.getPosition() == second.getPosition()) {
+                return 0;
+            }
+            return first.getPosition() > second.getPosition() ? -1 : 1;
+        }).findFirst().orElseGet(null);
+    }
+
+    public static Role getHighestFrom(@Nonnull List<Role> roles) {
+        Checks.notNull(roles, "Member object can not be null");
+        if (roles.isEmpty()) {
+            return null;
+        }
+        return roles.stream().sorted((first, second) -> {
+            if (first.getPosition() == second.getPosition()) {
+                return 0;
+            }
+            return first.getPosition() > second.getPosition() ? -1 : 1;
+        }).findFirst().orElseGet(null);
     }
 }

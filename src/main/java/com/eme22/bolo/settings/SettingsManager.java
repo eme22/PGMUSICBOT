@@ -80,9 +80,9 @@ public class SettingsManager implements GuildSettingsManager<Settings> {
     }
 
     protected Settings createDefaultSettings() {
-        return new Settings(this, 0, 0, 0, 0, BotConfig.DEFAULT_VOLUME, null, RepeatMode.OFF, null, SKIP_RATIO, 0, null,
-                null, 0, null, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
-                new ArrayList<>());
+        return new Settings(this, 0, 0, 0, 0, BotConfig.DEFAULT_VOLUME, null, RepeatMode.OFF, null, SKIP_RATIO, false,0, null,
+                null,false,0, null, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), false);
     }
 
     public void writeSettings() {

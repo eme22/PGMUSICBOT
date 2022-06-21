@@ -29,5 +29,6 @@ public class RoleManager {
     private String message;
     @JsonProperty("emojilist")
     private HashMap<String, String> emoji;
-
+    @JsonProperty("toggled")
+    private boolean toggled;
 }

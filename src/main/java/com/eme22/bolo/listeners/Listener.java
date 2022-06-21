@@ -21,6 +21,7 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.entities.RoleManager;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -58,6 +59,8 @@ public class Listener extends ListenerAdapter {
     public Listener(Bot bot) {
         this.bot = bot;
     }
+
+    private String setupMessage = null;
 
     private final HashMap<String, Integer> tempChannels = new HashMap<>();
 
@@ -166,7 +169,18 @@ public class Listener extends ListenerAdapter {
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-        Guild guild = event.getGuild();
+
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setDescription("¿Desea configurar el bot?");
+        event.getGuild().getDefaultChannel().sendMessageEmbeds(embedBuilder.build()).queue(message -> {
+            setupMessage = message.getId();
+            message.addReaction("U+2705").queue();
+            message.addReaction("U+274C").queue();
+        });
+
+    }
+
+    private void setupDefaultChannels(Guild guild) {
         try {
             TextChannel commandsChannel = bot.getSettingsManager().getSettings(guild).getTextChannel(guild);
             TextChannel bienvenidasChannel = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
@@ -187,7 +201,6 @@ public class Listener extends ListenerAdapter {
 
             log.error("Error: " + exception.getMessage(), exception);
         }
-
     }
 
     private void setupChannel(String title, TextChannel defaultChannel, List<TextChannel> channels, int channel) {
@@ -224,6 +237,15 @@ public class Listener extends ListenerAdapter {
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         if (event.getUser().isBot())
             return;
+
+        if (setupMessage != null && setupMessage.equals(event.getMessageId())) {
+            if (event.getReactionEmote().getEmoji().contains("white_check_mark")) {
+                setupDefaultChannels(event.getGuild());
+                return;
+            }
+
+            event.retrieveMessage().complete().delete().complete();
+        }
 
         if (tempChannels.containsKey(event.getMessageId())) {
 
@@ -263,7 +285,7 @@ public class Listener extends ListenerAdapter {
                             .setDespedidasChannelId(channelId.getIdLong());
                 }
             }
-
+            return;
         }
 
         RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong())
@@ -271,17 +293,32 @@ public class Listener extends ListenerAdapter {
 
         if (manager != null) {
             String reaction = event.getReactionEmote().getAsReactionCode();
-            // System.out.println("Emote for Search:
-            // "+event.getReactionEmote().getAsReactionCode());
-            HashMap<String, String> datas = manager.getEmoji();
-            //datas.forEach((key, value) -> System.out.println(key + " " + value));
 
-            if (datas.containsKey(event.getReactionEmote().getAsReactionCode())) {
-                String roleT = datas.get(reaction);
-                // System.out.println("Role:"+ roleT);
+            System.out.println(manager.isToggled());
+
+            if (manager.isToggled()) {
+                List<MessageReaction>  reactionsList = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete().getReactions();
+
+                reactionsList.forEach(messageReaction -> {
+                    List<User> users = messageReaction.retrieveUsers().complete();
+                    users.forEach(user -> {
+
+                        if (user.equals(event.getUser()) && !event.getReactionEmote().equals(messageReaction.getReactionEmote())) {
+                            messageReaction.removeReaction(user).complete();
+                        }
+                    });
+                });
+
+            }
+
+            HashMap<String, String> data = manager.getEmoji();
+
+            if (data.containsKey(event.getReactionEmote().getAsReactionCode())) {
+                String roleT = data.get(reaction);
                 List<Role> list = FinderUtil.findRoles(roleT, event.getGuild());
                 event.getGuild().addRoleToMember(event.getUserId(), list.get(0)).queue();
             }
+
         }
     }
 
@@ -335,6 +372,12 @@ public class Listener extends ListenerAdapter {
         Guild guild = event.getGuild();
         User member = event.getMember().getUser();
         try {
+
+            System.out.println(bot.getSettingsManager().getSettings(guild).getBienvenidasChannelEnabled());
+
+            if (!bot.getSettingsManager().getSettings(guild).getBienvenidasChannelEnabled())
+                return;
+
             TextChannel bienvenidas = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
 
             if (bienvenidas != null) {
@@ -351,7 +394,7 @@ public class Listener extends ListenerAdapter {
                 String message = OtherUtil.getMessage(bot, guild, true);
 
                 if (member.isBot())
-                    message = "Ptmr otro bot en este server conchasumare";
+                    message = "Un bot ha llegado";
 
                 message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername",
                         guild.getName());
@@ -386,6 +429,13 @@ public class Listener extends ListenerAdapter {
         User member = event.getMember().getUser();
 
         try {
+
+            System.out.println(bot.getSettingsManager().getSettings(guild).getDespedidasChannelEnabled());
+
+            if (!bot.getSettingsManager().getSettings(guild).getDespedidasChannelEnabled())
+                return;
+
+
             TextChannel despedidas = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
             if (despedidas != null) {
                 InputStream despedida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), false);

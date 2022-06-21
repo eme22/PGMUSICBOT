@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Bolo" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.eme22.bolo.Bolo" />
-    <module name="Bolo" />
+    <module name="bolo" />
     <option name="PROGRAM_PARAMETERS" value="-dev" />
     <option name="VM_PARAMETERS" value="-Dnogui=true" />
     <method v="2">

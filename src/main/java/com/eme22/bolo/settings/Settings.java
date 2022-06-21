@@ -26,9 +26,11 @@ import java.util.*;
         "repeat_mode",
         "prefix",
         "skip_ratio",
+        "bienvenidas_channel",
         "bienvenidas_channel_id",
         "bienvenidas_channel_image",
         "bienvenidas_channel_message",
+        "despedidas_channel",
         "despedidas_channel_id",
         "despedidas_channel_image",
         "despedidas_channel_message",
@@ -36,7 +38,8 @@ import java.util.*;
         "meme_images",
         "polls",
         "role_manager",
-        "8ball_answers"
+        "8ball_answers",
+        "anti_raid_mode"
 })
 
 @AllArgsConstructor
@@ -66,12 +69,16 @@ public class Settings implements GuildSettingsProvider {
     private String prefix;
     @JsonProperty("skip_ratio")
     private double skipRatio;
+    @JsonProperty("bienvenidas_channel")
+    private Boolean bienvenidasChannelEnabled = false;
     @JsonProperty("bienvenidas_channel_id")
     private long bienvenidasChannelId;
     @JsonProperty("bienvenidas_channel_image")
     private String bienvenidasChannelImage;
     @JsonProperty("bienvenidas_channel_message")
     private String bienvenidasChannelMessage;
+    @JsonProperty("despedidas_channel")
+    private Boolean despedidasChannelEnabled = false;
     @JsonProperty("despedidas_channel_id")
     private long despedidasChannelId;
     @JsonProperty("despedidas_channel_image")
@@ -88,6 +95,9 @@ public class Settings implements GuildSettingsProvider {
     private List<RoleManager> roleManagerList = new ArrayList<>();
     @JsonProperty("8ball_answers")
     private List<String> eightBallAnswers = new ArrayList<>();
+
+    @JsonProperty("anti_raid_mode")
+    private Boolean antiRaidMode = false;
 
     public void addPollForGuild(Long messageId, Poll poll) {
         if (this.polls.stream().anyMatch(poll1 -> poll1.getId() == messageId))
