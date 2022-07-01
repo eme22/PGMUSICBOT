@@ -160,6 +160,7 @@ public class Bolo {
                         new MemeListCmd(bot),
                         new ShowImageChannelsCmd(bot),
                         new EightBallCmd(bot),
+                        new SendMessageAsCmd(bot),
 
                         // NSFW COMMANDS
 
@@ -243,6 +244,7 @@ public class Bolo {
                         new MemeListCmd(bot),
                         new ShowImageChannelsCmd(bot),
                         new EightBallCmd(bot),
+                        new SendMessageAsCmd(bot),
 
                         // NSFW COMMANDS
 

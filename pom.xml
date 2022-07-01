@@ -70,6 +70,11 @@
             <artifactId>JLyrics</artifactId>
             <version>-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>discord-webhooks</artifactId>
+            <version>0.8.0</version>
+        </dependency>
         <!--dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>JLyrics</artifactId>
