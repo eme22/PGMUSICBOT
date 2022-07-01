@@ -25,6 +25,7 @@ public class SendMessageAsCmd extends SlashCommand {
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "usuario", "busca el usuario a hacerce pasar.").setRequired(true),
                 new OptionData(OptionType.STRING, "mensaje", "mensaje a decir").setRequired(true));
+        this.guildOnly = true;
     }
 
     @Override
@@ -36,15 +37,43 @@ public class SendMessageAsCmd extends SlashCommand {
         try {
 
             sendFakeMessage(usuario, message, event.getTextChannel());
-
             event.reply(getClient().getSuccess()+ " Mensaje Enviado").setEphemeral(true).queue();
-
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
+    }
+
+    private void sendFakeMessage(User usuario, String message, TextChannel textChannel) throws IOException {
+
+        Member member = textChannel.getGuild().getMember(usuario);
+
+        String avatarUrl;
+        String name;
+
+        if (member == null) {
+            avatarUrl = usuario.getEffectiveAvatarUrl();
+            name = usuario.getName();
+        }
+        else {
+            avatarUrl = member.getEffectiveAvatarUrl();
+            name = member.getEffectiveName();
+        }
+
+
+        URL url = new URL(avatarUrl);
+        Webhook webhook = textChannel
+                .createWebhook(name)
+                .setAvatar(Icon.from(new BufferedInputStream(url.openStream())))
+                .complete();
+
+        try (JDAWebhookClient client = JDAWebhookClient.from(webhook)) {
+            client.send(message); // send a JDA message instance
+        } finally {
+            webhook.delete().queue();
+        }
     }
 
     @Override
@@ -62,34 +91,15 @@ public class SendMessageAsCmd extends SlashCommand {
             return;
         }
 
-        User usuario = FinderUtil.findUsers(data[0].substring(1), event.getJDA()).get(0);
+        User usuario = FinderUtil.findUsers(data[0].substring(1).replace(" ", ""), event.getJDA()).get(0);
         String message = data[1];
 
         try {
 
-            sendFakeMessage(usuario, message, event.getTextChannel());
+            sendFakeMessage( usuario, message, event.getTextChannel());
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void sendFakeMessage(User usuario, String message, TextChannel textChannel) throws IOException {
-        String avatarUrl = usuario.getAvatarUrl();
-
-        if (avatarUrl == null)
-            avatarUrl = usuario.getDefaultAvatarUrl();
-
-        URL url = new URL(avatarUrl);
-        Webhook webhook = textChannel
-                .createWebhook(usuario.getName())
-                .setAvatar(Icon.from(new BufferedInputStream(url.openStream())))
-                .complete();
-
-        try (JDAWebhookClient client = JDAWebhookClient.from(webhook)) {
-            client.send(message); // send a JDA message instance
-        } finally {
-            webhook.delete().queue();
         }
     }
 }
