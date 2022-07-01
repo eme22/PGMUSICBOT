@@ -294,7 +294,7 @@ public class Listener extends ListenerAdapter {
         if (manager != null) {
             String reaction = event.getReactionEmote().getAsReactionCode();
 
-            System.out.println(manager.isToggled());
+            //System.out.println(manager.isToggled());
 
             if (manager.isToggled()) {
                 List<MessageReaction>  reactionsList = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete().getReactions();
@@ -373,7 +373,7 @@ public class Listener extends ListenerAdapter {
         User member = event.getMember().getUser();
         try {
 
-            System.out.println(bot.getSettingsManager().getSettings(guild).getBienvenidasChannelEnabled());
+            //System.out.println(bot.getSettingsManager().getSettings(guild).getBienvenidasChannelEnabled());
 
             if (!bot.getSettingsManager().getSettings(guild).getBienvenidasChannelEnabled())
                 return;
@@ -430,7 +430,7 @@ public class Listener extends ListenerAdapter {
 
         try {
 
-            System.out.println(bot.getSettingsManager().getSettings(guild).getDespedidasChannelEnabled());
+            //System.out.println(bot.getSettingsManager().getSettings(guild).getDespedidasChannelEnabled());
 
             if (!bot.getSettingsManager().getSettings(guild).getDespedidasChannelEnabled())
                 return;

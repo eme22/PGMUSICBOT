@@ -91,7 +91,7 @@ public class SendMessageAsCmd extends SlashCommand {
             return;
         }
 
-        User usuario = FinderUtil.findUsers(data[0].substring(1).replace(" ", ""), event.getJDA()).get(0);
+        User usuario = FinderUtil.findUsers(data[0].substring(1).trim(), event.getJDA()).get(0);
         String message = data[1];
 
         try {
