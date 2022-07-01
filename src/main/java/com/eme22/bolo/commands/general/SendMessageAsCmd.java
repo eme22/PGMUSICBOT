@@ -98,6 +98,8 @@ public class SendMessageAsCmd extends SlashCommand {
 
             sendFakeMessage( usuario, message, event.getTextChannel());
 
+            event.getMessage().delete().queue();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
