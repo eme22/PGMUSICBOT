@@ -27,10 +27,12 @@ public class SpotifyAudioSourceManager extends YoutubeAudioSourceManager {
 
     private final SpotifyPlayListLoader playlistLoader;
     private static final String PLAYLIST_URL_REGEX = "^https?:\\/\\/open\\.spotify\\.com/playlist/([0-9A-Za-z]{22})";
-
+    private static final String ALBUM_URL_REGEX = "^https?:\\/\\/open\\.spotify\\.com/album/([0-9A-Za-z]{22})";
     private static final String TRACK_URL_REGEX = "^https?:\\/\\/open\\.spotify\\.com/track/([0-9A-Za-z]{22})";
 
     private static final Pattern playlistUrlPattern = Pattern.compile(PLAYLIST_URL_REGEX);
+
+    private static final Pattern albumUrlPattern = Pattern.compile(ALBUM_URL_REGEX);
 
     private static final Pattern trackUrlPattern = Pattern.compile(TRACK_URL_REGEX);
     private final YoutubeSearchMusicProvider searchMusicResultLoader;
@@ -64,13 +66,28 @@ public class SpotifyAudioSourceManager extends YoutubeAudioSourceManager {
 
     private AudioReference processAsPlaylist(AudioReference reference) {
         String url = reference.identifier;
+
         Matcher trackUrlMatcher = playlistUrlPattern.matcher(url);
+
         if (trackUrlMatcher.find()) {
             return new AudioReference(trackUrlMatcher.group(1), null);
         }
 
         return null;
     }
+
+    private AudioReference processAsAlbum(AudioReference reference) {
+        String url = reference.identifier;
+
+        Matcher trackUrlMatcher = albumUrlPattern.matcher(url);
+
+        if (trackUrlMatcher.find()) {
+            return new AudioReference(trackUrlMatcher.group(1), null);
+        }
+
+        return null;
+    }
+
 
     @Override
     public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {
@@ -94,10 +111,22 @@ public class SpotifyAudioSourceManager extends YoutubeAudioSourceManager {
 
         if (trackReference == null) {
 
-            AudioReference playList = processAsPlaylist(reference);
-            if (playList != null) {
-                return playlist(playList.identifier, null);
-            } else throw new FriendlyException("Unknown URL", COMMON, null);
+            trackReference = processAsAlbum(reference);
+
+            if (trackReference == null) {
+
+                trackReference = processAsPlaylist(reference);
+
+                if (trackReference == null) {
+
+                    throw new FriendlyException("Unknown URL", COMMON, null);
+
+                }
+
+                return playlist(trackReference.identifier);
+            }
+
+            return album(trackReference.identifier, null);
 
         }
 
@@ -121,17 +150,29 @@ public class SpotifyAudioSourceManager extends YoutubeAudioSourceManager {
 
     }
 
-    public AudioItem playlist(String playlistId, String selectedVideoId) {
+    public AudioItem playlist(String playlistId) {
 
         //log.debug("Starting to load playlist with ID { "+playlistId+"} ");
 
         try (HttpInterface ignored = getHttpInterface()) {
-            return playlistLoader.load(decoderUtil, this, playlistId, selectedVideoId,
-                    SpotifyAudioSourceManager.this::buildTrackFromInfo);
+            return playlistLoader.load(decoderUtil, this, playlistId
+            );
         } catch (Exception e) {
             throw ExceptionTools.wrapUnfriendlyExceptions(e);
         }
     }
+
+    public AudioItem album(String albumId, String selectedVideoId) {
+
+        //log.debug("Starting to load playlist with ID { "+playlistId+"} ");
+
+        try (HttpInterface ignored = getHttpInterface()) {
+            return playlistLoader.loadAlbum(decoderUtil, this, albumId);
+        } catch (Exception e) {
+            throw ExceptionTools.wrapUnfriendlyExceptions(e);
+        }
+    }
+
     private YoutubeAudioTrack buildTrackFromInfo(AudioTrackInfo info) {
         return new YoutubeAudioTrack(info, this);
     }

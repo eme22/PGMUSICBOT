@@ -2,10 +2,12 @@ package com.eme22.bolo.utils;
 
 import org.apache.commons.collections4.map.SingletonMap;
 import org.apache.hc.core5.http.ParseException;
+import org.jetbrains.annotations.NotNull;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.exceptions.detailed.NotFoundException;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
+import se.michaelthelin.spotify.model_objects.specification.Album;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 import se.michaelthelin.spotify.model_objects.specification.Track;
@@ -13,8 +15,6 @@ import se.michaelthelin.spotify.model_objects.specification.Track;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -55,12 +55,21 @@ public class SpotifyDecoderUtil {
             ArrayList<Track> tracks = Arrays.stream(playlistIRequest.getItems()).map(PlaylistTrack::getTrack).map(Track.class::cast).collect(Collectors.toCollection(ArrayList::new));
 
 
-            return new SingletonMap<>(name ,tracks.stream().map(n -> n.getName()+ " - " + n.getArtists()[0].getName() ).collect(Collectors.toCollection(ArrayList::new)));
+            return getStringArrayListSingletonMap(name, tracks);
 
         } catch ( NotFoundException ignored) {
             return null;
         }
 
+    }
+
+    @NotNull
+    private SingletonMap<String, ArrayList<String>> getStringArrayListSingletonMap(String name, ArrayList<Track> tracks) {
+        return new SingletonMap<>(name ,tracks.stream().map(n ->
+                n.getArtists().length == 1 ?
+                        n.getName()+ " - " + n.getArtists()[0].getName() :
+                        n.getName()+ " - " + n.getArtists()[0].getName() + ", " + n.getArtists()[1].getName()
+        ).collect(Collectors.toCollection(ArrayList::new)));
     }
 
     public String getTrack(String id) throws IOException, ParseException, SpotifyWebApiException {
@@ -81,7 +90,6 @@ public class SpotifyDecoderUtil {
 
     private void checkCredentials() throws IOException, SpotifyWebApiException, ParseException {
         if ( System.currentTimeMillis() >= nextUpdate) {
-
             ClientCredentials clientCredentials = spotifyApi.clientCredentials()
                     .build().execute();
 
@@ -91,4 +99,23 @@ public class SpotifyDecoderUtil {
         }
     }
 
+    public SingletonMap<String, ArrayList<String>> getAlbum(String albumId) throws IOException, ParseException, SpotifyWebApiException {
+
+        checkCredentials();
+
+        try {
+
+            Album album = spotifyApi.getAlbum(albumId).build().execute();
+
+            String name = album.getName();
+
+            ArrayList<Track> tracks = Arrays.stream(album.getTracks().getItems()).map(Track.class::cast).collect(Collectors.toCollection(ArrayList::new));
+
+            return getStringArrayListSingletonMap(name, tracks);
+
+        } catch (IOException | SpotifyWebApiException | ParseException ignored) {
+            return null;
+        }
+
+    }
 }

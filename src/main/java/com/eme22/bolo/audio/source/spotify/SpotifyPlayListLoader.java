@@ -5,27 +5,39 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.DefaultYoutubePlaylistLoa
 import com.sedmelluq.discord.lavaplayer.track.*;
 import org.apache.commons.collections4.map.SingletonMap;
 import org.apache.hc.core5.http.ParseException;
+import org.jetbrains.annotations.NotNull;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SpotifyPlayListLoader extends DefaultYoutubePlaylistLoader {
 
-    public AudioPlaylist load(SpotifyDecoderUtil api, SpotifyAudioSourceManager audioSourceManager, String playlistId, String selectedVideoId, Function<AudioTrackInfo, AudioTrack> trackFactory) throws IOException, ParseException, SpotifyWebApiException {
+    public AudioPlaylist load(SpotifyDecoderUtil api, SpotifyAudioSourceManager audioSourceManager, String playlistId) throws IOException, ParseException, SpotifyWebApiException {
 
         SingletonMap<String, ArrayList<String>> tracks = api.getPlayList(playlistId);
 
+        return searchAndBuildPlaylist(audioSourceManager, tracks);
+
+    }
+
+    public AudioPlaylist loadAlbum(SpotifyDecoderUtil api, SpotifyAudioSourceManager audioSourceManager, String albumId) throws IOException, ParseException, SpotifyWebApiException {
+
+        SingletonMap<String, ArrayList<String>> tracks = api.getAlbum(albumId);
+
+        return searchAndBuildPlaylist(audioSourceManager, tracks);
+
+    }
+
+    @NotNull
+    private AudioPlaylist searchAndBuildPlaylist(SpotifyAudioSourceManager audioSourceManager, SingletonMap<String, ArrayList<String>> tracks) {
         String name = tracks.getKey();
 
         ArrayList<String> tracksLeft = tracks.getValue();
 
-        ArrayList<AudioTrack> audioTracks = tracksLeft.stream().map(audioSourceManager::searchMusic).map(BasicAudioPlaylist.class::cast).map( basicAudioPlaylist -> basicAudioPlaylist.getTracks().get(0) ).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<AudioTrack> audioTracks = tracksLeft.stream().map(audioSourceManager::searchMusic).map(BasicAudioPlaylist.class::cast).map(basicAudioPlaylist -> basicAudioPlaylist.getTracks().get(0) ).collect(Collectors.toCollection(ArrayList::new));
 
         return new BasicAudioPlaylist(name, audioTracks, null, false);
-
     }
 }
