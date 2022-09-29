@@ -15,11 +15,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class SpotifyDecoderUtil {
 
     private static SpotifyApi spotifyApi;
+
+    private static long nextUpdate= 0L;
+
     public SpotifyDecoderUtil(String user, String secret){
 
         spotifyApi = new SpotifyApi.Builder()
@@ -27,15 +31,18 @@ public class SpotifyDecoderUtil {
                 .setClientSecret(secret)
                 .build();
 
+        try {
+            checkCredentials();
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public SingletonMap<String , ArrayList<String>> getPlayList(String id) throws IOException, ParseException, SpotifyWebApiException {
 
+        checkCredentials();
 
-        ClientCredentials clientCredentialsRequest = spotifyApi.clientCredentials()
-                .build().execute();
-
-        spotifyApi.setAccessToken(clientCredentialsRequest.getAccessToken());
 
         try {
             String name = spotifyApi.getPlaylist(id).fields("name").build().execute().getName();
@@ -58,10 +65,7 @@ public class SpotifyDecoderUtil {
 
     public String getTrack(String id) throws IOException, ParseException, SpotifyWebApiException {
 
-        ClientCredentials clientCredentialsRequest = spotifyApi.clientCredentials()
-                .build().execute();
-
-        spotifyApi.setAccessToken(clientCredentialsRequest.getAccessToken());
+        checkCredentials();
 
         try {
             Track track = spotifyApi.getTrack(id).build().execute();
@@ -73,6 +77,18 @@ public class SpotifyDecoderUtil {
 
 
 
+    }
+
+    private void checkCredentials() throws IOException, SpotifyWebApiException, ParseException {
+        if ( System.currentTimeMillis() >= nextUpdate) {
+
+            ClientCredentials clientCredentials = spotifyApi.clientCredentials()
+                    .build().execute();
+
+            nextUpdate = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(clientCredentials.getExpiresIn());
+
+            spotifyApi.setAccessToken(clientCredentials.getAccessToken());
+        }
     }
 
 }
