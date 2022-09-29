@@ -75,6 +75,11 @@
             <artifactId>discord-webhooks</artifactId>
             <version>0.8.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.Topis-Lavalink-Plugins</groupId>
+            <artifactId>Topis-Source-Managers</artifactId>
+            <version>v2.0.7</version>
+        </dependency>
         <!--dependency>
             <groupId>com.jagrosh</groupId>
             <artifactId>JLyrics</artifactId>
@@ -122,11 +127,6 @@
             <groupId>com.github.eme22</groupId>
             <artifactId>anime-image-api</artifactId>
             <version>0.5</version>
-        </dependency>
-        <dependency>
-            <groupId>se.michaelthelin.spotify</groupId>
-            <artifactId>spotify-web-api-java</artifactId>
-            <version>7.2.0</version>
         </dependency>
     </dependencies>
     

@@ -23,6 +23,8 @@ import com.eme22.bolo.birthday.BirthdayManager;
 import com.eme22.bolo.gui.GUI;
 import com.eme22.bolo.playlist.PlaylistLoader;
 import com.eme22.bolo.settings.SettingsManager;
+import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifyConfig;
+import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySourceManager;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,6 +54,8 @@ public class Bot
     private final NowplayingHandler nowPlayingHandler;
     private final AloneInVoiceHandler aloneInVoiceHandler;
     private final BirthdayManager birthdayManager;
+
+    private final SpotifyConfig spotifyConfig;
     
     private boolean shuttingDown = false;
     private boolean devMode = false;
@@ -68,13 +72,18 @@ public class Bot
         this.playlistLoader = new PlaylistLoader(config);
         this.threadpool = Executors.newSingleThreadScheduledExecutor();
         this.playerManager = new PlayerManager(this);
+        this.spotifyConfig = new SpotifyConfig();
+        this.spotifyConfig.setClientId(config.getSpotifyUserId());
+        this.spotifyConfig.setClientSecret(config.getSpotifySecret());
+        this.spotifyConfig.setCountryCode("US");
+        this.playerManager.registerSourceManager(new SpotifySourceManager(null, spotifyConfig, playerManager));
         this.playerManager.init();
         this.nowPlayingHandler = new NowplayingHandler(this);
         this.nowPlayingHandler.init();
         this.aloneInVoiceHandler = new AloneInVoiceHandler(this);
         this.aloneInVoiceHandler.init();
         this.birthdayManager = new BirthdayManager(this);
-    }
+        }
     
     public void closeAudioConnection(long guildId)
     {
