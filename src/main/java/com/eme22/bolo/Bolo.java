@@ -380,11 +380,7 @@ public class Bolo {
     }
 
     private static boolean checkDev(String[] args) {
-        for (String arg : args) {
-            if (arg.equals("-dev"))
-                return true;
-        }
-        return false;
+        return Arrays.asList(args).contains("-dev");
     }
 
 }

@@ -32,7 +32,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,10 +48,7 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -259,7 +255,7 @@ public class OtherUtil
                     Answer answers1 = answers.get(index);
                     sb.append(OtherUtil.numtoString(index)).append(": ").append(answers1.getAnswer()).append("\n");
                     double perc;
-                    float count = answers1.votes.size();
+                    float count = answers1.getVotes().size();
                     if (Math.abs(votes.get()) < 0.0001)
                         perc = 0;
                     else
@@ -454,7 +450,7 @@ public class OtherUtil
         GHRef masterRef = repo.getRef("heads/main");
         String masterTreeSha = repo.getTree("main").getSha();
 
-        GHCommit commit = repo.createContent()
+        GitCommit commit = repo.createContent()
                 .content(Files.readAllBytes(file.toPath()))
                 .message(LocalDateTime.now() + " Settings")
                 .path(file.getName())
@@ -463,18 +459,6 @@ public class OtherUtil
                 .getCommit();
 
         masterRef.updateTo(commit.getSHA1());
-
-        //String masterTreeSha = repo.getTree("main").getSha();
-        //String treeSha = repo.createContent()
-        //        .add(file.getName(), Files.readAllBytes(file.toPath()), true)
-        //        .create().getSha();
-
-        //GHCommit commit = repo.createCommit()
-        //        .parent(masterTreeSha)
-        //        .tree(treeSha)
-        //        .message(LocalDateTime.now() + " Settings").create();
-
-        //masterRef.updateTo(commit.getSHA1());
 
 
     }
@@ -598,8 +582,14 @@ public class OtherUtil
     }
 
     public static boolean isValidUrl(String imageAddress) {
-        UrlValidator validator = new UrlValidator();
-        return validator.isValid(imageAddress);
+
+        try {
+            new URL(imageAddress).toURI();
+        } catch (MalformedURLException | URISyntaxException e) {
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean checkImage(String imageAddress) {
@@ -755,5 +745,15 @@ public class OtherUtil
             }
             return first.getPosition() > second.getPosition() ? -1 : 1;
         }).findFirst().orElseGet(null);
+    }
+
+    public static boolean isValidURL(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            url.toURI();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

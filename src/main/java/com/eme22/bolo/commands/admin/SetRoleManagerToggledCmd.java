@@ -3,7 +3,6 @@ package com.eme22.bolo.commands.admin;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.entities.RoleManager;
-import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.EmbedBuilder;

@@ -2,6 +2,7 @@
 package com.eme22.bolo.settings;
 
 import com.eme22.bolo.BotConfig;
+import com.eme22.bolo.entities.Birthday;
 import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.entities.RoleManager;
@@ -39,6 +40,8 @@ import java.util.*;
         "polls",
         "role_manager",
         "8ball_answers",
+        "birthdays",
+        "birthday_channel_id",
         "anti_raid_mode"
 })
 
@@ -95,6 +98,12 @@ public class Settings implements GuildSettingsProvider {
     private List<RoleManager> roleManagerList = new ArrayList<>();
     @JsonProperty("8ball_answers")
     private List<String> eightBallAnswers = new ArrayList<>();
+
+    @JsonProperty("birthdays")
+    private List<Birthday> birthdays = new ArrayList<>();
+
+    @JsonProperty("birthday_channel_id")
+    private long birthdayChannelId;
 
     @JsonProperty("anti_raid_mode")
     private Boolean antiRaidMode = false;
@@ -246,6 +255,17 @@ public class Settings implements GuildSettingsProvider {
     @JsonIgnore
     public Role getDJRoleId(Guild guild) {
         return guild == null ? null : guild.getRoleById(djRoleId);
+    }
+
+    public void addBirthDay(Birthday birthday) {
+        if (this.birthdays.contains(birthday))
+            return;
+
+        this.birthdays.add(birthday);
+    }
+
+    public void removeBirthDay(long user) {
+        this.birthdays.removeIf(birthday -> birthday.getUser() == user);
     }
 
     @JsonIgnore

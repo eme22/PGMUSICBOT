@@ -21,8 +21,8 @@ import java.util.HashSet;
 public class Answer {
 
     @JsonProperty("answer")
-    public String answer;
+    private String answer;
     @JsonProperty("votes")
-    public final HashSet<Long> votes = new HashSet<>();
+    private final HashSet<Long> votes = new HashSet<>();
 
 }

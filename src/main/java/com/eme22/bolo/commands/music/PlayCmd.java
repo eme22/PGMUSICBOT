@@ -88,12 +88,11 @@ public class PlayCmd extends MusicCommand {
              * return;
              * }
              */
-            StringBuilder builder = new StringBuilder(getClient().getWarning() + " Comando Play:\n");
-            builder.append("\n`").append(getClient().getPrefix()).append(name)
-                    .append(" <titulo>` - reproduce la primera cancion encontrada con ese nombre");
-            builder.append("\n`").append(getClient().getPrefix()).append(name)
-                    .append(" <URL>` - reproduce cancion, video, o stream");
-            event.reply(builder.toString()).setEphemeral(true).queue();
+            String builder = getClient().getWarning() + " Comando Play:\n" + "\n`" + getClient().getPrefix() + name +
+                    " <titulo>` - reproduce la primera cancion encontrada con ese nombre" +
+                    "\n`" + getClient().getPrefix() + name +
+                    " <URL>` - reproduce cancion, video, o stream";
+            event.reply(builder).setEphemeral(true).queue();
             return;
         }
 

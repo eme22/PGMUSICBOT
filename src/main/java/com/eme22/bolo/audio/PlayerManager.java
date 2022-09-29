@@ -16,6 +16,7 @@
 package com.eme22.bolo.audio;
 
 import com.eme22.bolo.Bot;
+import com.eme22.bolo.audio.source.spotify.SpotifyAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -39,6 +40,8 @@ public class PlayerManager extends DefaultAudioPlayerManager
     public void init()
     {
         TransformativeAudioSourceManager.createTransforms(bot.getConfig().getTransforms()).forEach(this::registerSourceManager);
+        registerSourceManager(new SpotifyAudioSourceManager(bot.getConfig().getSpotifyUserId(), bot.getConfig().getSpotifySecret()));
+
         AudioSourceManagers.registerRemoteSources(this);
         AudioSourceManagers.registerLocalSource(this);
         source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);

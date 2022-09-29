@@ -79,6 +79,7 @@ public class Listener extends ListenerAdapter {
                 if (defpl != null && vc != null && bot.getPlayerManager().setUpHandler(guild).playFromDefault()) {
                     guild.getAudioManager().openAudioConnection(vc);
                 }
+                bot.getBirthdayManager().setupBirthdays(guild);
             } catch (Exception ignore) {
             }
         });

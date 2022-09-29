@@ -37,7 +37,7 @@ public class Poll {
 
     @JsonIgnore
     public Integer getAllVoteCount(){
-        return answers.stream().mapToInt(answer -> answer.votes.size()).sum();
+        return answers.stream().mapToInt(answer -> answer.getVotes().size()).sum();
     }
 
     public void addVoteToAnswer(int answer,Long userId){
@@ -54,16 +54,16 @@ public class Poll {
 
     @JsonIgnore
     public Integer getUserAnswer(Long userId){
-        Answer answer = answers.stream().filter(answer1 -> answer1.votes.contains(userId)).findFirst().orElse(null);
+        Answer answer = answers.stream().filter(answer1 -> answer1.getVotes().contains(userId)).findFirst().orElse(null);
         return answers.indexOf(answer);
     }
 
     public boolean isUserParticipating(Long userId){
-        return answers.stream().anyMatch( answer -> answer.votes.contains(userId));
+        return answers.stream().anyMatch( answer -> answer.getVotes().contains(userId));
     }
 
     public boolean isUserParticipatingInAnswer(int answer, Long userId){
-        return answers.get(answer).votes.contains(userId);
+        return answers.get(answer).getVotes().contains(userId);
     }
 
 }

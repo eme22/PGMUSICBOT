@@ -49,7 +49,9 @@ public class AnalCmd extends SlashCommand {
         try {
             builder.setImage(new AnimeImageClient().getImage(Endpoints.KAWAII_NSFW.ANAL));
         }
-        catch (Exception ignored) {}
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         event.replyEmbeds(builder.build()).queue();
     }
 
@@ -80,7 +82,9 @@ public class AnalCmd extends SlashCommand {
         try {
             builder.setImage(new AnimeImageClient().getImage(Endpoints.KAWAII_NSFW.ANAL));
         }
-        catch (Exception ignored) {}
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         event.reply(builder.build());
     }
 

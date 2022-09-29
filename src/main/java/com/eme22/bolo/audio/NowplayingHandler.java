@@ -26,6 +26,8 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.exceptions.RateLimitedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +42,8 @@ public class NowplayingHandler
 {
     private final Bot bot;
     private final HashMap<Long,Pair<Long,Long>> lastNP; // guild -> channel,message
+
+    private final Logger log = LoggerFactory.getLogger(getClass().getName());
     
     public NowplayingHandler(Bot bot)
     {
@@ -145,8 +149,12 @@ public class NowplayingHandler
                     // mean we don't want a backlog of changes piling up, so if we hit a 
                     // ratelimit, we just won't change the topic this time
                     tchan.getManager().setTopic(text).complete(wait);
+
                 } 
-                catch(PermissionException | RateLimitedException e) { e.printStackTrace();}
+                catch(PermissionException e) { e.printStackTrace();}
+                catch (RateLimitedException ignored) {
+                    log.warn("La accion se ha ratelimitado, no se volvera a intentar hasta el siguiente evento");
+                }
             }
         }
     }

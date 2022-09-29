@@ -50,7 +50,7 @@ public class BotConfig
     private Path path = null;
 
 
-    private String token, prefix, altprefix, helpWord, playlistsFolder,
+    private String token, spotifyUserId, spotifySecret, prefix, altprefix, helpWord, playlistsFolder,
             successEmoji, warningEmoji, errorEmoji, loadingEmoji, searchingEmoji, welcomeString, goodByeString;
     private boolean stayInChannel, songInStatus, npImages, updatealerts, useEval, dbots;
     private long owner, maxSeconds, aloneTimeUntilStop;
@@ -110,6 +110,8 @@ public class BotConfig
             playlistsFolder = config.getString("playlistsfolder");
             aliases = config.getConfig("aliases");
             transforms = config.getConfig("transforms");
+            spotifyUserId = config.getString("spotifyuserid");
+            spotifySecret = config.getString("spotifysecret");
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file

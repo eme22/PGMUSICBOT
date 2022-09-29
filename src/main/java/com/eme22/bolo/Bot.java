@@ -19,6 +19,7 @@ import com.eme22.bolo.audio.AloneInVoiceHandler;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.NowplayingHandler;
 import com.eme22.bolo.audio.PlayerManager;
+import com.eme22.bolo.birthday.BirthdayManager;
 import com.eme22.bolo.gui.GUI;
 import com.eme22.bolo.playlist.PlaylistLoader;
 import com.eme22.bolo.settings.SettingsManager;
@@ -50,6 +51,7 @@ public class Bot
     private final PlaylistLoader playlistLoader;
     private final NowplayingHandler nowPlayingHandler;
     private final AloneInVoiceHandler aloneInVoiceHandler;
+    private final BirthdayManager birthdayManager;
     
     private boolean shuttingDown = false;
     private boolean devMode = false;
@@ -71,6 +73,7 @@ public class Bot
         this.nowPlayingHandler.init();
         this.aloneInVoiceHandler = new AloneInVoiceHandler(this);
         this.aloneInVoiceHandler.init();
+        this.birthdayManager = new BirthdayManager(this);
     }
     
     public void closeAudioConnection(long guildId)
