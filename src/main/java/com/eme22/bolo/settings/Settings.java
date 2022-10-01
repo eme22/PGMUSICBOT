@@ -274,4 +274,8 @@ public class Settings implements GuildSettingsProvider {
     public Collection<String> getPrefixes() {
         return prefix == null ? Collections.emptySet() : Collections.singleton(prefix);
     }
+
+    public Birthday getUserBirthday(long idLong) {
+        return birthdays.stream().filter(birthday -> birthday.getUser() == idLong).findFirst().orElse(null);
+    }
 }

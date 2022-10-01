@@ -161,6 +161,8 @@ public class Bolo {
                         new ShowImageChannelsCmd(bot),
                         new EightBallCmd(bot),
                         new SendMessageAsCmd(bot),
+                        new SetBirthdayCmd(bot),
+                        new RemoveBirthdayCmd(bot),
 
                         // NSFW COMMANDS
 
@@ -245,7 +247,8 @@ public class Bolo {
                         new ShowImageChannelsCmd(bot),
                         new EightBallCmd(bot),
                         new SendMessageAsCmd(bot),
-
+                        new SetBirthdayCmd(bot),
+                        new RemoveBirthdayCmd(bot),
                         // NSFW COMMANDS
 
                         new AnalCmd(bot),
