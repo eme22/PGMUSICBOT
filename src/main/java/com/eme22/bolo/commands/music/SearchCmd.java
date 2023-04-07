@@ -21,6 +21,7 @@ import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.commands.MusicCommand;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.menu.OrderedMenu;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -29,7 +30,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -85,7 +85,7 @@ public class SearchCmd extends MusicCommand
 
         if(args == null || args.getAsString().isEmpty())
         {
-            event.reply(getClient().getWarning()+"Please include a query.").queue();
+            event.reply(event.getClient().getWarning()+"Please include a query.").queue();
             return;
         }
         event.reply(searchingEmoji+" Searching... `["+args.getAsString().isEmpty()+"]`").queue( s -> s.retrieveOriginal().queue(
@@ -129,7 +129,7 @@ public class SearchCmd extends MusicCommand
         {
             builder.setColor((slashEvent == null ? event.getGuild().getSelfMember() : slashEvent.getGuild().getSelfMember()).getColor())
                     .setText(FormatUtil.filter((slashEvent == null ? event.getClient() : getClient()).getSuccess()+" Search results for `"+ (slashEvent == null ? event.getArgs() : args.getAsString())+"`:"))
-                    .setChoices(new String[0])
+                    .setChoices()
                     .setSelection((msg,i) -> 
                     {
                         AudioTrack track = playlist.getTracks().get(i-1);
@@ -139,7 +139,7 @@ public class SearchCmd extends MusicCommand
                                 event.replyWarning("This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
                                     +FormatUtil.formatTime(track.getDuration())+"` > `"+bot.getConfig().getMaxTime()+"`");
                             else
-                                slashEvent.reply(getClient().getWarning()+ "This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
+                                slashEvent.reply(event.getClient().getWarning()+ "This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
                                         +FormatUtil.formatTime(track.getDuration())+"` > `"+bot.getConfig().getMaxTime()+"`").queue();
                             return;
                         }

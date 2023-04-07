@@ -146,8 +146,8 @@ public class Prompt
         }
     }
     
-    public static enum Level
+    public enum Level
     {
-        INFO, WARNING, ERROR;
+        INFO, WARNING, ERROR
     }
 }

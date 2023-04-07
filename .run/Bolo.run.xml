@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="com.eme22.bolo.Bolo" />
     <module name="bolo" />
     <option name="PROGRAM_PARAMETERS" value="-dev" />
-    <option name="VM_PARAMETERS" value="-Dnogui=true -Dspotifyuserid=&quot;648e198d1b544dd3b6b60e6eecfb490f&quot; -Dspotifysecret=&quot;cf398b4121ac441f869df95625c6a3eb&quot; -Dtoken=&quot;OTU2NDE0NTMxNzU0NjU1ODc1.GjnN_T.xyOClkOhPDxr4HSba0xTC7sWefQxEkCvELfXBY&quot;" />
+    <option name="VM_PARAMETERS" value="-Dnogui=true -Dspotifyuserid=&quot;648e198d1b544dd3b6b60e6eecfb490f&quot; -Dspotifysecret=&quot;9e58660e612d4d9db3375ce9908cf76c&quot; -Dtoken=&quot;OTU2NDE0NTMxNzU0NjU1ODc1.G4xPiH.WTt8kwidoCrQIZ6MtJ14KhYElPuLNRVM9towvY&quot;" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

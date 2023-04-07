@@ -19,10 +19,10 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.ArrayList;
 
@@ -43,8 +43,7 @@ public class ShowImageChannelsCmd extends SlashCommand
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Settings s = getClient().getSettingsFor(event.getGuild());
-        MessageBuilder builder = new MessageBuilder().append(" ** Canales de solo Imagenes **");
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         ArrayList<TextChannel> onlyimages = s.getOnlyImageChannels(event.getGuild());
 
         StringBuilder builder1 = new StringBuilder();
@@ -54,16 +53,17 @@ public class ShowImageChannelsCmd extends SlashCommand
         EmbedBuilder ebuilder = new EmbedBuilder()
                 .setColor(event.getGuild().getSelfMember().getColor())
                 .setDescription(builder1.toString());
-        builder.setEmbeds(ebuilder.build());
+        MessageCreateBuilder mbuilder = new MessageCreateBuilder();
+        mbuilder.setContent(" ** Canales de solo Imagenes **");
+        mbuilder.setEmbeds(ebuilder.build());
 
-        event.reply(builder.build()).queue();
+        event.reply(mbuilder.build()).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) 
     {
         Settings s = event.getClient().getSettingsFor(event.getGuild());
-        MessageBuilder builder = new MessageBuilder().append(" ** Canales de solo Imagenes **");
         ArrayList<TextChannel> onlyimages = s.getOnlyImageChannels(event.getGuild());
 
         StringBuilder builder1 = new StringBuilder();
@@ -73,8 +73,10 @@ public class ShowImageChannelsCmd extends SlashCommand
         EmbedBuilder ebuilder = new EmbedBuilder()
                 .setColor(event.getSelfMember().getColor())
                 .setDescription(builder1.toString());
-        builder.setEmbeds(ebuilder.build());
-        event.reply(builder.build());
+        MessageCreateBuilder mbuilder = new MessageCreateBuilder();
+        mbuilder.setContent(" ** Canales de solo Imagenes **");
+        mbuilder.setEmbeds(ebuilder.build());
+        event.reply(mbuilder.build());
     }
     
 }

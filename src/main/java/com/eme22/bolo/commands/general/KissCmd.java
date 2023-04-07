@@ -6,10 +6,10 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -36,12 +36,12 @@ public class KissCmd extends SlashCommand {
         Member memberKissed = event.getOption("usuario").getAsMember();
 
         if (memberKissed.getUser().isBot()) {
-            event.reply(getClient().getError() + " Asegurese de que el usuario no sea un bot").setEphemeral(true)
+            event.reply(event.getClient().getError() + " Asegurese de que el usuario no sea un bot").setEphemeral(true)
                     .queue();
             return;
         }
         if (memberKisser.equals(memberKissed)) {
-            event.reply(getClient().getError() + "Asegurese de que el usuario no sea usted").setEphemeral(true).queue();
+            event.reply(event.getClient().getError() + "Asegurese de que el usuario no sea usted").setEphemeral(true).queue();
             return;
         }
         EmbedBuilder builder = new EmbedBuilder();

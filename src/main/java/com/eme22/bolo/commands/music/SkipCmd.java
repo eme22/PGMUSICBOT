@@ -20,7 +20,7 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.RequestMetadata;
 import com.eme22.bolo.commands.MusicCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 /**
  *
@@ -80,7 +80,7 @@ public class SkipCmd extends MusicCommand
         RequestMetadata rm = handler.getRequestMetadata();
         if(event.getUser().getIdLong() == rm.getOwner())
         {
-            event.reply(getClient().getSuccess()+" Saltado **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**").queue();
+            event.reply(event.getClient().getSuccess()+" Saltado **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**").queue();
             handler.getPlayer().stopTrack();
         }
         else
@@ -89,10 +89,10 @@ public class SkipCmd extends MusicCommand
                     .filter(m -> !m.getUser().isBot() && !m.getVoiceState().isDeafened()).count();
             String msg;
             if(handler.getVotes().contains(event.getUser().getId()))
-                msg = getClient().getWarning()+" Ya has votado para saltar esta cancion `[";
+                msg = event.getClient().getWarning()+" Ya has votado para saltar esta cancion `[";
             else
             {
-                msg = getClient().getSuccess()+" Has votado para saltar esta cancion `[";
+                msg = event.getClient().getSuccess()+" Has votado para saltar esta cancion `[";
                 handler.getVotes().add(event.getUser().getId());
             }
             int skippers = (int)event.getGuild().getSelfMember().getVoiceState().getChannel().getMembers().stream()
@@ -101,7 +101,7 @@ public class SkipCmd extends MusicCommand
             msg += skippers + " votes, " + required + "/" + listeners + " needed]`";
             if(skippers>=required)
             {
-                msg += "\n" + getClient().getSuccess() + " Saltado **" + handler.getPlayer().getPlayingTrack().getInfo().title
+                msg += "\n" + event.getClient().getSuccess() + " Saltado **" + handler.getPlayer().getPlayingTrack().getInfo().title
                         + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(pedido por **" + rm.user.username + "**)");
                 handler.getPlayer().stopTrack();
             }

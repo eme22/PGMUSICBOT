@@ -48,7 +48,7 @@ public class SettingsManager implements GuildSettingsManager<Settings> {
             File file = new File("serversettings.json");
             if (!file.exists())
                 throw new IOException();
-            HashMap<Long, Settings> temp_Settings = mapper.readValue(file, new TypeReference<>() {
+            HashMap<Long, Settings> temp_Settings = mapper.readValue(file, new TypeReference<HashMap<Long, Settings>>() {
             });
             temp_Settings.forEach((aLong, settingsTEST) -> this.settings.put(aLong, settingsTEST.withManager(this)));
 

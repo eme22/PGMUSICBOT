@@ -4,7 +4,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -22,11 +22,11 @@ public class AddEightBallAnswer extends AdminCommand {
 
 	@Override
 	protected void execute(SlashCommandEvent event) {
-		Settings settings = getClient().getSettingsFor(event.getGuild());
+		Settings settings = event.getClient().getSettingsFor(event.getGuild());
 		String answer = event.getOption("respuesta").getAsString();
 
 		settings.addToEightBallAnswers(answer);
-		event.reply(getClient().getSuccess()+ " **Respuesta agregada:** " + answer).queue();
+		event.reply(event.getClient().getSuccess()+ " **Respuesta agregada:** " + answer).queue();
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import com.eme22.bolo.commands.DJCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -87,11 +87,11 @@ public class VolumeCmd extends DJCommand
         else {
             int nvolume = Integer.parseInt(option.getAsString());
             if(nvolume<0 || nvolume>999)
-                event.reply(getClient().getError()+" El volumen debe estar entre  0 y 999!").setEphemeral(true).queue();
+                event.reply(event.getClient().getError()+" El volumen debe estar entre  0 y 999!").setEphemeral(true).queue();
             else
             {
                 handler.getPlayer().setVolume(nvolume);
-                Settings settings = getClient().getSettingsFor(event.getGuild());
+                Settings settings = event.getClient().getSettingsFor(event.getGuild());
                 settings.setVolume(nvolume);
                 event.reply(FormatUtil.volumeIcon(nvolume)+" Volume cambiado de `"+volume+"` a `"+nvolume+"`").queue();
             }

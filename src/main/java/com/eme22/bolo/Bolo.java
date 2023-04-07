@@ -44,7 +44,6 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -60,13 +59,12 @@ public class Bolo {
     public final static String PLAY_EMOJI = "\u25B6"; // ▶
     public final static String PAUSE_EMOJI = "\u23F8"; // ⏸
     public final static String STOP_EMOJI = "\u23F9"; // ⏹
-    public final static Permission[] RECOMMENDED_PERMS = { Permission.MESSAGE_READ, Permission.MESSAGE_WRITE,
-            Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
+    public final static Permission[] RECOMMENDED_PERMS = { Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
             Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.ADMINISTRATOR,
             Permission.MESSAGE_EXT_EMOJI,
-            Permission.MANAGE_CHANNEL, Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE };
-    public final static GatewayIntent[] INTENTS = { GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES,
-            GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS };
+            Permission.MANAGE_CHANNEL, Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE, Permission.MANAGE_WEBHOOKS };
+    public final static GatewayIntent[] INTENTS = { GatewayIntent.DIRECT_MESSAGES, GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MESSAGES,
+            GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_WEBHOOKS };
 
     /**
      * @param args the command line arguments
@@ -227,7 +225,8 @@ public class Bolo {
                         new SetGoodByeEnabledCmd(bot),
                         new AddEightBallAnswer(bot),
                         new DeleteEightBallAnswer(bot),
-                        new EightBallAnswerList(bot))
+                        new EightBallAnswerList(bot),
+                        new CreateMemeCmd(bot))
 
                 .addCommands(
 
@@ -326,7 +325,8 @@ public class Bolo {
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot),
                         new SendGlobalMessageCmd(bot),
-                        new ReloadSettings(bot));
+                        new ReloadSettings(bot),
+                        new CreateMemeCmd(bot));
 
         if (config.isUseEval())
             cb.addCommand(new EvalCmd(bot));
@@ -359,7 +359,7 @@ public class Bolo {
         try {
             JDA jda = JDABuilder.create(config.getToken(), Arrays.asList(INTENTS))
                     .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
-                    .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOTE, CacheFlag.ONLINE_STATUS)
+                    .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOJI, CacheFlag.ONLINE_STATUS)
                     .setActivity(nogame ? null : Activity.playing("loading..."))
                     .setStatus(
                             config.getStatus() == OnlineStatus.INVISIBLE || config.getStatus() == OnlineStatus.OFFLINE
@@ -370,15 +370,12 @@ public class Bolo {
                     .setBulkDeleteSplittingEnabled(true)
                     .build();
             bot.setJDA(jda);
-        } catch (LoginException ex) {
-            prompt.alert(Prompt.Level.ERROR, "Franquito", ex + "\nPlease make sure you are "
-                    + "editing the correct config.txt file, and that you have used the "
-                    + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
-            System.exit(1);
         } catch (IllegalArgumentException ex) {
-            prompt.alert(Prompt.Level.ERROR, "Franquito", "Some aspect of the configuration is "
+            prompt.alert(Prompt.Level.ERROR, "EMBot", "Some aspect of the configuration is "
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
+        } catch (Exception e) {
+            prompt.alert(Prompt.Level.ERROR, "EMBot", e.getMessage());
         }
     }
 

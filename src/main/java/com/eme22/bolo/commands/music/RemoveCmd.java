@@ -21,9 +21,9 @@ import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.commands.MusicCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -115,7 +115,7 @@ public class RemoveCmd extends MusicCommand
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         if(handler.getQueue().isEmpty())
         {
-            event.reply(getClient().getError()+"There is nothing in the queue!").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+"There is nothing in the queue!").setEphemeral(true).queue();
             return;
         }
 
@@ -127,10 +127,10 @@ public class RemoveCmd extends MusicCommand
         }
         if(pos<1 || pos>handler.getQueue().size())
         {
-            event.reply(getClient().getError()+"Position must be a valid integer between 1 and "+handler.getQueue().size()+"!").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+"Position must be a valid integer between 1 and "+handler.getQueue().size()+"!").setEphemeral(true).queue();
             return;
         }
-        Settings settings = getClient().getSettingsFor(event.getGuild());
+        Settings settings = event.getClient().getSettingsFor(event.getGuild());
         boolean isDJ = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if(!isDJ)
             isDJ = event.getMember().getRoles().contains(settings.getDJRoleId(event.getGuild()));
@@ -138,7 +138,7 @@ public class RemoveCmd extends MusicCommand
         if(qt.getIdentifier()==event.getUser().getIdLong())
         {
             handler.getQueue().remove(pos-1);
-            event.reply(getClient().getSuccess()+"Removed **"+qt.getTrack().getInfo().title+"** from the queue").queue();
+            event.reply(event.getClient().getSuccess()+"Removed **"+qt.getTrack().getInfo().title+"** from the queue").queue();
         }
         else if(isDJ)
         {
@@ -149,12 +149,12 @@ public class RemoveCmd extends MusicCommand
             } catch(Exception e) {
                 u = null;
             }
-            event.reply(getClient().getSuccess()+"Removed **"+qt.getTrack().getInfo().title
+            event.reply(event.getClient().getSuccess()+"Removed **"+qt.getTrack().getInfo().title
                     +"** from the queue (requested by "+(u==null ? "someone" : "**"+u.getName()+"**")+")").queue();
         }
         else
         {
-            event.reply(getClient().getError()+"You cannot remove **"+qt.getTrack().getInfo().title+"** because you didn't add it!").queue();
+            event.reply(event.getClient().getError()+"You cannot remove **"+qt.getTrack().getInfo().title+"** because you didn't add it!").queue();
         }
     }
 }

@@ -18,7 +18,7 @@ package com.eme22.bolo.commands.music;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.MusicCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 import java.util.List;
 
@@ -68,19 +68,19 @@ public class PlaylistsCmd extends MusicCommand
             bot.getPlaylistLoader().createFolder();
         if(!bot.getPlaylistLoader().folderExists())
         {
-            event.reply(getClient().getWarning()+" Playlists folder does not exist and could not be created!").queue();
+            event.reply(event.getClient().getWarning()+" Playlists folder does not exist and could not be created!").queue();
             return;
         }
         List<String> list = bot.getPlaylistLoader().getPlaylistNames();
         if(list==null)
-            event.reply(getClient().getError()+" Failed to load available playlists!").queue();
+            event.reply(event.getClient().getError()+" Failed to load available playlists!").queue();
         else if(list.isEmpty())
-            event.reply(getClient().getWarning()+" There are no playlists in the Playlists folder!").queue();
+            event.reply(event.getClient().getWarning()+" There are no playlists in the Playlists folder!").queue();
         else
         {
-            StringBuilder builder = new StringBuilder(getClient().getSuccess()+" Available playlists:\n");
+            StringBuilder builder = new StringBuilder(event.getClient().getSuccess()+" Available playlists:\n");
             list.forEach(str -> builder.append("`").append(str).append("` "));
-            builder.append("\nType `").append(getClient().getTextualPrefix()).append("play playlist <name>` to play a playlist");
+            builder.append("\nType `").append(event.getClient().getTextualPrefix()).append("play playlist <name>` to play a playlist");
             event.reply(builder.toString()).queue();
         }
     }

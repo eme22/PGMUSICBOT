@@ -4,8 +4,8 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -36,12 +36,12 @@ public class AddMemeCmd extends AdminCommand {
         try {
             new URL(link);
         } catch (MalformedURLException e) {
-            event.reply(getClient().getError()+" Link Incorrecto").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+" Link Incorrecto").setEphemeral(true).queue();
             return;
         }
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         s.addToMemeImages(message, link);
-        event.reply(getClient().getSuccess()+" Imagen "+ link +" Agregada a la lista de memes").setEphemeral(true).queue();
+        event.reply(event.getClient().getSuccess()+" Imagen "+ link +" Agregada a la lista de memes").setEphemeral(true).queue();
     }
 
     @Override

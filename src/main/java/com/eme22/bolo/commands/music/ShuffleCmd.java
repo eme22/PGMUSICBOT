@@ -19,7 +19,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.MusicCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 /**
  *
@@ -63,13 +63,13 @@ public class ShuffleCmd extends MusicCommand
         switch (s)
         {
             case 0:
-                event.reply(getClient().getError()+"You don't have any music in the queue to shuffle!").queue();
+                event.reply(event.getClient().getError()+"You don't have any music in the queue to shuffle!").queue();
                 break;
             case 1:
-                event.reply(getClient().getWarning()+ "You only have one song in the queue!").queue();
+                event.reply(event.getClient().getWarning()+ "You only have one song in the queue!").queue();
                 break;
             default:
-                event.reply(getClient().getSuccess()+"You successfully shuffled your "+s+" entries.").queue();
+                event.reply(event.getClient().getSuccess()+"You successfully shuffled your "+s+" entries.").queue();
                 break;
         }
     }

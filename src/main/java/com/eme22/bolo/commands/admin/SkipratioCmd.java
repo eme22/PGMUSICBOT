@@ -19,7 +19,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -45,9 +45,9 @@ public class SkipratioCmd extends AdminCommand
     @Override
     protected void execute(SlashCommandEvent event) {
         int val = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(event.getOption("radio")).getAsString()));
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         s.setSkipRatio(val / 100.0);
-        event.reply(getClient().getSuccess()+ " Skip percentage has been set to `" + val + "%` of listeners on *" + event.getGuild().getName() + "*").queue();
+        event.reply(event.getClient().getSuccess()+ " Skip percentage has been set to `" + val + "%` of listeners on *" + event.getGuild().getName() + "*").queue();
 
     }
 

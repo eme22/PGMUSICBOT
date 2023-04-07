@@ -4,8 +4,8 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -25,7 +25,7 @@ public class EightBallCmd extends SlashCommand {
 
 	@Override
 	protected void execute(SlashCommandEvent event) {
-		Settings settings = getClient().getSettingsFor(event.getGuild());
+		Settings settings = event.getClient().getSettingsFor(event.getGuild());
 
 		String question = event.getOption("pregunta").getAsString();
 

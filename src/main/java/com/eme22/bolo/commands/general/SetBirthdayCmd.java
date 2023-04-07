@@ -5,14 +5,12 @@ import com.eme22.bolo.entities.Birthday;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 
 public class SetBirthdayCmd extends SlashCommand {
 
@@ -43,7 +41,7 @@ public class SetBirthdayCmd extends SlashCommand {
             cal.set(year, mes-1, dia);
 
             if (cal.isLenient()) {
-                event.reply(getClient().getError()+ " La fecha no es valida").setEphemeral(true).queue();
+                event.reply(event.getClient().getError()+ " La fecha no es valida").setEphemeral(true).queue();
                 return;
             }
 
@@ -58,10 +56,10 @@ public class SetBirthdayCmd extends SlashCommand {
 
             bot.getSettingsManager().getSettings(event.getGuild()).addBirthDay(cumple);
 
-            event.reply(getClient().getSuccess()+ "Se recordará tu cumpleaños el "+ dia+ "/"+mes).setEphemeral(true).queue();
+            event.reply(event.getClient().getSuccess()+ "Se recordará tu cumpleaños el "+ dia+ "/"+mes).setEphemeral(true).queue();
 
     } catch (NumberFormatException e) {
-        event.reply(getClient().getError()+ " La fecha no es valida").setEphemeral(true).queue();
+        event.reply(event.getClient().getError()+ " La fecha no es valida").setEphemeral(true).queue();
     }
 
     }
@@ -108,7 +106,7 @@ public class SetBirthdayCmd extends SlashCommand {
 
             settings.addBirthDay(cumple);
 
-            event.replySuccess(getClient().getSuccess()+ "Se recordará tu cumpleaños el "+ dia+ "/"+mes);
+            event.replySuccess(event.getClient().getSuccess()+ "Se recordará tu cumpleaños el "+ dia+ "/"+mes);
         } catch (NumberFormatException e) {
             event.replyError(" La fecha no es valida");
         }

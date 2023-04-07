@@ -24,14 +24,14 @@ import com.eme22.bolo.settings.RepeatMode;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.menu.Paginator;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.util.Collections;
 import java.util.List;
@@ -83,9 +83,9 @@ public class QueueCmd extends MusicCommand {
         AudioHandler ah = (AudioHandler) event.getGuild().getAudioManager().getSendingHandler();
         List<QueuedTrack> list = ah.getQueue().getList();
         if (list.isEmpty()) {
-            Message nowp = ah.getNowPlaying(event.getJDA());
-            Message nonowp = ah.getNoMusicPlaying(event.getJDA());
-            Message built = new MessageBuilder()
+            MessageCreateData nowp = ah.getNowPlaying(event.getJDA());
+            MessageCreateData nonowp = ah.getNoMusicPlaying(event.getJDA());
+            MessageCreateData built = new MessageCreateBuilder()
                     .setContent(event.getClient().getWarning() + " There is no music in the queue!")
                     .setEmbeds((nowp == null ? nonowp : nowp).getEmbeds().get(0)).build();
             event.reply(built, m -> {
@@ -120,10 +120,10 @@ public class QueueCmd extends MusicCommand {
         AudioHandler ah = (AudioHandler) event.getGuild().getAudioManager().getSendingHandler();
         List<QueuedTrack> list = ah.getQueue().getList();
         if (list.isEmpty()) {
-            Message nowp = ah.getNowPlaying(event.getJDA());
-            Message nonowp = ah.getNoMusicPlaying(event.getJDA());
-            Message built = new MessageBuilder()
-                    .setContent(getClient().getWarning() + " There is no music in the queue!")
+            MessageCreateData nowp = ah.getNowPlaying(event.getJDA());
+            MessageCreateData nonowp = ah.getNoMusicPlaying(event.getJDA());
+            MessageCreateData built = new MessageCreateBuilder()
+                    .setContent(event.getClient().getWarning() + " There is no music in the queue!")
                     .setEmbeds((nowp == null ? nonowp : nowp).getEmbeds().get(0)).build();
             event.reply(built).queue(s -> s.retrieveOriginal().queue(m -> {
                 if (nowp != null)
@@ -137,9 +137,9 @@ public class QueueCmd extends MusicCommand {
             total += list.get(i).getTrack().getDuration();
             songs[i] = list.get(i).toString();
         }
-        Settings settings = getClient().getSettingsFor(event.getGuild());
+        Settings settings = event.getClient().getSettingsFor(event.getGuild());
         long fintotal = total;
-        builder.setText((i1, i2) -> getQueueTitle(ah, getClient().getSuccess(), songs.length, fintotal,
+        builder.setText((i1, i2) -> getQueueTitle(ah, event.getClient().getSuccess(), songs.length, fintotal,
                 settings.getRepeatMode()))
                 .setItems(songs)
                 .setUsers(event.getUser())

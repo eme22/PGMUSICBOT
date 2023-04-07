@@ -4,13 +4,13 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -29,11 +29,11 @@ public class CloneAndDeleteChannel extends AdminCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        TextChannel channel = Objects.requireNonNull(event.getGuild()).getTextChannelById(Objects.requireNonNull(event.getOption("canal")).getAsMessageChannel().getId());
+        TextChannel channel = Objects.requireNonNull(event.getGuild()).getTextChannelById(Objects.requireNonNull(event.getOption("canal")).getAsChannel().getId());
 
         channel.createCopy().queue(
                 success -> {
-                    Settings s = getClient().getSettingsFor(event.getGuild());
+                    Settings s = event.getClient().getSettingsFor(event.getGuild());
 
                     checkAndDeleteChannel(channel, success, s, event.getGuild(), event.getJDA());
                 });

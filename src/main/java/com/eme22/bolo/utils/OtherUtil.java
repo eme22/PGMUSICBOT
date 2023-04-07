@@ -27,6 +27,7 @@ import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.internal.utils.Checks;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,7 +42,6 @@ import org.kohsuke.github.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -76,6 +76,11 @@ public class OtherUtil
     private final static String WINDOWS_INVALID_PATH = "c:\\windows\\system32\\";
 
     private static final List<String> SHA = new ArrayList<>();
+    private static final int WIDTH = 1000;
+
+    private static final int HEIGHT = 500;
+    private static final int PADDING = 50;
+    private static final int AVATAR_SIZE = 250;
 
     /**
      * gets a Path from a String
@@ -314,6 +319,80 @@ public class OtherUtil
         }
     }
 
+    public static void crateImage2(String username, String message, BufferedImage background, BufferedImage avatar, String outputFilePath) throws IOException, FontFormatException {
+
+        // Crear fuentes
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("trans.ttf");
+
+        // Crear la imagen de bienvenida
+        BufferedImage welcomeImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = welcomeImage.createGraphics();
+
+        // Dibujar la imagen de fondo
+        g2d.drawImage(background, 0, 0, WIDTH, HEIGHT, null);
+
+        // Establecer la fuente y el color de la fuente para el nombre de usuario
+        Font font = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(90f);
+        g2d.setFont(font);
+        g2d.setColor(Color.WHITE);
+
+        // Medir el tamaño del nombre de usuario
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        int usernameWidth = fontMetrics.stringWidth(username);
+        int usernameHeight = fontMetrics.getHeight();
+
+        // Dibujar el nombre de usuario en la parte superior de la imagen
+        int usernameX = (WIDTH - usernameWidth) / 2;
+        int usernameY = PADDING + usernameHeight;
+        g2d.drawString(username, usernameX, usernameY);
+
+        // Dibujar la imagen de avatar circular en el centro de la imagen
+        BufferedImage circleImage = createCircleImage(avatar, AVATAR_SIZE);
+        int avatarX = (WIDTH - AVATAR_SIZE) / 2;
+        int avatarY = (HEIGHT - AVATAR_SIZE - PADDING - usernameHeight) / 2 + usernameHeight;
+        g2d.drawImage(circleImage, avatarX, avatarY, null);
+
+        // Establecer la fuente y el color de la fuente para el texto de bienvenida
+        font = font.deriveFont(70f);
+        g2d.setFont(font);
+        g2d.setColor(Color.WHITE);
+
+        // Medir el tamaño del texto de bienvenida
+        int welcomeWidth = fontMetrics.stringWidth(message);
+        int welcomeHeight = fontMetrics.getHeight();
+
+        // Dibujar el texto de bienvenida en la parte inferior de la imagen
+        int welcomeX = (WIDTH - welcomeWidth) / 2;
+        int welcomeY = HEIGHT - PADDING - welcomeHeight;
+        g2d.drawString(message, welcomeX, welcomeY);
+
+        // Liberar los recursos del contexto gráfico
+        g2d.dispose();
+
+        File outputfile = new File(outputFilePath);
+        ImageIO.write(welcomeImage, "png", outputfile);
+    }
+
+    private static BufferedImage createCircleImage(BufferedImage image, int size) {
+        // Crear una imagen vacía con el tamaño especificado
+        BufferedImage circleImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+                // Obtener el contexto gráfico de la imagen circular
+                Graphics2D g2d = circleImage.createGraphics();
+
+        // Dibujar un círculo negro para el fondo
+        g2d.setColor(Color.BLACK);
+        g2d.fillOval(0, 0, size, size);
+
+        // Dibujar la imagen en el centro del círculo
+        int x = (size - image.getWidth()) / 2;
+        int y = (size - image.getHeight()) / 2;
+        g2d.drawImage(image, x, y, null);
+
+        // Liberar los recursos del contexto gráfico
+        g2d.dispose();
+
+        return circleImage;
+    }
     public static void createImage(String message, String name, String id, InputStream background, String userImage, File image) throws IOException {
 
         try {
@@ -462,6 +541,8 @@ public class OtherUtil
 
 
     }
+
+
 
     private static String getFileChecksum(MessageDigest digest, File file) throws IOException
     {
@@ -645,7 +726,7 @@ public class OtherUtil
     }
 
     public static boolean isAudioChannelAllowed(Guild guild, Settings settings, Member member){
-        VoiceChannel current = guild.getSelfMember().getVoiceState().getChannel();
+        VoiceChannel current = guild.getSelfMember().getVoiceState().getChannel().asVoiceChannel();
         GuildVoiceState userState = member.getVoiceState();
 
         if(current==null) {
@@ -664,7 +745,7 @@ public class OtherUtil
 
     public static int isUserInVoice(Guild guild, Settings settings, Member member){
         GuildVoiceState userState = member.getVoiceState();
-        if (userState.inVoiceChannel()) {
+        if (userState.inAudioChannel()) {
             VoiceChannel afkChannel = guild.getAfkChannel();
             if(afkChannel != null && afkChannel.equals(userState.getChannel()))
                 return 2;
@@ -696,12 +777,12 @@ public class OtherUtil
         }
     }
 
-    public static boolean isRoleHierarchyLower(@Nonnull List<Role> roles, @Nonnull Role matchRole) {
+    public static boolean isRoleHierarchyLower(@NotNull List<Role> roles, @NotNull Role matchRole) {
         Checks.notNull(matchRole, "Match roles can not be null");
         return isRoleHierarchyLower(roles, matchRole.getPosition());
     }
 
-    public static boolean isRoleHierarchyLower(@Nonnull List<Role> roles, int hierarchyPosition) {
+    public static boolean isRoleHierarchyLower(@NotNull List<Role> roles, int hierarchyPosition) {
         for (Role role : roles) {
             if (role.getPosition() < hierarchyPosition) {
                 return false;
@@ -710,7 +791,7 @@ public class OtherUtil
         return true;
     }
 
-    public static boolean isRoleHierarchyLower(@Nonnull Role role, @Nonnull Role roleToCompare) {
+    public static boolean isRoleHierarchyLower(@NotNull Role role, @NotNull Role roleToCompare) {
         return role.getPosition() < roleToCompare.getPosition();
     }
 
@@ -720,7 +801,7 @@ public class OtherUtil
      * @param member The member whos roles should be used.
      * @return Possibly-null, if the user has any roles the role that is ranked highest in the role hierarchy will be returned.
      */
-    public static Role getHighestFrom(@Nonnull Member member) {
+    public static Role getHighestFrom(@NotNull Member member) {
         Checks.notNull(member, "Member object can not be null");
         List<Role> roles = member.getRoles();
         if (roles.isEmpty()) {
@@ -734,7 +815,7 @@ public class OtherUtil
         }).findFirst().orElseGet(null);
     }
 
-    public static Role getHighestFrom(@Nonnull List<Role> roles) {
+    public static Role getHighestFrom(@NotNull List<Role> roles) {
         Checks.notNull(roles, "Member object can not be null");
         if (roles.isEmpty()) {
             return null;

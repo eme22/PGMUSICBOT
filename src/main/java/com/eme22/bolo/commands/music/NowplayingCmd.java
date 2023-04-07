@@ -19,9 +19,10 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.MusicCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 /**
  *
@@ -42,7 +43,7 @@ public class NowplayingCmd extends MusicCommand
     public void doCommand(CommandEvent event) 
     {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-        Message m = handler.getNowPlaying(event.getJDA());
+        MessageCreateData m = handler.getNowPlaying(event.getJDA());
         if(m==null)
         {
             event.reply(handler.getNoMusicPlaying(event.getJDA()));
@@ -51,11 +52,11 @@ public class NowplayingCmd extends MusicCommand
         else
         {
             event.reply(m, msg -> {
-                msg.addReaction("U+23EF").queue();
-                msg.addReaction("U+23ED").queue();
-                msg.addReaction("U+1F507").queue();
-                msg.addReaction("U+1F4C3").queue();
-                msg.addReaction("U+1F3B5").queue();
+                msg.addReaction(Emoji.fromFormatted("U+23EF")).queue();
+                msg.addReaction(Emoji.fromFormatted("U+23ED")).queue();
+                msg.addReaction(Emoji.fromFormatted("U+1F507")).queue();
+                msg.addReaction(Emoji.fromFormatted("U+1F4C3")).queue();
+                msg.addReaction(Emoji.fromFormatted("U+1F3B5")).queue();
                 bot.getNowPlayingHandler().setLastNPMessage(msg);
             });
         }
@@ -64,7 +65,7 @@ public class NowplayingCmd extends MusicCommand
     @Override
     public void doCommand(SlashCommandEvent event) {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-        Message m = handler.getNowPlaying(event.getJDA());
+        MessageCreateData m = handler.getNowPlaying(event.getJDA());
         if(m==null)
         {
             event.reply(handler.getNoMusicPlaying(event.getJDA())).queue();
@@ -73,11 +74,11 @@ public class NowplayingCmd extends MusicCommand
         else
         {
             event.reply(m).queue( s -> s.retrieveOriginal().queue(msg -> {
-                msg.addReaction("U+23EF").queue();
-                msg.addReaction("U+23ED").queue();
-                msg.addReaction("U+1F507").queue();
-                msg.addReaction("U+1F4C3").queue();
-                msg.addReaction("U+1F3B5").queue();
+                msg.addReaction(Emoji.fromFormatted("U+23EF")).queue();
+                msg.addReaction(Emoji.fromFormatted("U+23ED")).queue();
+                msg.addReaction(Emoji.fromFormatted("U+1F507")).queue();
+                msg.addReaction(Emoji.fromFormatted("U+1F4C3")).queue();
+                msg.addReaction(Emoji.fromFormatted("U+1F3B5")).queue();
                 bot.getNowPlayingHandler().setLastNPMessage(msg);
             }) );
         }

@@ -21,9 +21,10 @@ import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 
 /**
@@ -65,7 +66,7 @@ public abstract class MusicCommand extends SlashCommand
         bot.getPlayerManager().setUpHandler(event.getGuild());
 
         if (bePlaying && !isMusicPlaying(event)) return;
-        if (beListening && !isBotConnected(event, settings)) return;
+        if (beListening && !isBotConnected(event)) return;
 
         doCommand(event);
     }
@@ -73,14 +74,14 @@ public abstract class MusicCommand extends SlashCommand
     @Override
     protected void execute(SlashCommandEvent event) {
 
-        Settings settings = getClient().getSettingsFor(event.getGuild());
+        Settings settings = event.getClient().getSettingsFor(event.getGuild());
         TextChannel tchannel = settings.getTextChannel(event.getGuild());
 
         if (!isTextChannelAllowed(event, tchannel)) return;
 
         switch (OtherUtil.isUserInVoice(event.getGuild(), settings, event.getMember())){
             case 0: {
-                event.reply(getClient().getError()+"¡Debes estar en un canal de audio para usar este comando!").setEphemeral(true).queue();
+                event.reply(event.getClient().getError()+"¡Debes estar en un canal de audio para usar este comando!").setEphemeral(true).queue();
                 return;
             }
             case 2: {
@@ -113,7 +114,7 @@ public abstract class MusicCommand extends SlashCommand
         if (tchannel == null)
             return true;
         else if (!event.getTextChannel().getId().equals(tchannel.getId())) {
-            event.reply(getClient().getError()+" You can only use that command in "+tchannel.getAsMention()+"!").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+" You can only use that command in "+tchannel.getAsMention()+"!").setEphemeral(true).queue();
             return false;
         }
         return true;
@@ -129,16 +130,27 @@ public abstract class MusicCommand extends SlashCommand
 
     private boolean isMusicPlaying(SlashCommandEvent event) {
         if (!((AudioHandler)event.getGuild().getAudioManager().getSendingHandler()).isMusicPlaying(event.getJDA())) {
-            event.reply(getClient().getError()+" There must be music playing to use that!").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+" There must be music playing to use that!").setEphemeral(true).queue();
             return false;
         }
         return true;
     }
 
-    public boolean isBotConnected(CommandEvent event, Settings settings) {
+    public boolean isBotConnected(CommandEvent event) {
 
-        if (!event.getGuild().getSelfMember().getVoiceState().inVoiceChannel()) {
-            GuildVoiceState userState = event.getMember().getVoiceState();
+        if (event.getGuild().getSelfMember().getVoiceState() == null)
+            return false;
+
+        if (!event.getGuild().getSelfMember().getVoiceState().inAudioChannel()) {
+            Member member = event.getMember();
+
+            GuildVoiceState userState = member.getVoiceState();
+
+            if (userState == null || userState.getChannel() == null || !userState.inAudioChannel()) {
+                event.replyError(" No te has conectado a un canal!");
+                return false;
+            }
+
             try {
                 event.getGuild().getAudioManager().openAudioConnection(userState.getChannel());
                 return true;
@@ -152,13 +164,31 @@ public abstract class MusicCommand extends SlashCommand
 
     public boolean isBotConnected(SlashCommandEvent event){
 
-        if (!event.getGuild().getSelfMember().getVoiceState().inVoiceChannel()) {
-            GuildVoiceState userState = event.getMember().getVoiceState();
+        if (event.getGuild() == null)
+            return false;
+
+        if (event.getGuild().getSelfMember().getVoiceState() == null)
+            return false;
+
+        if (!event.getGuild().getSelfMember().getVoiceState().inAudioChannel()) {
+
+            Member member = event.getMember();
+
+            if (member == null)
+                return false;
+
+            GuildVoiceState userState = member.getVoiceState();
+
+            if (userState == null || userState.getChannel() == null || !userState.inAudioChannel()) {
+                event.reply(event.getClient().getError() + " No te has conectado a un canal!").setEphemeral(true).queue();
+                return false;
+            }
+
             try {
                 event.getGuild().getAudioManager().openAudioConnection(userState.getChannel());
                 return true;
             } catch (PermissionException ex) {
-                event.reply(getClient().getError() + " I am unable to connect to " + userState.getChannel().getAsMention() + "!").queue();
+                event.reply(event.getClient().getError() + " No tengo permisos para conectarme a " + userState.getChannel().getAsMention() + "!").queue();
                 return false;
             }
         }

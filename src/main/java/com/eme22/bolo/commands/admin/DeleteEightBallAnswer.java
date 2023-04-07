@@ -4,7 +4,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -22,16 +22,16 @@ public class DeleteEightBallAnswer extends AdminCommand {
 
 	@Override
 	protected void execute(SlashCommandEvent event) {
-		Settings settings = getClient().getSettingsFor(event.getGuild());
+		Settings settings = event.getClient().getSettingsFor(event.getGuild());
 		int answer = Integer.parseInt(event.getOption("posicion").getAsString());
 
 		if (answer >= settings.getEightBallAnswers().size()) {
-			event.reply(getClient().getError() + " Posicion incorrecta!!").queue();
+			event.reply(event.getClient().getError() + " Posicion incorrecta!!").queue();
 			return;
 		}
 
 		settings.removeFrom8BallAnswers(answer);
-		event.reply(getClient().getSuccess()+ " **Respuesta eliminada en la posicion: " + answer+ " **").queue();
+		event.reply(event.getClient().getSuccess()+ " **Respuesta eliminada en la posicion: " + answer+ " **").queue();
 	}
 
 	@Override

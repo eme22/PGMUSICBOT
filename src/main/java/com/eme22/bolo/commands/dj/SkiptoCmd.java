@@ -19,7 +19,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.DJCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -80,17 +80,17 @@ public class SkiptoCmd extends DJCommand
         }
         catch(NumberFormatException e)
         {
-            event.reply(getClient().getError()+" `"+option.getAsString()+"` is not a valid integer!").queue();
+            event.reply(event.getClient().getError()+" `"+option.getAsString()+"` is not a valid integer!").queue();
             return;
         }
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         if(index<1 || index>handler.getQueue().size())
         {
-            event.reply(getClient().getError()+" Position must be a valid integer between 1 and "+handler.getQueue().size()+"!").queue();
+            event.reply(event.getClient().getError()+" Position must be a valid integer between 1 and "+handler.getQueue().size()+"!").queue();
             return;
         }
         handler.getQueue().skip(index-1);
-        event.reply(getClient().getSuccess()+" Skipped to **"+handler.getQueue().get(0).getTrack().getInfo().title+"**").queue();
+        event.reply(event.getClient().getSuccess()+" Skipped to **"+handler.getQueue().get(0).getTrack().getInfo().title+"**").queue();
         handler.getPlayer().stopTrack();
     }
 }

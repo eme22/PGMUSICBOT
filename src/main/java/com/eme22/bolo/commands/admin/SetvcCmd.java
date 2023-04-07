@@ -20,9 +20,10 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -51,14 +52,15 @@ public class SetvcCmd extends AdminCommand
 
         OptionMapping option = event.getOption("canal");
         VoiceChannel channel = null;
-        if (option != null){
-            channel = event.getGuild().getVoiceChannelById(option.getAsGuildChannel().getId());
-        }
+        if (option != null)
+            if (option.getAsChannel().getType().equals(ChannelType.VOICE))
+                channel = option.getAsChannel().asVoiceChannel();
+
 
         if (channel != null) {
-            Settings s = getClient().getSettingsFor(event.getGuild());
+            Settings s = event.getClient().getSettingsFor(event.getGuild());
             s.setVoiceChannelId(channel.getIdLong());
-            event.reply(getClient().getSuccess()+" Ahora la música sólo puede reproducirse en "+channel.getAsMention()).queue();
+            event.reply(event.getClient().getSuccess()+" Ahora la música sólo puede reproducirse en "+channel.getAsMention()).queue();
         }
         else
             event.reply("Asegurese de que es un canal de voz").setEphemeral(true).queue();

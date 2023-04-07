@@ -5,7 +5,7 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -26,19 +26,19 @@ public class SetGoodByeImageCmd extends AdminCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         String image = event.getOption("imagen").getAsString();
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(image.equalsIgnoreCase("none"))
         {
             s.setDespedidasChannelImage(null);
-            event.reply(getClient().getSuccess()+" La imagen de despedidas se ha quitado.").queue();
+            event.reply(event.getClient().getSuccess()+" La imagen de despedidas se ha quitado.").queue();
             return;
         }
         if (OtherUtil.checkImage(image)){
             s.setDespedidasChannelImage(image);
-            event.reply(getClient().getSuccess()+"La imagen de despedidas es ahora "+image).queue();
+            event.reply(event.getClient().getSuccess()+"La imagen de despedidas es ahora "+image).queue();
         }
         else {
-            event.reply(getClient().getError()+ " Incluya un link a una imagen valida o NONE para usar la imagen por defecto").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+ " Incluya un link a una imagen valida o NONE para usar la imagen por defecto").setEphemeral(true).queue();
         }
     }
     

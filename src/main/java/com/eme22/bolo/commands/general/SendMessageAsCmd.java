@@ -4,11 +4,17 @@ import club.minnced.discord.webhook.external.JDAWebhookClient;
 import com.eme22.bolo.Bot;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -16,6 +22,8 @@ import java.net.URL;
 import java.util.Arrays;
 
 public class SendMessageAsCmd extends SlashCommand {
+
+    private static final Logger log = LoggerFactory.getLogger("BoloBot - SendMessageAsCmd");
 
     public SendMessageAsCmd(Bot bot) {
         this.name = "sendmessageas";
@@ -37,7 +45,7 @@ public class SendMessageAsCmd extends SlashCommand {
         try {
 
             sendFakeMessage(usuario, message, event.getTextChannel());
-            event.reply(getClient().getSuccess()+ " Mensaje Enviado").setEphemeral(true).queue();
+            event.reply(event.getClient().getSuccess()+ " Mensaje Enviado").setEphemeral(true).queue();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -64,15 +72,20 @@ public class SendMessageAsCmd extends SlashCommand {
 
 
         URL url = new URL(avatarUrl);
-        Webhook webhook = textChannel
+
+        Webhook webhook = null;
+
+        webhook = textChannel
                 .createWebhook(name)
                 .setAvatar(Icon.from(new BufferedInputStream(url.openStream())))
                 .complete();
 
+
         try (JDAWebhookClient client = JDAWebhookClient.from(webhook)) {
-            client.send(message); // send a JDA message instance
-        } finally {
-            webhook.delete().queue();
+            Webhook finalWebhook = webhook;
+            client.send(message).thenRun(()->{
+                finalWebhook.delete().queue();
+            }); // send a JDA message instance
         }
     }
 

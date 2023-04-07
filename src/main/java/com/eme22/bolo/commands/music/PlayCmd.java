@@ -23,6 +23,7 @@ import com.eme22.bolo.playlist.PlaylistLoader.Playlist;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.menu.ButtonMenu;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -31,7 +32,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -78,19 +78,19 @@ public class PlayCmd extends MusicCommand {
              * if(checkDJPermission(event))
              * {
              * handler.getPlayer().setPaused(false);
-             * event.reply(getClient().getSuccess()+
+             * event.reply(event.getClient().getSuccess()+
              * "Resumido **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**.").
              * queue();
              * }
              * else
-             * event.reply(getClient().getError()+
+             * event.reply(event.getClient().getError()+
              * "Solo los DJ pueden utilizar este comando!").setEphemeral(true).queue();
              * return;
              * }
              */
-            String builder = getClient().getWarning() + " Comando Play:\n" + "\n`" + getClient().getPrefix() + name +
+            String builder = event.getClient().getWarning() + " Comando Play:\n" + "\n`" + event.getClient().getPrefix() + name +
                     " <titulo>` - reproduce la primera cancion encontrada con ese nombre" +
-                    "\n`" + getClient().getPrefix() + name +
+                    "\n`" + event.getClient().getPrefix() + name +
                     " <URL>` - reproduce cancion, video, o stream";
             event.reply(builder).setEphemeral(true).queue();
             return;
@@ -130,6 +130,7 @@ public class PlayCmd extends MusicCommand {
                     .append(" <titulo>` - reproduce la primera cancion encontrada con ese nombre");
             builder.append("\n`").append(event.getClient().getPrefix()).append(name)
                     .append(" <URL>` - reproduce cancion, video, o stream");
+
             for (Command cmd : children)
                 builder.append("\n`").append(event.getClient().getPrefix()).append(name).append(" ")
                         .append(cmd.getName()).append(" ").append(cmd.getArguments()).append("` - ")
@@ -159,7 +160,7 @@ public class PlayCmd extends MusicCommand {
 
         private void loadSingle(AudioTrack track, AudioPlaylist playlist) {
             if (bot.getConfig().isTooLong(track)) {
-                m.editMessage(FormatUtil.filter((slashEvent == null ? event.getClient() : getClient()).getWarning()
+                m.editMessage(FormatUtil.filter((slashEvent == null ? event.getClient() : slashEvent.getClient()).getWarning()
                         + " Esta pista (**" + track.getInfo().title + "**) es mas larga que el maximo: `"
                         + FormatUtil.formatTime(track.getDuration()) + "` permitido > `"
                         + FormatUtil.formatTime(bot.getConfig().getMaxSeconds() * 1000) + "`")).queue();
@@ -173,7 +174,7 @@ public class PlayCmd extends MusicCommand {
             int pos = handler.addTrack(
                     new QueuedTrack(track, (slashEvent == null ? event.getAuthor() : slashEvent.getUser()))) + 1;
 
-            String addMsg = FormatUtil.filter((slashEvent == null ? event.getClient() : getClient()).getSuccess()
+            String addMsg = FormatUtil.filter((slashEvent == null ? event.getClient() : slashEvent.getClient()).getSuccess()
                     + " Agregado **" + track.getInfo().title
                     + "** (`" + FormatUtil.formatTime(track.getDuration()) + "`) "
                     + (pos == 0 ? "to begin playing" : " to the queue at position " + pos));
@@ -184,7 +185,7 @@ public class PlayCmd extends MusicCommand {
                 m.editMessage(addMsg).queue();
             else {
                 new ButtonMenu.Builder()
-                        .setText(addMsg + "\n" + (slashEvent == null ? event.getClient() : getClient()).getWarning()
+                        .setText(addMsg + "\n" + (slashEvent == null ? event.getClient() : slashEvent.getClient()).getWarning()
                                 + " This track has a playlist of **" + playlist.getTracks().size()
                                 + "** tracks attached. Select " + LOAD + " to load playlist.")
                         .setChoices(LOAD, CANCEL)
@@ -193,7 +194,7 @@ public class PlayCmd extends MusicCommand {
                         .setAction(re -> {
                             if (re.getName().equals(LOAD))
                                 m.editMessage(addMsg + "\n"
-                                        + (slashEvent == null ? event.getClient() : getClient()).getSuccess()
+                                        + (slashEvent == null ? event.getClient() : slashEvent.getClient()).getSuccess()
                                         + " Loaded **" + loadPlaylist(playlist, track) + "** additional tracks!")
                                         .queue();
                             else
@@ -247,13 +248,13 @@ public class PlayCmd extends MusicCommand {
                 } else {
                     m.editMessage(
                             FormatUtil.filter(
-                                    (slashEvent == null ? event.getClient() : getClient()).getSuccess() + " Found "
+                                    (slashEvent == null ? event.getClient() : slashEvent.getClient()).getSuccess() + " Found "
                                             + (playlist.getName() == null ? "a playlist"
                                                     : "playlist **" + playlist.getName() + "**")
                                             + " with `"
                                             + playlist.getTracks().size() + "` entries; added to the queue!"
                                             + (count < playlist.getTracks().size() ? "\n"
-                                                    + (slashEvent == null ? event.getClient() : getClient())
+                                                    + (slashEvent == null ? event.getClient() : slashEvent.getClient())
                                                             .getWarning()
                                                     + " Tracks longer than the allowed maximum (`"
                                                     + bot.getConfig().getMaxTime() + "`) have been omitted." : "")))
@@ -267,24 +268,24 @@ public class PlayCmd extends MusicCommand {
             if (slashEvent == null) {
                 if (ytsearch)
                     m.editMessage(FormatUtil.filter(
-                            event.getClient().getWarning() + " No hay resultados para `" + event.getArgs() + "`."))
+                            event.getClient().getWarning() + " No hay resultados para `" + slashEvent == null ? event.getArgs(): slashEvent.getOption("link").getAsString() + "`."))
                             .queue();
                 else
-                    bot.getPlayerManager().loadItemOrdered(event.getClient(), "ytsearch:" + event.getArgs(),
+                    bot.getPlayerManager().loadItemOrdered(event.getClient(), "ytsearch:" + slashEvent == null ? event.getArgs(): slashEvent.getOption("link").getAsString(),
                             new ResultHandler(m, event, null, true));
 
             } else {
                 OptionMapping arg = slashEvent.getOption("link");
                 if (arg == null) {
                     if (ytsearch)
-                        m.editMessage(FormatUtil.filter(getClient().getWarning() + " No hay resultados.")).queue();
+                        m.editMessage(FormatUtil.filter(event.getClient().getWarning() + " No hay resultados.")).queue();
 
                 } else {
                     if (ytsearch) {
-                        Playlist playlist = bot.getPlaylistLoader().getPlaylist(event.getArgs());
+                        Playlist playlist = bot.getPlaylistLoader().getPlaylist(slashEvent == null ? event.getArgs(): slashEvent.getOption("link").getAsString() );
                         if (playlist == null) {
                             m.editMessage(FormatUtil.filter(
-                                    getClient().getWarning() + " No hay resultados para `" + arg.getAsString() + "`."))
+                                    event.getClient().getWarning() + " No hay resultados para `" + arg.getAsString() + "`."))
                                     .queue();
                             return;
                         }
@@ -296,8 +297,8 @@ public class PlayCmd extends MusicCommand {
                                     playlist.loadTracks(bot.getPlayerManager(),
                                             (at) -> handler.addTrack(new QueuedTrack(at, slashEvent.getUser())), () -> {
                                                 StringBuilder builder = new StringBuilder(playlist.getTracks().isEmpty()
-                                                        ? getClient().getWarning() + " No tracks were loaded!"
-                                                        : getClient().getSuccess() + " Loaded **"
+                                                        ? event.getClient().getWarning() + " No tracks were loaded!"
+                                                        : event.getClient().getSuccess() + " Loaded **"
                                                                 + playlist.getTracks().size() + "** tracks!");
                                                 if (!playlist.getErrors().isEmpty())
                                                     builder.append("\nThe following tracks failed to load:");
@@ -311,7 +312,7 @@ public class PlayCmd extends MusicCommand {
                                             });
                                 });
                     } else
-                        bot.getPlayerManager().loadItemOrdered(getClient(), "ytsearch:" + arg.getAsString(),
+                        bot.getPlayerManager().loadItemOrdered(slashEvent == null ? event.getClient() : slashEvent.getClient(), "ytsearch:" + arg.getAsString(),
                                 new ResultHandler(m, event, slashEvent, true));
                 }
             }
@@ -321,11 +322,11 @@ public class PlayCmd extends MusicCommand {
         @Override
         public void loadFailed(FriendlyException throwable) {
             if (throwable.severity == Severity.COMMON)
-                m.editMessage((slashEvent == null ? event.getClient() : getClient()).getError() + " Error loading: "
+                m.editMessage((slashEvent == null ? event.getClient() : slashEvent.getClient()).getError() + " Error cargando: "
                         + throwable.getMessage()).queue();
             else
                 m.editMessage(
-                        (slashEvent == null ? event.getClient() : getClient()).getError() + " Error loading track.")
+                        (slashEvent == null ? event.getClient() : slashEvent.getClient()).getError() + " Error cargando pista.")
                         .queue();
         }
     }

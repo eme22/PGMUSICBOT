@@ -19,15 +19,14 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -46,14 +45,14 @@ public class DeleteImageChannel extends AdminCommand
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        TextChannel textChannel = Objects.requireNonNull(event.getGuild()).getTextChannelById(Objects.requireNonNull(event.getOption("canal")).getAsMessageChannel().getId());
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        TextChannel textChannel = event.getOption("canal").getAsChannel().asTextChannel();
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         if (s.isOnlyImageChannel(textChannel)){
             s.removeFromOnlyImageChannels(textChannel);
-            event.reply(getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> quitado de la lista de canales sin texto").queue();
+            event.reply(event.getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> quitado de la lista de canales sin texto").queue();
         }
         else {
-            event.reply(getClient().getError() + " Canal <#"+textChannel.getId()+"> no esta en la lista de canales sin texto").setEphemeral(true).queue();
+            event.reply(event.getClient().getError() + " Canal <#"+textChannel.getId()+"> no esta en la lista de canales sin texto").setEphemeral(true).queue();
         }
 
     }

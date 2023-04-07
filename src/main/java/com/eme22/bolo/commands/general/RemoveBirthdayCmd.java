@@ -1,16 +1,9 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.entities.Birthday;
-import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-
-import java.util.Arrays;
-import java.util.Calendar;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 public class RemoveBirthdayCmd extends SlashCommand {
 
@@ -29,7 +22,7 @@ public class RemoveBirthdayCmd extends SlashCommand {
 
             bot.getSettingsManager().getSettings(event.getGuild()).removeBirthDay(event.getUser().getIdLong());
 
-            event.reply(getClient().getSuccess()+ " Se ha borrado tu cumpleaños").setEphemeral(true).queue();
+            event.reply(event.getClient().getSuccess()+ " Se ha borrado tu cumpleaños").setEphemeral(true).queue();
 
 
     }

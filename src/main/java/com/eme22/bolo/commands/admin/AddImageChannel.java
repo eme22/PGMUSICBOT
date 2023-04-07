@@ -19,17 +19,15 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -50,19 +48,19 @@ public class AddImageChannel extends AdminCommand
     protected void execute(SlashCommandEvent event) {
 
         OptionMapping canal = event.getOption("canal");
-        MessageChannel textChannel = null;
+        TextChannel textChannel = null;
         if (canal != null){
-            textChannel = canal.getAsMessageChannel();
+            textChannel = canal.getAsChannel().asTextChannel();
         }
 
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
 
         if (textChannel != null) {
             s.addOnlyImageChannels(textChannel);
-            event.reply(getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> Agregado a la lista de canales sin texto").setEphemeral(true).queue();
+            event.reply(event.getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> Agregado a la lista de canales sin texto").setEphemeral(true).queue();
         }
         else {
-            event.reply(getClient().getError()+" Asegurese de que es un canal de texto").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+" Asegurese de que es un canal de texto").setEphemeral(true).queue();
         }
 
     }

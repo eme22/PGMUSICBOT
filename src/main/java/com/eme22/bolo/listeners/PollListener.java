@@ -5,9 +5,9 @@ import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.OtherUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,14 +22,14 @@ public class PollListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         if (event.getUser().isBot())
             return;
 
         Settings settings = bot.getSettingsManager().getSettings(event.getGuild());
         if (settings != null && settings.getPolls().stream().anyMatch(poll -> poll.getId() == event.getMessageIdLong())) {
             Poll polls = settings.getPolls().stream().filter(poll -> poll.getId() == event.getMessageIdLong()).findFirst().orElse(null);
-            int num = OtherUtil.EmojiToNumber(event.getReaction().getReactionEmote().getEmoji());
+            int num = OtherUtil.EmojiToNumber(event.getReaction().getEmoji().asUnicode().getFormatted());
             if (polls != null && num != -1 && polls.isUserParticipating(event.getUserIdLong())) {
                 event.getUser().openPrivateChannel().queue(success -> success.sendMessage(bot.getConfig().getErrorEmoji() + " Solo puedes votar una vez").queue(m ->
                         m.delete().queueAfter(30, TimeUnit.SECONDS)));
@@ -51,14 +51,14 @@ public class PollListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReactionRemove(@NotNull GuildMessageReactionRemoveEvent event) {
+    public void onMessageReactionRemove(@NotNull MessageReactionRemoveEvent event) {
         if (event.getUser().isBot())
             return;
 
         Settings settings = bot.getSettingsManager().getSettings(event.getGuild());
         if (settings != null && settings.getPolls().stream().anyMatch(poll -> poll.getId() == event.getMessageIdLong())) {
             Poll polls = settings.getPolls().stream().filter(poll -> poll.getId() == event.getMessageIdLong()).findFirst().orElse(null);
-            int num = OtherUtil.EmojiToNumber(event.getReaction().getReactionEmote().getEmoji());
+            int num = OtherUtil.EmojiToNumber(event.getReaction().getEmoji().asUnicode().getFormatted());
             if (polls != null && num != -1 && polls.isUserParticipating(event.getUserIdLong())) {
                 if (polls.isUserParticipatingInAnswer(num, event.getUserIdLong())) {
                     polls.removeVoteFromAnswer(num, event.getUserIdLong());
@@ -75,7 +75,7 @@ public class PollListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
+    public void onMessageDelete(@NotNull MessageDeleteEvent event) {
         Settings settings = bot.getSettingsManager().getSettings(event.getGuild());
         if (settings != null) {
             settings.removePollFromGuild(event.getMessageIdLong());

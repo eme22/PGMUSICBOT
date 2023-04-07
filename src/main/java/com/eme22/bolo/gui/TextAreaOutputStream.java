@@ -18,7 +18,7 @@ package com.eme22.bolo.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class TextAreaOutputStream extends OutputStream {
 // INSTANCE MEMBERS
 // *************************************************************************************************
 
-private byte[]                          oneByte;                                                    // array for write(int val);
+private final byte[]                          oneByte;                                                    // array for write(int val);
 private Appender                        appender;                                                   // most recent action
 
 public TextAreaOutputStream(JTextArea txtara) {
@@ -78,12 +78,8 @@ public synchronized void write(byte[] ba,int str,int len) {
 
 //@edu.umd.cs.findbugs.annotations.SuppressWarnings("DM_DEFAULT_ENCODING")
 static private String bytesToString(byte[] ba, int str, int len) {
-    try { 
-        return new String(ba,str,len,"UTF-8"); 
-    } catch(UnsupportedEncodingException thr) { 
-        return new String(ba,str,len); 
-    } // all JVMs are required to support UTF-8
-    }
+    return new String(ba,str,len, StandardCharsets.UTF_8);
+}
 
 // *************************************************************************************************
 // STATIC MEMBERS

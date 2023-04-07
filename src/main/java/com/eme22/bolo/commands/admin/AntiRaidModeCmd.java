@@ -3,19 +3,17 @@ package com.eme22.bolo.commands.admin;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Collections;
-import java.util.function.Consumer;
 
 public class AntiRaidModeCmd extends AdminCommand {
 
-    private Bot bot;
+    private final Bot bot;
 
     public AntiRaidModeCmd(Bot bot) {
         this.bot = bot;
@@ -28,7 +26,7 @@ public class AntiRaidModeCmd extends AdminCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         OptionMapping canal = event.getOption("estado");
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
 
         if (canal != null && canal.getAsBoolean()) {
             s.setAntiRaidMode(true);

@@ -20,9 +20,9 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -48,14 +48,14 @@ public class SetAdminCmd extends AdminCommand
     @Override
     protected void execute(SlashCommandEvent event) {
         Role role = event.getOption("rol").getAsRole();
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         if(role.getIdLong() == event.getGuild().getIdLong()) {
             s.setAdminRoleId(0);
-            event.reply(getClient().getSuccess()+"Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.").queue();
+            event.reply(event.getClient().getSuccess()+"Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.").queue();
         }
         else {
             s.setAdminRoleId(role.getIdLong());
-            event.reply(getClient().getSuccess()+" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"**.").queue();
+            event.reply(event.getClient().getSuccess()+" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"**.").queue();
         }
     }
 

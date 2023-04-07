@@ -20,7 +20,7 @@ import com.eme22.bolo.commands.DJCommand;
 import com.eme22.bolo.settings.RepeatMode;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -83,7 +83,7 @@ public class RepeatCmd extends DJCommand
     protected void execute(SlashCommandEvent event) {
         OptionMapping option = event.getOption("modo");
         RepeatMode value;
-        Settings settings = getClient().getSettingsFor(event.getGuild());
+        Settings settings = event.getClient().getSettingsFor(event.getGuild());
         String args = null;
         if (option != null) {
             args = option.getAsString();
@@ -108,11 +108,11 @@ public class RepeatCmd extends DJCommand
         }
         else
         {
-            event.reply(getClient().getError() + "Valid options are `off`, `all` or `single` (or leave empty to toggle between `off` and `all`)").queue();
+            event.reply(event.getClient().getError() + "Valid options are `off`, `all` or `single` (or leave empty to toggle between `off` and `all`)").queue();
             return;
         }
         settings.setRepeatMode(value);
-        event.reply(getClient().getSuccess()+ "Repeat mode is now `"+value.getUserFriendlyName()+"`").queue();
+        event.reply(event.getClient().getSuccess()+ "Repeat mode is now `"+value.getUserFriendlyName()+"`").queue();
     }
 
     @Override

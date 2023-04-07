@@ -5,8 +5,8 @@ import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.menu.Paginator;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class MemeListCmd extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
 
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
 
         List<MemeImage> data = s.getMemeImages();
 
@@ -51,11 +51,11 @@ public class MemeListCmd extends SlashCommand {
         }
 
         if (songs.length == 0){
-            event.reply( getClient().getError()+ "No hay memes para mostrar").setEphemeral(true).queue();
+            event.reply( event.getClient().getError()+ "No hay memes para mostrar").setEphemeral(true).queue();
             return;
         }
 
-        event.reply(getClient().getSuccess()+ " Lista de memes").queue();
+        event.reply(event.getClient().getSuccess()+ " Lista de memes").queue();
         builder.setText("").setItems(songs);
         builder.build().paginate(event.getChannel(), 1);
     }

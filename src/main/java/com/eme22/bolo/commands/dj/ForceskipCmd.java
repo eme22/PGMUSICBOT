@@ -20,7 +20,7 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.RequestMetadata;
 import com.eme22.bolo.commands.DJCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 /**
  * @author John Grosh <john.a.grosh@gmail.com>
@@ -50,7 +50,7 @@ public class ForceskipCmd extends DJCommand
     public void doCommand(SlashCommandEvent event) {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         RequestMetadata rm = handler.getRequestMetadata();
-        event.reply(getClient().getSuccess()+" Skipped **"+handler.getPlayer().getPlayingTrack().getInfo().title
+        event.reply(event.getClient().getSuccess()+" Skipped **"+handler.getPlayer().getPlayingTrack().getInfo().title
                 +"** "+(rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + rm.user.username + "**)")).queue();
         handler.getPlayer().stopTrack();
     }

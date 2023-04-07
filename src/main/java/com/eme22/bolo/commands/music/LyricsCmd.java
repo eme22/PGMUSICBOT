@@ -20,16 +20,16 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.MusicCommand;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jlyrics.Lyrics;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Collections;
 
@@ -102,7 +102,7 @@ public class LyricsCmd extends MusicCommand
                 title = sendingHandler.getPlayer().getPlayingTrack().getInfo().title;
             else
             {
-                event.reply(getClient().getError()+ " There must be music playing to use that!").setEphemeral(true).queue();
+                event.reply(event.getClient().getError()+ " There must be music playing to use that!").setEphemeral(true).queue();
                 return;
             }
         }
@@ -112,7 +112,7 @@ public class LyricsCmd extends MusicCommand
         // {
         //     if(lyrics == null)
         //     {
-        //         interactionHook.editOriginal (getClient().getError()+ "Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
+        //         interactionHook.editOriginal (event.getClient().getError()+ "Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
         //         return;
         //     }
 
@@ -123,7 +123,7 @@ public class LyricsCmd extends MusicCommand
             Lyrics lyrics = OtherUtil.getLyrics(title);
             if(lyrics == null)
             {
-                interaction.editOriginal(getClient().getError()+ "Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
+                interaction.editOriginal(event.getClient().getError()+ "Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
                 return;
             }
 
@@ -181,7 +181,7 @@ public class LyricsCmd extends MusicCommand
                 .setColor(color)
                 .setTitle(lyrics.getTitle(), lyrics.getURL());
         if(lyrics.getContent().length()>15000)
-                event.reply(getClient().getError()+ "Lyrics for `" + title + "` found but likely not correct: " + lyrics.getURL()).setEphemeral(true).queue();
+                event.reply(event.getClient().getError()+ "Lyrics for `" + title + "` found but likely not correct: " + lyrics.getURL()).setEphemeral(true).queue();
 
         else if(lyrics.getContent().length()>2000)
         {

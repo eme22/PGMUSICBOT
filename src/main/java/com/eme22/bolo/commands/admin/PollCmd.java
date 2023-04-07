@@ -6,8 +6,9 @@ import com.eme22.bolo.entities.Answer;
 import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -68,12 +69,12 @@ public class PollCmd extends AdminCommand {
         event.getTextChannel().sendMessageEmbeds(eb.build()).queue(success -> {
 
             for (int j = 0; j < answers; j++) {
-                success.addReaction("U+003" + j + " U+FE0F U+20E3").queue();
+                success.addReaction(Emoji.fromFormatted("U+003" + j + " U+FE0F U+20E3")).queue();
             }
             bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addPollForGuild(success.getIdLong(),
                     poll);
 
-            event.reply(getClient().getSuccess()+ " Encuesta creada con exito. Puedes cancelarla borrando el mensaje.").setEphemeral(true).queue();
+            event.reply(event.getClient().getSuccess()+ " Encuesta creada con exito. Puedes cancelarla borrando el mensaje.").setEphemeral(true).queue();
         });
 
     }
@@ -115,7 +116,7 @@ public class PollCmd extends AdminCommand {
         eb.setDescription(OtherUtil.makePollString(poll));
         event.reply(eb.build(), success -> {
             for (int j = 0; j < answers; j++) {
-                success.addReaction("U+003" + j + " U+FE0F U+20E3").queue();
+                success.addReaction(Emoji.fromFormatted("U+003" + j + " U+FE0F U+20E3")).queue();
             }
             bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addPollForGuild(success.getIdLong(),
                     poll);

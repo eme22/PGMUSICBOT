@@ -5,11 +5,11 @@ import com.eme22.bolo.entities.MemeImage;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -29,7 +29,7 @@ public class MemeCmd extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
 
         Integer pos = null;
 
@@ -45,13 +45,14 @@ public class MemeCmd extends SlashCommand {
             else
                 data = s.getRandomMemeImages();
         } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
-            event.reply(getClient().getError() + "Meme invalido o no hay memes configurados en este servidor").queue();
+            event.reply(event.getClient().getError() + "Meme invalido o no hay memes configurados en este servidor").queue();
             return;
         }
-        MessageBuilder builder = new MessageBuilder().append(data.getMessage());
+        MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
+        StringBuilder builder = new StringBuilder().append(data.getMessage());
         EmbedBuilder eb = new EmbedBuilder().setImage(data.getMeme());
-        builder.setEmbeds(eb.build());
-        event.reply(builder.build()).queue();
+        messageCreateBuilder.setEmbeds(eb.build());
+        event.reply(messageCreateBuilder.build()).queue();
     }
 
     @Override
@@ -76,10 +77,11 @@ public class MemeCmd extends SlashCommand {
             event.replyError("Meme invalido o no hay memes configurados en este servidor");
             return;
         }
-        MessageBuilder builder = new MessageBuilder().append(data.getMessage());
+        StringBuilder builder = new StringBuilder().append(data.getMessage());
         EmbedBuilder eb = new EmbedBuilder().setImage(data.getMeme());
-        builder.setEmbeds(eb.build());
-        event.reply(builder.build());
+        MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
+        messageCreateBuilder.setEmbeds(eb.build());
+        event.reply(messageCreateBuilder.build());
         event.getMessage().delete().queue();
     }
 }

@@ -4,7 +4,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -13,7 +13,7 @@ import java.util.Collections;
 
 public class SetWelcomeEnabledCmd extends AdminCommand {
 
-    private Bot bot;
+    private final Bot bot;
 
     public SetWelcomeEnabledCmd(Bot bot) {
         this.bot = bot;
@@ -27,13 +27,15 @@ public class SetWelcomeEnabledCmd extends AdminCommand {
     protected void execute(SlashCommandEvent event) {
 
         OptionMapping canal = event.getOption("estado");
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
 
         if (canal != null && canal.getAsBoolean()) {
             s.setBienvenidasChannelEnabled(true);
         }
         else
             s.setAntiRaidMode(false);
+
+        event.reply("Hecho").queue();
     }
 
     @Override

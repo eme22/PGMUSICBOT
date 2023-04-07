@@ -1,15 +1,13 @@
 package com.eme22.bolo.birthday;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.entities.Birthday;
 import com.eme22.bolo.settings.Settings;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.Consumer;
 
 public class BirthdayManager {
 

@@ -3,14 +3,13 @@ package com.eme22.bolo.commands.admin;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ClearMessagesCmd extends AdminCommand {
@@ -29,7 +28,7 @@ public class ClearMessagesCmd extends AdminCommand {
         int values = Integer.parseInt(event.getOption("mensajes").getAsString());
         List<Message> messages = event.getChannel().getHistory().retrievePast(values).complete();
         event.getTextChannel().deleteMessages(messages).queue();
-        event.reply(getClient().getSuccess() +" " + values + " mensajes borrados!").setEphemeral(true).queue();
+        event.reply(event.getClient().getSuccess() +" " + values + " mensajes borrados!").setEphemeral(true).queue();
     }
 
     @Override

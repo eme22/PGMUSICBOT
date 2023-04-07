@@ -21,5 +21,5 @@ package com.eme22.bolo.queue;
  */
 public interface Queueable {
     
-    public long getIdentifier();
+    long getIdentifier();
 }

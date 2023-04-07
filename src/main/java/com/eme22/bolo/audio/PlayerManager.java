@@ -16,9 +16,18 @@
 package com.eme22.bolo.audio;
 
 import com.eme22.bolo.Bot;
+import com.sedmelluq.discord.lavaplayer.container.MediaContainerRegistry;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.getyarn.GetyarnAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.LoggerFactory;
@@ -39,7 +48,7 @@ public class PlayerManager extends DefaultAudioPlayerManager
     public void init()
     {
         TransformativeAudioSourceManager.createTransforms(bot.getConfig().getTransforms()).forEach(this::registerSourceManager);
-        AudioSourceManagers.registerRemoteSources(this);
+        this.registerRemoteSources(this);
         AudioSourceManagers.registerLocalSource(this);
         source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);
     }
@@ -70,5 +79,20 @@ public class PlayerManager extends DefaultAudioPlayerManager
         else
             handler = (AudioHandler) guild.getAudioManager().getSendingHandler();
         return handler;
+    }
+
+    private void registerRemoteSources(AudioPlayerManager playerManager) {
+        registerRemoteSources(playerManager, MediaContainerRegistry.DEFAULT_REGISTRY);
+    }
+
+    private void registerRemoteSources(AudioPlayerManager playerManager, MediaContainerRegistry containerRegistry) {
+        playerManager.registerSourceManager(new YoutubeAudioSourceManager(true, bot.getConfig().getYtUser(), bot.getConfig().getYtPassword()));
+        playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+        playerManager.registerSourceManager(new BandcampAudioSourceManager());
+        playerManager.registerSourceManager(new VimeoAudioSourceManager());
+        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+        playerManager.registerSourceManager(new BeamAudioSourceManager());
+        playerManager.registerSourceManager(new GetyarnAudioSourceManager());
+        playerManager.registerSourceManager(new HttpAudioSourceManager(containerRegistry));
     }
 }

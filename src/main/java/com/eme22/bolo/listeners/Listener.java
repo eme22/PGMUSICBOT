@@ -22,21 +22,26 @@ import com.eme22.bolo.entities.RoleManager;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageEmbedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageEmbedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.api.utils.messages.MessageData;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +105,7 @@ public class Listener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageEmbed(@NotNull GuildMessageEmbedEvent event) {
+    public void onMessageEmbed(@NotNull MessageEmbedEvent event) {
         ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild())
                 .getOnlyImageChannels(event.getGuild());
 
@@ -120,7 +125,7 @@ public class Listener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         if (event.getAuthor().isBot())
             return;
 
@@ -143,7 +148,7 @@ public class Listener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
+    public void onMessageDelete(MessageDeleteEvent event) {
         bot.getNowPlayingHandler().onMessageDelete(event.getGuild(), event.getMessageIdLong());
 
     }
@@ -151,16 +156,12 @@ public class Listener extends ListenerAdapter {
     @Override
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
         bot.getAloneInVoiceHandler().onVoiceUpdate(event);
-    }
 
-    @Override
-    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        if (event.getMember().getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong())
-            return;
-
-        Guild guild = event.getGuild();
-        ((AudioHandler) guild.getAudioManager().getSendingHandler()).stopAndClear();
-        guild.getAudioManager().closeAudioConnection();
+        if (event.getChannelLeft() != null && event.getEntity().getUser().getIdLong() == event.getJDA().getSelfUser().getIdLong()) {
+            Guild guild = event.getGuild();
+            ((AudioHandler) guild.getAudioManager().getSendingHandler()).stopAndClear();
+            guild.getAudioManager().closeAudioConnection();
+        }
     }
 
     @Override
@@ -173,10 +174,10 @@ public class Listener extends ListenerAdapter {
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setDescription("¿Desea configurar el bot?");
-        event.getGuild().getDefaultChannel().sendMessageEmbeds(embedBuilder.build()).queue(message -> {
+        event.getGuild().getDefaultChannel().asTextChannel().sendMessageEmbeds(embedBuilder.build()).queue(message -> {
             setupMessage = message.getId();
-            message.addReaction("U+2705").queue();
-            message.addReaction("U+274C").queue();
+            message.addReaction(Emoji.fromFormatted("U+2705")).queue();
+            message.addReaction(Emoji.fromFormatted("U+274C")).queue();
         });
 
     }
@@ -186,7 +187,7 @@ public class Listener extends ListenerAdapter {
             TextChannel commandsChannel = bot.getSettingsManager().getSettings(guild).getTextChannel(guild);
             TextChannel bienvenidasChannel = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
             TextChannel despedidasChannel = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
-            TextChannel defaultChannel = guild.getDefaultChannel();
+            TextChannel defaultChannel = guild.getDefaultChannel().asTextChannel();
             List<TextChannel> channels = guild.getTextChannels();
 
             if (commandsChannel == null) {
@@ -205,31 +206,32 @@ public class Listener extends ListenerAdapter {
     }
 
     private void setupChannel(String title, TextChannel defaultChannel, List<TextChannel> channels, int channel) {
-        ArrayList<Message> pages = new ArrayList<>();
+        ArrayList<MessageCreateData> pages = new ArrayList<>();
         int calculatedPages = (int) Math.ceil((double) channels.size() / 10);
-        MessageBuilder mb = new MessageBuilder();
+        StringBuilder mb = new StringBuilder();
         for (int i = 1; i <= calculatedPages; i++) {
             StringBuilder sb = new StringBuilder();
             sb.append("Seleccione el canal para ").append(title).append(": \n");
             for (int j = (i - 1) * 10; j < Math.min(i * 10, channels.size()); j++) {
                 sb.append(OtherUtil.numtoString(j)).append(" ").append(channels.get(j).getName()).append("\n");
             }
-            mb.setContent(sb.toString());
-            pages.add(mb.build());
+            MessageCreateBuilder msb = new MessageCreateBuilder();
+            msb.setContent(sb.toString());
+            pages.add(msb.build());
         }
 
         pages.forEach(page -> defaultChannel.sendMessage(page).queue(success -> {
 
             tempChannels.put(success.getId(), channel);
             for (int i = 0; i < getMessageItems(page); i++) {
-                success.addReaction("U+003" + i + " U+FE0F U+20E3").queue();
+                success.addReaction(Emoji.fromFormatted("U+003" + i + " U+FE0F U+20E3")).queue();
             }
         }));
 
     }
 
-    private int getMessageItems(Message message) {
-        String[] chans = message.getContentRaw().split("\n");
+    private int getMessageItems(MessageData message) {
+        String[] chans = message.getContent().split("\n");
         chans = Arrays.copyOfRange(chans, 1, chans.length);
         return chans.length;
     }
@@ -240,7 +242,7 @@ public class Listener extends ListenerAdapter {
             return;
 
         if (setupMessage != null && setupMessage.equals(event.getMessageId())) {
-            if (event.getReactionEmote().getEmoji().contains("white_check_mark")) {
+            if (event.getReaction().getEmoji().getName().contains("white_check_mark")) {
                 setupDefaultChannels(event.getGuild());
                 return;
             }
@@ -250,7 +252,7 @@ public class Listener extends ListenerAdapter {
 
         if (tempChannels.containsKey(event.getMessageId())) {
 
-            String reaction = event.getReactionEmote().getName();
+            String reaction = event.getReaction().getEmoji().getName();
             int channel = Integer.parseInt(reaction.replaceAll("[^\\d.]", ""));
             TextChannel channelId = getChannelFromMessage(channel, event.retrieveMessage().complete());
             if (channelId != null) {
@@ -259,7 +261,7 @@ public class Listener extends ListenerAdapter {
                 if (mode == 0) {
                     for (String key : getKeys(tempChannels, 0)) {
 
-                        Message msgToDelete = event.getTextChannel().retrieveMessageById(key).complete();
+                        Message msgToDelete = event.getChannel().asTextChannel().retrieveMessageById(key).complete();
                         msgToDelete.delete().complete();
 
                     }
@@ -268,7 +270,7 @@ public class Listener extends ListenerAdapter {
                 if (mode == 1) {
                     for (String key : getKeys(tempChannels, 1)) {
 
-                        Message msgToDelete = event.getTextChannel().retrieveMessageById(key).complete();
+                        Message msgToDelete = event.getChannel().asTextChannel().retrieveMessageById(key).complete();
                         msgToDelete.delete().complete();
 
                     }
@@ -278,7 +280,7 @@ public class Listener extends ListenerAdapter {
                 if (mode == 2) {
                     for (String key : getKeys(tempChannels, 2)) {
 
-                        Message msgToDelete = event.getTextChannel().retrieveMessageById(key).complete();
+                        Message msgToDelete = event.getChannel().asTextChannel().retrieveMessageById(key).complete();
                         msgToDelete.delete().complete();
 
                     }
@@ -293,18 +295,18 @@ public class Listener extends ListenerAdapter {
                 .getRoleManager(event.getMessageIdLong());
 
         if (manager != null) {
-            String reaction = event.getReactionEmote().getAsReactionCode();
+            String reaction = event.getReaction().getEmoji().getAsReactionCode();
 
             //System.out.println(manager.isToggled());
 
             if (manager.isToggled()) {
-                List<MessageReaction>  reactionsList = event.getTextChannel().retrieveMessageById(event.getMessageId()).complete().getReactions();
+                List<MessageReaction>  reactionsList = event.getChannel().asTextChannel().retrieveMessageById(event.getMessageId()).complete().getReactions();
 
                 reactionsList.forEach(messageReaction -> {
                     List<User> users = messageReaction.retrieveUsers().complete();
                     users.forEach(user -> {
 
-                        if (user.equals(event.getUser()) && !event.getReactionEmote().equals(messageReaction.getReactionEmote())) {
+                        if (user.equals(event.getUser()) && !event.getReaction().getEmoji().equals(messageReaction.getEmoji())) {
                             messageReaction.removeReaction(user).complete();
                         }
                     });
@@ -314,10 +316,10 @@ public class Listener extends ListenerAdapter {
 
             HashMap<String, String> data = manager.getEmoji();
 
-            if (data.containsKey(event.getReactionEmote().getAsReactionCode())) {
+            if (data.containsKey(event.getReaction().getEmoji().getAsReactionCode())) {
                 String roleT = data.get(reaction);
                 List<Role> list = FinderUtil.findRoles(roleT, event.getGuild());
-                event.getGuild().addRoleToMember(event.getUserId(), list.get(0)).queue();
+                event.getGuild().addRoleToMember(event.getMember(), list.get(0)).queue();
             }
 
         }
@@ -332,12 +334,12 @@ public class Listener extends ListenerAdapter {
                 .getRoleManager(event.getMessageIdLong());
 
         if (manager != null) {
-            String reaction = event.getReactionEmote().getAsReactionCode();
+            String reaction = event.getReaction().getEmoji().getAsReactionCode();
             HashMap<String, String> datas = manager.getEmoji();
 
             if (datas.containsKey(reaction)) {
                 List<Role> list = FinderUtil.findRoles(datas.get(reaction), event.getGuild());
-                event.getGuild().removeRoleFromMember(event.getUserId(), list.get(0)).complete();
+                event.getGuild().removeRoleFromMember(event.getMember(), list.get(0)).complete();
             }
         }
     }
@@ -401,7 +403,7 @@ public class Listener extends ListenerAdapter {
                         guild.getName());
 
                 // builder.setThumbnail("attachment://bienvenida.png");
-                bienvenidas.sendMessage(message).addFile(converted).queue(sucess -> {
+                bienvenidas.sendMessage(message).addFiles(FileUpload.fromData(converted)).queue(sucess -> {
                     if (converted.delete()) {
 
                         log.error("Image deleted from memory after succes sended");
@@ -454,7 +456,7 @@ public class Listener extends ListenerAdapter {
                 String message = OtherUtil.getMessage(bot, guild, false);
                 message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername",
                         guild.getName());
-                despedidas.sendMessage(message).addFile(converted).queue(sucess -> {
+                despedidas.sendMessage(message).addFiles(FileUpload.fromData(converted)).queue(sucess -> {
                     if (converted.delete()) {
                         log.error("Image deleted from memory after succes sended");
                     }

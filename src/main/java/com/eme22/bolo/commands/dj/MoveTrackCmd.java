@@ -6,7 +6,7 @@ import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.commands.DJCommand;
 import com.eme22.bolo.queue.FairQueue;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 /**
  * Command that provides users the ability to move a track in the playlist.

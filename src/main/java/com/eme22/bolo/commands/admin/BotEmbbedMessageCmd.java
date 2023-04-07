@@ -3,8 +3,8 @@ package com.eme22.bolo.commands.admin;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -24,7 +24,7 @@ public class BotEmbbedMessageCmd extends AdminCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         String message = Objects.requireNonNull(event.getOption("mensaje")).getAsString();
-        event.reply(getClient().getSuccess()+ " Mensaje Enviado").setEphemeral(true).queue();
+        event.reply(event.getClient().getSuccess()+ " Mensaje Enviado").setEphemeral(true).queue();
         event.getChannel().sendMessageEmbeds(new EmbedBuilder().setDescription(message).build()).queue();
     }
 

@@ -4,7 +4,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -26,14 +26,14 @@ public class RemoveMemeCmd extends AdminCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         int a = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(event.getOption("posicion")).getAsString()));
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         try {
             s.deleteFromMemeImages(a-1);
         } catch (IndexOutOfBoundsException exception) {
-            event.reply(getClient().getError()+ " Numero incorrecto").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+ " Numero incorrecto").setEphemeral(true).queue();
             return;
         }
-        event.reply(getClient().getSuccess()+" Imagen "+ a +" borrada de la lista de memes").queue();
+        event.reply(event.getClient().getSuccess()+" Imagen "+ a +" borrada de la lista de memes").queue();
     }
 
     @Override

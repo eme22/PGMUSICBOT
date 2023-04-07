@@ -1,7 +1,7 @@
 package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.commands.AdminCommand;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 public class CreateChannelCmd extends AdminCommand {
     @Override

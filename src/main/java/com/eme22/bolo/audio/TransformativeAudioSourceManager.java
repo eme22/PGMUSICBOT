@@ -54,6 +54,16 @@ public class TransformativeAudioSourceManager extends YoutubeAudioSourceManager
         this.format = format;
     }
 
+    public TransformativeAudioSourceManager(String username, String password, String name, String regex, String replacement, String selector, String format)
+    {
+        super(true, username, password);
+        this.name = name;
+        this.regex = regex;
+        this.replacement = replacement;
+        this.selector = selector;
+        this.format = format;
+    }
+
     @Override
     public String getSourceName()
     {

@@ -50,7 +50,7 @@ public class BotConfig
     private Path path = null;
 
 
-    private String token, spotifyUserId, spotifySecret, prefix, altprefix, helpWord, playlistsFolder,
+    private String token, spotifyUserId, spotifySecret, ytUser, ytPassword, prefix, altprefix, helpWord, playlistsFolder,
             successEmoji, warningEmoji, errorEmoji, loadingEmoji, searchingEmoji, welcomeString, goodByeString;
     private boolean stayInChannel, songInStatus, npImages, updatealerts, useEval, dbots;
     private long owner, maxSeconds, aloneTimeUntilStop;
@@ -104,6 +104,8 @@ public class BotConfig
             updatealerts = config.getBoolean("updatealerts");
             welcomeString = config.getString("welcomemessage");
             goodByeString = config.getString("goodbyemessage");
+            ytUser = config.getString("ytuser");
+            ytPassword = config.getString("ytpassword");
             useEval = config.getBoolean("eval");
             maxSeconds = config.getLong("maxtime");
             aloneTimeUntilStop = config.getLong("alonetimeuntilstop");

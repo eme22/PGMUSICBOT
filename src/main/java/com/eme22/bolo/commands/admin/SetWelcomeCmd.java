@@ -20,10 +20,9 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -48,12 +47,12 @@ public class SetWelcomeCmd extends AdminCommand
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        MessageChannel channel = event.getOption("canal").getAsMessageChannel();
+        TextChannel channel = event.getOption("canal").getAsChannel().asTextChannel();
 
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
 
         s.setBienvenidasChannelId(channel.getIdLong());
-        event.reply(getClient().getSuccess()+" El canal de las bienvenidas es ahora <#"+channel.getId()+">").queue();
+        event.reply(event.getClient().getSuccess()+" El canal de las bienvenidas es ahora <#"+channel.getId()+">").queue();
 
     }
 

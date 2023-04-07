@@ -3,10 +3,10 @@ package com.eme22.bolo.commands.general;
 import com.eme22.bolo.Bot;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -30,7 +30,7 @@ public class AvatarCmd extends SlashCommand {
         OptionMapping option = event.getOption("usuario");
         if(option == null)
         {
-            event.reply(getClient().getError()+ "Asegurese de que el usuario exista y no sea un bot").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+ "Asegurese de que el usuario exista y no sea un bot").setEphemeral(true).queue();
             return;
         }
 

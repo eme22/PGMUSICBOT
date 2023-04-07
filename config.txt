@@ -144,6 +144,9 @@ lyrics.default = "MusicMatch"
 // Example 2: Giving command "search" the aliases "yts" and "find":
 // search = [ yts, find ]
 
+ytuser = "embot7573@gmail.com"
+ytpassword = "G^dzbyR*8a46cmsT$%5sFdtu"
+
 aliases {
   // General commands
   settings = [ status ]

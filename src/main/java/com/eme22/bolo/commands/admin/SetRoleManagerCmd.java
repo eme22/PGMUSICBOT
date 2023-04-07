@@ -4,10 +4,11 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.entities.RoleManager;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -76,7 +77,7 @@ public class SetRoleManagerCmd extends AdminCommand {
         });
 
         if (emojis.size() != roles.size()) {
-            event.reply(getClient().getError()+ " Por favor incluya correctamente los emojis y roles").setEphemeral(true).queue();
+            event.reply(event.getClient().getError()+ " Por favor incluya correctamente los emojis y roles").setEphemeral(true).queue();
             return;
         }
 
@@ -92,13 +93,13 @@ public class SetRoleManagerCmd extends AdminCommand {
                 String emoji = emojis.get(i);
                 if (emoji.startsWith("<"))
                     emoji = emoji.substring(2, emoji.length()-1);
-                success.addReaction( emoji ).queue();
+                success.addReaction(Emoji.fromFormatted(emoji) ).queue();
 
                 Role role = roles.get(i);
 
                 if (!event.getGuild().getSelfMember().canInteract(role)) {
                     success.delete().queue();
-                    event.reply(getClient().getError()+" El rol "+ role.getAsMention() + " es mayor que el rol del bot, no se puede agregar").queue();
+                    event.reply(event.getClient().getError()+" El rol "+ role.getAsMention() + " es mayor que el rol del bot, no se puede agregar").queue();
                     return;
                 }
 
@@ -109,7 +110,7 @@ public class SetRoleManagerCmd extends AdminCommand {
             manager.setEmoji(map);
             manager.setToggled(false);
             bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addToRoleManagers(manager);
-            event.reply(getClient().getSuccess()+ " Administrador de roles creado!").setEphemeral(true).queue();
+            event.reply(event.getClient().getSuccess()+ " Administrador de roles creado!").setEphemeral(true).queue();
         });
     }
 
@@ -150,7 +151,7 @@ public class SetRoleManagerCmd extends AdminCommand {
 
                 if (emojisnroles[i].startsWith("<"))
                     emojisnroles[i] = emojisnroles[i].substring(2, emojisnroles[i].length()-1);
-                success.addReaction( emojisnroles[i]).queue();
+                success.addReaction(Emoji.fromFormatted( emojisnroles[i] )).queue();
                 Role role = roles.get(0);
 
                 if (!event.getGuild().getSelfMember().canInteract(role)) {

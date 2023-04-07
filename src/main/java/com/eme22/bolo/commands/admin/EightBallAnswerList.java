@@ -4,8 +4,8 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.menu.Paginator;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 
 import java.util.List;
@@ -40,14 +40,14 @@ public class EightBallAnswerList extends AdminCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Settings s = getClient().getSettingsFor(event.getGuild());
+        Settings s = event.getClient().getSettingsFor(event.getGuild());
         List<String> data = s.getEightBallAnswers();
         if (data.isEmpty()){
-            event.reply( getClient().getError()+ " No hay respuestas para mostrar").setEphemeral(true).queue();
+            event.reply( event.getClient().getError()+ " No hay respuestas para mostrar").setEphemeral(true).queue();
             return;
         }
 
-        event.reply(getClient().getSuccess()+ " Lista de respuestas del comando 8ball").queue();
+        event.reply(event.getClient().getSuccess()+ " Lista de respuestas del comando 8ball").queue();
         builder.setText("").setItems(data.toArray(new String[0]));
         builder.build().paginate(event.getChannel(), 1);
     }

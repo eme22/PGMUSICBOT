@@ -15,7 +15,7 @@
         <repository>
             <id>dv8tion</id>
             <name>m2-dv8tion</name>
-            <url>https://m2.dv8tion.net/releases</url>
+            <url>https://m2.dv8tion.net/snapshots</url>
         </repository>
         <repository>
             <id>maven_central</id>
@@ -30,7 +30,7 @@
         <repository>
             <id>chew</id>
             <name>m2-chew</name>
-            <url>https://m2.chew.pro/releases</url>
+            <url>https://m2.chew.pro/snapshots/</url>
         </repository>
     </repositories>
     
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.4.0_350</version>
+            <version>5.0.0-beta.6</version>
         </dependency>
         <!-- using a fork of this to fix some issues faster -->
         <!-- dependency>
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>com.github.walkyst</groupId>
             <artifactId>lavaplayer-fork</artifactId>
-            <version>1.3.97</version>
+            <version>1.4.0</version>
         </dependency>
         <!-- this is needed, but isn't actually hosted anywhere anymore... uh -->
         <!--dependency>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>pw.chew</groupId>
             <artifactId>jda-chewtils</artifactId>
-            <version>1.24.1</version>
+            <version>2.0-SNAPSHOT</version>
             <scope>compile</scope>
             <type>pom</type>
         </dependency>
@@ -88,7 +88,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.9</version>
+            <version>1.4.6</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
@@ -98,7 +98,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.15.3</version>
+            <version>1.15.4</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -115,7 +115,7 @@
         <dependency>
             <groupId>org.kohsuke</groupId>
             <artifactId>github-api</artifactId>
-            <version>1.308</version>
+            <version>1.314</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -127,6 +127,11 @@
             <groupId>com.github.eme22</groupId>
             <artifactId>anime-image-api</artifactId>
             <version>0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
         </dependency>
     </dependencies>
     
@@ -167,9 +172,9 @@
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.8.1</version>
               <configuration>
-                  <source>11</source>
-                  <target>11</target>
+                  <forceJavacCompilerUse>true</forceJavacCompilerUse>
               </configuration>
           </plugin>
           <!--

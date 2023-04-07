@@ -3,8 +3,8 @@ package com.eme22.bolo.commands.admin;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 public class CloneChannelCmd extends AdminCommand {
 
@@ -22,7 +22,7 @@ public class CloneChannelCmd extends AdminCommand {
                     event.reply("El canal se ha clonado con exito").queue();
                 },
                 error -> {
-                    event.reply(getClient().getError() + " El canal no se ha podido clonar").queue();
+                    event.reply(event.getClient().getError() + " El canal no se ha podido clonar").queue();
                 });
     }
 

@@ -23,7 +23,8 @@ import com.jagrosh.jdautilities.commons.JDAUtilitiesInfo;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.utils.FileUpload;
 
 /**
  *
@@ -78,10 +79,10 @@ public class DebugCmd extends OwnerCommand
                 .append("\n  Users = ").append(event.getJDA().getUserCache().size());
         sb.append("\n```");
         
-        if(event.isFromType(ChannelType.PRIVATE) 
+        if(event.isFromType(ChannelType.PRIVATE)
                 || event.getSelfMember().hasPermission(event.getTextChannel(), Permission.MESSAGE_ATTACH_FILES))
-            event.getChannel().sendFile(sb.toString().getBytes(), "debug_information.txt").queue();
+            event.getChannel().sendFiles(FileUpload.fromData(sb.toString().getBytes(),"debug_information.txt")).queue();
         else
-            event.reply("Debug Information: " + sb.toString());
+            event.reply("Debug Information: " + sb);
     }
 }

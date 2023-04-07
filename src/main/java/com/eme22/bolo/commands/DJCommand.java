@@ -18,8 +18,8 @@ package com.eme22.bolo.commands;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.settings.Settings;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 /**
  *
@@ -50,11 +50,11 @@ public abstract class DJCommand extends MusicCommand
 
     public boolean checkDJPermission(SlashCommandEvent event)
     {
-        if(event.getMember().getId().equals(getClient().getOwnerId()))
+        if(event.getMember().getId().equals(event.getClient().getOwnerId()))
             return true;
         if(event.getGuild()==null)
             return true;
-        Settings settings = getClient().getSettingsFor(event.getGuild());
+        Settings settings = event.getClient().getSettingsFor(event.getGuild());
         Role admin = settings.getAdminRoleId(event.getGuild());
         if(event.getMember().getRoles().contains(admin))
             return true;

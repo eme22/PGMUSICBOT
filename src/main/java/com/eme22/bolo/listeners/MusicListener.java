@@ -11,14 +11,14 @@ import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.menu.Paginator;
 import com.jagrosh.jlyrics.Lyrics;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -65,13 +65,13 @@ public class MusicListener extends ListenerAdapter {
 
         try {
             if (event.getMessageIdLong() == bot.getNowPlayingHandler().getLastNP(event.getGuild()).getValue()) {
-                String reaction = event.getReactionEmote().getAsReactionCode();
+                String reaction = event.getReaction().getEmoji().getAsReactionCode();
 
                 MusicPlayerEmoji playerEmoji = MusicPlayerEmoji.isEmojiValid(reaction);
 
                 if (playerEmoji != null){
 
-                    VoiceChannel current = event.getGuild().getSelfMember().getVoiceState().getChannel();
+                    VoiceChannel current = event.getGuild().getSelfMember().getVoiceState().getChannel().asVoiceChannel();
                     if(current==null)
                         current = settings.getVoiceChannel(event.getGuild());
                     if (OtherUtil.isUserInVoice(event.getGuild(), settings, event.getMember() )!= 1  ){
@@ -112,7 +112,7 @@ public class MusicListener extends ListenerAdapter {
             if (sendingHandler.isMusicPlaying(event.getJDA()))
                 title = sendingHandler.getPlayer().getPlayingTrack().getInfo().title;
             else {
-                event.getTextChannel().sendMessage("There must be music playing to use that!").complete();
+                event.getChannel().asTextChannel().sendMessage("There must be music playing to use that!").complete();
                 return;
             }
         }
@@ -123,10 +123,10 @@ public class MusicListener extends ListenerAdapter {
 
         if(lyrics == null)
         {
-            event.getTextChannel().sendMessage("Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
+            event.getChannel().asTextChannel().sendMessage("Lyrics for `" + title + "` could not be found!" + (title.isEmpty() ? " Try entering the song name manually (`lyrics [song name]`)" : "")).queue();
             return;
         }
-        LyricsCmd.showLyrics(null, event.getGuild().getSelfMember().getColor(), event.getTextChannel(), title, lyrics);
+        LyricsCmd.showLyrics(null, event.getGuild().getSelfMember().getColor(), event.getChannel().asTextChannel(), title, lyrics);
         try {
             event.getReaction().removeReaction(user).queue(s -> {}, t -> {});
         } catch (ErrorResponseException ignore) {}
@@ -139,11 +139,11 @@ public class MusicListener extends ListenerAdapter {
         assert handler != null;
         List<QueuedTrack> list = handler.getQueue().getList();
         if (list.isEmpty()) {
-            Message built = new MessageBuilder()
+            MessageCreateData built = new MessageCreateBuilder()
                     .setContent(bot.getConfig().getWarningEmoji() + " There is no music in the queue!")
                     .build();
 
-            event.getTextChannel().sendMessage(built).queue(m ->
+            event.getChannel().asTextChannel().sendMessage(built).queue(m ->
                     m.delete().queueAfter(5, TimeUnit.SECONDS));
             return;
         }
@@ -179,7 +179,7 @@ public class MusicListener extends ListenerAdapter {
         AudioHandler handler = ((AudioHandler) event.getGuild().getAudioManager().getSendingHandler());
         assert handler != null;
         RequestMetadata rm = handler.getRequestMetadata();
-        event.getTextChannel().sendMessage(bot.getConfig().getSuccessEmoji() + " Skipped **" + handler.getPlayer().getPlayingTrack().getInfo().title
+        event.getChannel().asTextChannel().sendMessage(bot.getConfig().getSuccessEmoji() + " Skipped **" + handler.getPlayer().getPlayingTrack().getInfo().title
                 + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + rm.user.username + "**)")).complete();
         handler.getPlayer().stopTrack();
         event.getReaction().removeReaction(user).queue(s -> {}, t -> {});

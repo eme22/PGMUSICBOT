@@ -21,12 +21,12 @@ import com.eme22.bolo.settings.Settings;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.ArrayList;
 
@@ -46,11 +46,10 @@ public class SettingsCmd extends SlashCommand {
 
         @Override
         protected void execute(SlashCommandEvent event) {
-                Settings s = getClient().getSettingsFor(event.getGuild());
-                MessageBuilder builder = new MessageBuilder()
-                                .append(EMOJI + " **")
-                                .append(FormatUtil.filter(event.getGuild().getSelfMember().getUser().getName()))
-                                .append("** settings:");
+                Settings s = event.getClient().getSettingsFor(event.getGuild());
+                String builder = EMOJI + " **" +
+                        FormatUtil.filter(event.getGuild().getSelfMember().getUser().getName()) +
+                        "** settings:";
                 TextChannel wchan = s.getHelloChannel(event.getGuild());
                 TextChannel dchan = s.getGoodbyeChannel(event.getGuild());
                 TextChannel tchan = s.getTextChannel(event.getGuild());
@@ -87,20 +86,24 @@ public class SettingsCmd extends SlashCommand {
                                 .setFooter(event.getJDA().getGuilds().size() + " servers | "
                                                 + event.getJDA().getGuilds().stream()
                                                                 .filter(g -> g.getSelfMember().getVoiceState()
-                                                                                .inVoiceChannel())
+                                                                                .inAudioChannel())
                                                                 .count()
                                                 + " conecciones de audio", null);
-                builder.setEmbeds(ebuilder.build());
-                event.reply(builder.build()).queue();
+
+                MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
+
+                messageCreateBuilder.addContent(builder).setEmbeds(ebuilder.build());
+
+                event.reply(messageCreateBuilder.build()).queue();
         }
 
         @Override
         protected void execute(CommandEvent event) {
                 Settings s = event.getClient().getSettingsFor(event.getGuild());
-                MessageBuilder builder = new MessageBuilder()
-                                .append(EMOJI + " **")
-                                .append(FormatUtil.filter(event.getSelfUser().getName()))
-                                .append("** settings:");
+
+                String builder = EMOJI + " **" +
+                        FormatUtil.filter(event.getSelfUser().getName()) +
+                        "** settings:";
                 TextChannel wchan = s.getHelloChannel(event.getGuild());
                 TextChannel dchan = s.getGoodbyeChannel(event.getGuild());
                 TextChannel tchan = s.getTextChannel(event.getGuild());
@@ -137,11 +140,15 @@ public class SettingsCmd extends SlashCommand {
                                 .setFooter(event.getJDA().getGuilds().size() + " servers | "
                                                 + event.getJDA().getGuilds().stream()
                                                                 .filter(g -> g.getSelfMember().getVoiceState()
-                                                                                .inVoiceChannel())
+                                                                        .inAudioChannel())
                                                                 .count()
                                                 + " conecciones de audio", null);
-                builder.setEmbeds(ebuilder.build());
-                event.reply(builder.build());
+
+                MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
+
+                messageCreateBuilder.addContent(builder).setEmbeds(ebuilder.build());
+
+                event.reply(messageCreateBuilder.build());
         }
 
 }
