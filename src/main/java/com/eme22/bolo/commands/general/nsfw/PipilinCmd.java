@@ -4,6 +4,9 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class PipilinCmd extends Command {
 
     public PipilinCmd() {

@@ -15,8 +15,12 @@
  */
 package com.eme22.bolo.entities;
 
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.util.Scanner;
@@ -25,31 +29,24 @@ import java.util.Scanner;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
+@Component
+@Log4j2
 public class Prompt
 {
-    private final String title;
-    private final String noguiMessage;
+    @Value("${config.nogui-title}")
+    private String title;
+
+    @Value("${config.nogui-message}")
+    private String noguiMessage;
     
     private boolean nogui;
     private final boolean noprompt;
     private Scanner scanner;
-    
-    public Prompt(String title)
-    {
-        this(title, null);
-    }
-    
-    public Prompt(String title, String noguiMessage)
-    {
-        this(title, noguiMessage, "true".equalsIgnoreCase(System.getProperty("nogui")), "true".equalsIgnoreCase(System.getProperty("noprompt")));
-    }
-    
-    public Prompt(String title, String noguiMessage, boolean nogui, boolean noprompt)
-    {
-        this.title = title;
-        this.noguiMessage = noguiMessage == null ? "Switching to nogui mode. You can manually start in nogui mode by including the -Dnogui=true flag." : noguiMessage;
-        this.nogui = nogui;
-        this.noprompt = noprompt;
+
+    public Prompt() {
+        this.noguiMessage = this.noguiMessage == null ? "Switching to nogui mode. You can manually start in nogui mode by including the -Dnogui=true flag." : this.noguiMessage;
+        this.nogui = "true".equalsIgnoreCase(System.getProperty("nogui"));
+        this.noprompt = "true".equalsIgnoreCase(System.getProperty("noprompt"));
     }
     
     public boolean isNoGUI()
@@ -61,7 +58,6 @@ public class Prompt
     {
         if(nogui)
         {
-            Logger log = LoggerFactory.getLogger(context);
             switch(level)
             {
                 case INFO: 

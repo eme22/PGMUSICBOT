@@ -15,30 +15,24 @@
  */
 package com.eme22.bolo.commands;
 
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.entities.Role;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public abstract class AdminCommand extends SlashCommand
+
+public abstract class AdminCommand extends BaseCommand
 {
-    public AdminCommand()
+    @Autowired
+    public AdminCommand(@Qualifier("adminCategory") Category adminCategory)
     {
-        this.category = new Category("Admin", event -> 
-        {
-            if(event.getAuthor().getId().equals(event.getClient().getOwnerId()))
-                return true;
-            if (event.getAuthor().getId().equals(event.getGuild().getOwnerId()))
-                return true;
-            if(event.getGuild()==null)
-                return true;
-            Settings settings = event.getClient().getSettingsFor(event.getGuild());
-            Role admin = settings.getAdminRoleId(event.getGuild());
-            return admin!=null && (event.getMember().getRoles().contains(admin) || admin.getIdLong()==event.getGuild().getIdLong());
-        });
-        this.guildOnly = true;
+        this.category = adminCategory;
     }
+
 }

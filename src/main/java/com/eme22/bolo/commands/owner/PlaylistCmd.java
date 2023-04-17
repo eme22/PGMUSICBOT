@@ -20,17 +20,33 @@ import com.eme22.bolo.commands.OwnerCommand;
 import com.eme22.bolo.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class PlaylistCmd extends OwnerCommand 
 {
     private final Bot bot;
+    @Value("${config.aliases.playlist:}")
+    String[] aliases = new String[0];
+
+
     public PlaylistCmd(Bot bot)
     {
         this.bot = bot;
@@ -38,7 +54,6 @@ public class PlaylistCmd extends OwnerCommand
         this.name = "playlist";
         this.arguments = "<append|delete|make|setdefault>";
         this.help = "playlist management";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.children = new OwnerCommand[]{
             new ListCmd(),
             new AppendlistCmd(),
@@ -46,6 +61,15 @@ public class PlaylistCmd extends OwnerCommand
             new MakelistCmd(),
             new DefaultlistCmd(bot)
         };
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        StringBuilder builder = new StringBuilder(event.getClient().getWarning()+" Playlist Management Commands:\n");
+        for(Command cmd: this.children)
+            builder.append("\n`").append(event.getClient().getPrefix()).append(name).append(" ").append(cmd.getName())
+                    .append(" ").append(cmd.getArguments()==null ? "" : cmd.getArguments()).append("` - ").append(cmd.getHelp());
+        event.reply(builder.toString()).queue();
     }
 
     @Override
@@ -57,8 +81,9 @@ public class PlaylistCmd extends OwnerCommand
                     .append(" ").append(cmd.getArguments()==null ? "" : cmd.getArguments()).append("` - ").append(cmd.getHelp());
         event.reply(builder.toString());
     }
-    
-    public class MakelistCmd extends OwnerCommand 
+
+
+public class MakelistCmd extends OwnerCommand 
     {
         public MakelistCmd()
         {
@@ -67,6 +92,29 @@ public class PlaylistCmd extends OwnerCommand
             this.help = "makes a new playlist";
             this.arguments = "<name>";
             this.guildOnly = false;
+            this.options = Collections.singletonList(new OptionData(OptionType.STRING, "name", "Playlist name").setRequired(true));
+        }
+
+        @Override
+        protected void execute(SlashCommandEvent event) {
+
+            String pname = event.getOption("name", OptionMapping::getAsString);
+
+            if(bot.getPlaylistLoader().getPlaylist(pname)==null)
+            {
+                try
+                {
+                    bot.getPlaylistLoader().createPlaylist(pname);
+                    event.reply(event.getClient().getSuccess()+" Successfully created playlist `"+pname+"`!").queue();
+                }
+                catch(IOException e)
+                {
+                    event.reply(event.getClient().getError()+" I was unable to create the playlist: "+e.getLocalizedMessage()).queue();
+                }
+            }
+            else
+                event.reply(event.getClient().getError()+" Playlist `"+pname+"` already exists!").queue();
+
         }
 
         @Override
@@ -78,19 +126,19 @@ public class PlaylistCmd extends OwnerCommand
                 try
                 {
                     bot.getPlaylistLoader().createPlaylist(pname);
-                    event.reply(event.getClient().getSuccess()+" Successfully created playlist `"+pname+"`!");
+                    event.replySuccess(" Successfully created playlist `"+pname+"`!");
                 }
                 catch(IOException e)
                 {
-                    event.reply(event.getClient().getError()+" I was unable to create the playlist: "+e.getLocalizedMessage());
+                    event.replyError(" I was unable to create the playlist: "+e.getLocalizedMessage());
                 }
             }
             else
-                event.reply(event.getClient().getError()+" Playlist `"+pname+"` already exists!");
+                event.replyError(" Playlist `"+pname+"` already exists!");
         }
     }
-    
-    public class DeletelistCmd extends OwnerCommand 
+
+public class DeletelistCmd extends OwnerCommand 
     {
         public DeletelistCmd()
         {
@@ -99,6 +147,26 @@ public class PlaylistCmd extends OwnerCommand
             this.help = "deletes an existing playlist";
             this.arguments = "<name>";
             this.guildOnly = false;
+            this.options = Collections.singletonList(new OptionData(OptionType.STRING, "name", "Playlist name").setRequired(true));
+        }
+
+        @Override
+        protected void execute(SlashCommandEvent event) {
+            String pname = event.getOption("name", OptionMapping::getAsString);
+            if(bot.getPlaylistLoader().getPlaylist(pname)==null)
+                event.reply(event.getClient().getError()+" Playlist `"+pname+"` doesn't exist!").queue();
+            else
+            {
+                try
+                {
+                    bot.getPlaylistLoader().deletePlaylist(pname);
+                    event.reply(event.getClient().getSuccess()+" Successfully deleted playlist `"+pname+"`!").queue();
+                }
+                catch(IOException e)
+                {
+                    event.reply(event.getClient().getError()+" I was unable to delete the playlist: "+e.getLocalizedMessage()).queue();
+                }
+            }
         }
 
         @Override
@@ -121,8 +189,8 @@ public class PlaylistCmd extends OwnerCommand
             }
         }
     }
-    
-    public class AppendlistCmd extends OwnerCommand 
+
+public class AppendlistCmd extends OwnerCommand 
     {
         public AppendlistCmd()
         {
@@ -131,6 +199,39 @@ public class PlaylistCmd extends OwnerCommand
             this.help = "appends songs to an existing playlist";
             this.arguments = "<name> <URL> | <URL> | ...";
             this.guildOnly = false;
+            this.options = Arrays.asList(
+                    new OptionData(OptionType.STRING, "name", "nombre de la playlist").setRequired(true),
+                    new OptionData(OptionType.STRING, "url1", "link del video 1").setRequired(true),
+                    new OptionData(OptionType.STRING, "url2", "link del video 2").setRequired(true),
+                    new OptionData(OptionType.STRING, "url3", "link del video 3").setRequired(true),
+                    new OptionData(OptionType.STRING, "url4", "link del video 4").setRequired(true),
+                    new OptionData(OptionType.STRING, "url5", "link del video 5").setRequired(true)
+            );
+        }
+
+        @Override
+        protected void execute(SlashCommandEvent event) {
+
+            String pname = event.getOption("name", OptionMapping::getAsString);
+
+            String[] parts = event.getOptionsByName("url").stream().map(OptionMapping::getAsString).toArray(String[]::new);
+
+            StringBuilder builder = new StringBuilder();
+
+            for(String url: parts) {
+                builder.append("\r\n").append(url);
+            }
+
+            try
+            {
+                bot.getPlaylistLoader().writePlaylist(pname, builder.toString());
+                event.reply(event.getClient().getSuccess()+" Successfully added "+parts.length+" items to playlist `"+pname+"`!").queue();
+            }
+            catch(IOException e)
+            {
+                event.reply(event.getClient().getError()+" I was unable to append to the playlist: "+e.getLocalizedMessage()).queue();
+            }
+
         }
 
         @Override
@@ -171,7 +272,8 @@ public class PlaylistCmd extends OwnerCommand
         }
     }
     
-    public class DefaultlistCmd extends AutoplaylistCmd 
+
+public class DefaultlistCmd extends AutoplaylistCmd 
     {
         public DefaultlistCmd(Bot bot)
         {
@@ -182,8 +284,8 @@ public class PlaylistCmd extends OwnerCommand
             this.guildOnly = true;
         }
     }
-    
-    public class ListCmd extends OwnerCommand 
+
+public class ListCmd extends OwnerCommand 
     {
         public ListCmd()
         {
@@ -194,20 +296,42 @@ public class PlaylistCmd extends OwnerCommand
         }
 
         @Override
+        protected void execute(SlashCommandEvent event) {
+            if(!bot.getPlaylistLoader().folderExists())
+                bot.getPlaylistLoader().createFolder();
+            if(!bot.getPlaylistLoader().folderExists())
+            {
+                event.reply(event.getClient().getWarning()+" Playlists folder does not exist and could not be created!").queue();
+                return;
+            }
+            List<String> list = bot.getPlaylistLoader().getPlaylistNames();
+            if(list==null)
+                event.reply(event.getClient().getError()+" Failed to load available playlists!").queue();
+            else if(list.isEmpty())
+                event.reply(event.getClient().getWarning()+" There are no playlists in the Playlists folder!").queue();
+            else
+            {
+                StringBuilder builder = new StringBuilder(event.getClient().getSuccess()+" Available playlists:\n");
+                list.forEach(str -> builder.append("`").append(str).append("` "));
+                event.reply(builder.toString()).queue();
+            }
+        }
+
+        @Override
         protected void execute(CommandEvent event) 
         {
             if(!bot.getPlaylistLoader().folderExists())
                 bot.getPlaylistLoader().createFolder();
             if(!bot.getPlaylistLoader().folderExists())
             {
-                event.reply(event.getClient().getWarning()+" Playlists folder does not exist and could not be created!");
+                event.replyWarning(" Playlists folder does not exist and could not be created!");
                 return;
             }
             List<String> list = bot.getPlaylistLoader().getPlaylistNames();
             if(list==null)
-                event.reply(event.getClient().getError()+" Failed to load available playlists!");
+                event.replyError(" Failed to load available playlists!");
             else if(list.isEmpty())
-                event.reply(event.getClient().getWarning()+" There are no playlists in the Playlists folder!");
+                event.replyWarning(" There are no playlists in the Playlists folder!");
             else
             {
                 StringBuilder builder = new StringBuilder(event.getClient().getSuccess()+" Available playlists:\n");

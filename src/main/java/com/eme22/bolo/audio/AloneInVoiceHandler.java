@@ -18,6 +18,8 @@ package com.eme22.bolo.audio;
 import com.eme22.bolo.Bot;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -30,20 +32,18 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Michaili K (mysteriouscursor+git@protonmail.com)
  */
+@Component
 public class AloneInVoiceHandler
 {
-    private final Bot bot;
+    private Bot bot;
     private final HashMap<Long, Instant> aloneSince = new HashMap<>();
-    private long aloneTimeUntilStop = 0;
-
-    public AloneInVoiceHandler(Bot bot)
+    @Value("${config.alonetimeuntilstop}")
+    private long aloneTimeUntilStop;
+    
+    public void init(Bot bot)
     {
         this.bot = bot;
-    }
-    
-    public void init()
-    {
-        aloneTimeUntilStop = bot.getConfig().getAloneTimeUntilStop();
+
         if(aloneTimeUntilStop > 0)
             bot.getThreadpool().scheduleWithFixedDelay(this::check, 0, 5, TimeUnit.SECONDS);
     }

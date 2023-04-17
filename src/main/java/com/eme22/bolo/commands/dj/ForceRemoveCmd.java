@@ -25,6 +25,8 @@ import com.jagrosh.jdautilities.menu.OrderedMenu;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -33,13 +35,19 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Michaili K.
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class ForceRemoveCmd extends DJCommand {
-    public ForceRemoveCmd(Bot bot) {
-        super(bot);
+
+    @Value("${config.aliases.forceremove:}")
+    String[] aliases = new String[0];
+
+public ForceRemoveCmd(Bot bot, @Qualifier("djCategory") Category category) {
+        super(bot, category);
         this.name = "forceremove";
         this.help = "removes all entries by a user from the queue";
         this.arguments = "<user>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.beListening = false;
         this.bePlaying = true;
         this.botPermissions = new Permission[] { Permission.MESSAGE_EMBED_LINKS };

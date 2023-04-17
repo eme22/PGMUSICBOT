@@ -21,17 +21,22 @@ import com.eme22.bolo.audio.NowplayingHandler;
 import com.eme22.bolo.audio.PlayerManager;
 import com.eme22.bolo.birthday.BirthdayManager;
 import com.eme22.bolo.gui.GUI;
+import com.eme22.bolo.image.ArtworkImageService;
 import com.eme22.bolo.playlist.PlaylistLoader;
 import com.eme22.bolo.settings.SettingsManager;
-import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifyConfig;
-import com.github.topislavalinkplugins.topissourcemanagers.spotify.SpotifySourceManager;
+import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,47 +48,49 @@ import java.util.concurrent.ScheduledExecutorService;
 
 @Getter
 @Setter
-public class Bot
-{
+@Component
+@Log4j2
+public class Bot {
     private final EventWaiter waiter;
     private final ScheduledExecutorService threadpool;
-    private final BotConfig config;
     private final SettingsManager settingsManager;
     private final PlayerManager playerManager;
     private final PlaylistLoader playlistLoader;
     private final NowplayingHandler nowPlayingHandler;
     private final AloneInVoiceHandler aloneInVoiceHandler;
     private final BirthdayManager birthdayManager;
-
-    private final SpotifyConfig spotifyConfig;
-    
+    private final ArtworkImageService artworkImageService;
     private boolean shuttingDown = false;
     private boolean devMode = false;
     private GUI GUI;
-
-    // JDA Entity
     private JDA JDA;
-    
-    public Bot(EventWaiter waiter, BotConfig config, SettingsManager settings)
+    private Activity activity;
+    @Value("${config.game}")
+    private String game;
+
+    @Autowired
+    public Bot(EventWaiter waiter, PlayerManager playerManager, AloneInVoiceHandler aloneInvoiceHandler, SettingsManager settings, ArtworkImageService artworkImageService )
     {
         this.waiter = waiter;
-        this.config = config;
         this.settingsManager = settings;
-        this.playlistLoader = new PlaylistLoader(config);
+        this.artworkImageService = artworkImageService;
+        this.playlistLoader = new PlaylistLoader();
         this.threadpool = Executors.newSingleThreadScheduledExecutor();
-        this.playerManager = new PlayerManager(this);
-        this.spotifyConfig = new SpotifyConfig();
-        this.spotifyConfig.setClientId(config.getSpotifyUserId());
-        this.spotifyConfig.setClientSecret(config.getSpotifySecret());
-        this.spotifyConfig.setCountryCode("US");
-        this.playerManager.registerSourceManager(new SpotifySourceManager(null, spotifyConfig, playerManager));
+        this.playerManager = playerManager;
+        this.playerManager.setBot(this);
         this.playerManager.init();
         this.nowPlayingHandler = new NowplayingHandler(this);
         this.nowPlayingHandler.init();
-        this.aloneInVoiceHandler = new AloneInVoiceHandler(this);
-        this.aloneInVoiceHandler.init();
+        this.aloneInVoiceHandler = aloneInvoiceHandler;
+        this.aloneInVoiceHandler.init(this);
         this.birthdayManager = new BirthdayManager(this);
-        }
+    }
+
+    @PostConstruct
+    private void init() {
+        this.activity = OtherUtil.getActivity(game);
+    }
+
     
     public void closeAudioConnection(long guildId)
     {
@@ -94,7 +101,7 @@ public class Bot
     
     public void resetGame()
     {
-        Activity game = config.getGame()==null || config.getGame().getName().equalsIgnoreCase("none") ? null : config.getGame();
+        Activity game = activity==null || activity.getName().equalsIgnoreCase("none") ? null : activity;
         if(!Objects.equals(JDA.getPresence().getActivity(), game))
             JDA.getPresence().setActivity(game);
     }

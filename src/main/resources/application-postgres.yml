@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL:'jdbc:postgresql://localhost:5432/discordBot'}
+    username: ${PGUSER:root}
+    password: ${PGPASSWORD:root}
+    driverClassName: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+  sql:
+    init:
+      platform: postgres
+      mode: embedded
+      continue-on-error: true

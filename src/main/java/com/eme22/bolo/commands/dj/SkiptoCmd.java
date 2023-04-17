@@ -23,6 +23,8 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 
@@ -30,15 +32,20 @@ import java.util.Collections;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class SkiptoCmd extends DJCommand 
 {
-    public SkiptoCmd(Bot bot)
+    @Value("${config.aliases.skipto:}")
+    String[] aliases = new String[0];
+
+    public SkiptoCmd(Bot bot, @Qualifier("djCategory") Category category)
     {
-        super(bot);
+        super(bot, category);
         this.name = "skipto";
         this.help = "skips to the specified song";
         this.arguments = "<posicion>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.bePlaying = true;
         this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "posicion", "Posicion para cambiar a la cola").setRequired(true));
 

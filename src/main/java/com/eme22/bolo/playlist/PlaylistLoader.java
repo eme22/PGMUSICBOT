@@ -15,13 +15,14 @@
  */
 package com.eme22.bolo.playlist;
 
-import com.eme22.bolo.BotConfig;
+import com.eme22.bolo.utils.FormatUtil;
 import com.eme22.bolo.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,18 +37,18 @@ import java.util.stream.Collectors;
  */
 public class PlaylistLoader
 {
-    private final BotConfig config;
+    @Value("${config.playlistsfolder}")
+    private String playlistsFolder;
+
+    @Value("${config.maxseconds}")
+    private long maxSeconds;
     
-    public PlaylistLoader(BotConfig config)
-    {
-        this.config = config;
-    }
     
     public List<String> getPlaylistNames()
     {
         if(folderExists())
         {
-            File folder = new File(OtherUtil.getPath(config.getPlaylistsFolder()).toString());
+            File folder = new File(OtherUtil.getPath(playlistsFolder).toString());
             return Arrays.stream(folder.listFiles((pathname) -> pathname.getName().endsWith(".txt"))).map(f -> f.getName().substring(0,f.getName().length()-4)).collect(Collectors.toList());
         }
         else
@@ -61,29 +62,29 @@ public class PlaylistLoader
     {
         try
         {
-            Files.createDirectory(OtherUtil.getPath(config.getPlaylistsFolder()));
+            Files.createDirectory(OtherUtil.getPath(playlistsFolder));
         } 
         catch (IOException ignore) {}
     }
     
     public boolean folderExists()
     {
-        return Files.exists(OtherUtil.getPath(config.getPlaylistsFolder()));
+        return Files.exists(OtherUtil.getPath(playlistsFolder));
     }
     
     public void createPlaylist(String name) throws IOException
     {
-        Files.createFile(OtherUtil.getPath(config.getPlaylistsFolder()+File.separator+name+".txt"));
+        Files.createFile(OtherUtil.getPath(playlistsFolder+File.separator+name+".txt"));
     }
     
     public void deletePlaylist(String name) throws IOException
     {
-        Files.delete(OtherUtil.getPath(config.getPlaylistsFolder()+File.separator+name+".txt"));
+        Files.delete(OtherUtil.getPath(playlistsFolder+File.separator+name+".txt"));
     }
     
     public void writePlaylist(String name, String text) throws IOException
     {
-        Files.write(OtherUtil.getPath(config.getPlaylistsFolder()+File.separator+name+".txt"), text.trim().getBytes());
+        Files.write(OtherUtil.getPath(playlistsFolder+File.separator+name+".txt"), text.trim().getBytes());
     }
     
     public Playlist getPlaylist(String name)
@@ -96,7 +97,7 @@ public class PlaylistLoader
             {
                 boolean[] shuffle = {false};
                 List<String> list = new ArrayList<>();
-                Files.readAllLines(OtherUtil.getPath(config.getPlaylistsFolder()+File.separator+name+".txt")).forEach(str -> 
+                Files.readAllLines(OtherUtil.getPath(playlistsFolder+File.separator+name+".txt")).forEach(str -> 
                 {
                     String s = str.trim();
                     if(s.isEmpty())
@@ -180,7 +181,7 @@ public class PlaylistLoader
                     @Override
                     public void trackLoaded(AudioTrack at) 
                     {
-                        if(config.isTooLong(at))
+                        if(isTooLong(at))
                             errors.add(new PlaylistLoadError(index, items.get(index), "This track is longer than the allowed maximum"));
                         else
                         {
@@ -213,12 +214,24 @@ public class PlaylistLoader
                                     loaded.set(first, loaded.get(second));
                                     loaded.set(second, tmp);
                                 }
-                            loaded.removeIf(config::isTooLong);
+                            loaded.removeIf(this::isTooLong);
                             loaded.forEach(at -> at.setUserData(0L));
                             tracks.addAll(loaded);
                             loaded.forEach(at -> consumer.accept(at));
                         }
                         done();
+                    }
+
+                    public String getMaxTime()
+                    {
+                        return FormatUtil.formatTime(maxSeconds * 1000);
+                    }
+
+                    public boolean isTooLong(AudioTrack track)
+                    {
+                        if(maxSeconds<=0)
+                            return false;
+                        return Math.round(track.getDuration()/1000.0) > maxSeconds;
                     }
 
                     @Override
@@ -292,4 +305,5 @@ public class PlaylistLoader
             return reason;
         }
     }
+
 }

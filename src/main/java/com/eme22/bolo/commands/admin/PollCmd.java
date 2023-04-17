@@ -2,8 +2,9 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
-import com.eme22.bolo.entities.Answer;
-import com.eme22.bolo.entities.Poll;
+import com.eme22.bolo.model.Answer;
+import com.eme22.bolo.model.Poll;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -12,6 +13,8 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,17 +22,22 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class PollCmd extends AdminCommand {
 
     protected final Bot bot;
 
-    public PollCmd(Bot bot) {
+    @Value("${config.aliases.poll:}")
+    String[] aliases = new String[0];
 
+    public PollCmd(Bot bot, @Qualifier("adminCategory") Category category) {
+        super(category);
         this.bot = bot;
         this.name = "poll";
         this.help = "crea una votacion con los datos enviados";
         this.arguments = "[Question] [Answer 1] [Answer 2]...[Answer 9]";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Arrays.asList(
                 new OptionData(OptionType.STRING, "pregunta", "pregunta a hacer").setRequired(true),
                 new OptionData(OptionType.STRING, "respuesta1", "respuesta u opcion").setRequired(true),
@@ -68,11 +76,14 @@ public class PollCmd extends AdminCommand {
         eb.setDescription(OtherUtil.makePollString(poll));
         event.getTextChannel().sendMessageEmbeds(eb.build()).queue(success -> {
 
-            for (int j = 0; j < answers; j++) {
+            for (int j = 0; j < answers; j++)
                 success.addReaction(Emoji.fromFormatted("U+003" + j + " U+FE0F U+20E3")).queue();
-            }
-            bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addPollForGuild(success.getIdLong(),
-                    poll);
+
+            poll.setId(success.getIdLong());
+
+            Server s = bot.getSettingsManager().getSettings(event.getGuild().getIdLong());
+            s.addPoll(poll);
+            s.save();
 
             event.reply(event.getClient().getSuccess()+ " Encuesta creada con exito. Puedes cancelarla borrando el mensaje.").setEphemeral(true).queue();
         });
@@ -100,7 +111,7 @@ public class PollCmd extends AdminCommand {
             if (i[0] == 1) {
                 poll.setQuestion(m.group(1));
             } else {
-                Answer answers = new Answer(m.group(1));
+                Answer answers = new Answer(0L, m.group(1));
                 poll.addAnswer(answers);
             }
 
@@ -115,11 +126,16 @@ public class PollCmd extends AdminCommand {
         int answers = poll.getAnswers().size();
         eb.setDescription(OtherUtil.makePollString(poll));
         event.reply(eb.build(), success -> {
-            for (int j = 0; j < answers; j++) {
+            for (int j = 0; j < answers; j++)
                 success.addReaction(Emoji.fromFormatted("U+003" + j + " U+FE0F U+20E3")).queue();
-            }
-            bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addPollForGuild(success.getIdLong(),
-                    poll);
+
+
+            poll.setId(success.getIdLong());
+
+            Server s = bot.getSettingsManager().getSettings(event.getGuild().getIdLong());
+            s.addPoll(poll);
+            s.save();
+
         });
 
     }

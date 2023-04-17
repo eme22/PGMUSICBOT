@@ -1,26 +1,31 @@
 package com.eme22.bolo.commands.general;
 
-import com.eme22.bolo.Bot;
-import com.eme22.bolo.entities.MemeImage;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.MemeImage;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
+import com.eme22.bolo.commands.BaseCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.Objects;
 
-public class MemeCmd extends SlashCommand {
+import org.springframework.stereotype.Component;
 
-    public MemeCmd(Bot bot) {
+@Component
+public class MemeCmd extends BaseCommand {
+
+    @Value("${config.aliases.meme:}")
+    String[] aliases = new String[0];
+
+    public MemeCmd() {
         this.name = "meme";
         this.arguments = "NONE o <posicion>";
         this.help = "muestra un meme al azar del servidor";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
         this.options = Collections
                 .singletonList(new OptionData(OptionType.INTEGER, "posicion", "posicion del meme").setRequired(false));
@@ -29,7 +34,7 @@ public class MemeCmd extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
 
         Integer pos = null;
 
@@ -49,8 +54,8 @@ public class MemeCmd extends SlashCommand {
             return;
         }
         MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
-        StringBuilder builder = new StringBuilder().append(data.getMessage());
         EmbedBuilder eb = new EmbedBuilder().setImage(data.getMeme());
+        messageCreateBuilder.addContent(data.getMessage());
         messageCreateBuilder.setEmbeds(eb.build());
         event.reply(messageCreateBuilder.build()).queue();
     }
@@ -58,7 +63,7 @@ public class MemeCmd extends SlashCommand {
     @Override
     protected void execute(CommandEvent event) {
 
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
 
         Integer pos = null;
 
@@ -77,9 +82,9 @@ public class MemeCmd extends SlashCommand {
             event.replyError("Meme invalido o no hay memes configurados en este servidor");
             return;
         }
-        StringBuilder builder = new StringBuilder().append(data.getMessage());
         EmbedBuilder eb = new EmbedBuilder().setImage(data.getMeme());
         MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
+        messageCreateBuilder.addContent(data.getMessage());
         messageCreateBuilder.setEmbeds(eb.build());
         event.reply(messageCreateBuilder.build());
         event.getMessage().delete().queue();

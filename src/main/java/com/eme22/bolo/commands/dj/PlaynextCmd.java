@@ -27,21 +27,31 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Message;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class PlaynextCmd extends DJCommand {
-    private final String loadingEmoji;
+import org.springframework.stereotype.Component;
 
-    public PlaynextCmd(Bot bot) {
-        super(bot);
-        this.loadingEmoji = bot.getConfig().getLoadingEmoji();
+@Component
+public class PlaynextCmd extends DJCommand {
+    @Value("${config.loading}")
+    private String loadingEmoji;
+
+    @Value("${config.aliases.repeat:}")
+    String[] aliases = new String[0];
+
+    @Value("${config.maxseconds}")
+    private long maxSeconds;
+
+    public PlaynextCmd(Bot bot, @Qualifier("djCategory") Category category) {
+        super(bot, category);
         this.name = "playnext";
         this.arguments = "<title|URL>";
         this.help = "plays a single song next";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.beListening = true;
         this.bePlaying = false;
     }
@@ -76,11 +86,11 @@ public class PlaynextCmd extends DJCommand {
         }
 
         private void loadSingle(AudioTrack track) {
-            if (bot.getConfig().isTooLong(track)) {
+            if (bot.getPlayerManager().isTooLong(track)) {
                 m.editMessage(FormatUtil.filter(event.getClient().getWarning() + " This track (**"
                         + track.getInfo().title + "**) is longer than the allowed maximum: `"
                         + FormatUtil.formatTime(track.getDuration()) + "` > `"
-                        + FormatUtil.formatTime(bot.getConfig().getMaxSeconds() * 1000) + "`")).queue();
+                        + FormatUtil.formatTime(maxSeconds * 1000) + "`")).queue();
                 return;
             }
             AudioHandler handler = (AudioHandler) event.getGuild().getAudioManager().getSendingHandler();

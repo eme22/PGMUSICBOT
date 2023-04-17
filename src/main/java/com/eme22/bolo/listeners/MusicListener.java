@@ -6,7 +6,7 @@ import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.audio.RequestMetadata;
 import com.eme22.bolo.commands.music.LyricsCmd;
 import com.eme22.bolo.entities.MusicPlayerEmoji;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.menu.Paginator;
 import com.jagrosh.jlyrics.Lyrics;
@@ -20,6 +20,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,12 +31,19 @@ import java.util.regex.Pattern;
 
 import static com.eme22.bolo.commands.music.QueueCmd.getQueueTitle;
 
+@Component
 public class MusicListener extends ListenerAdapter {
 
     private final Bot bot;
     private final Paginator.Builder builder;
     private int tempvolume = -1;
 
+    @Value("${config.success}")
+    private String successEmoji;
+    @Value("${config.warning}")
+    private String warningEmoji;
+
+    @Autowired
     public MusicListener(Bot bot) {
         this.bot = bot;
         this.builder = new Paginator.Builder()
@@ -58,7 +68,7 @@ public class MusicListener extends ListenerAdapter {
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
 
         User user = event.getUser();
-        Settings settings = bot.getSettingsManager().getSettings(event.getGuild());
+        Server settings = bot.getSettingsManager().getSettings(event.getGuild());
 
         if (user == null || user.isBot()) return;
 
@@ -73,7 +83,7 @@ public class MusicListener extends ListenerAdapter {
 
                     VoiceChannel current = event.getGuild().getSelfMember().getVoiceState().getChannel().asVoiceChannel();
                     if(current==null)
-                        current = settings.getVoiceChannel(event.getGuild());
+                        current = event.getGuild().getVoiceChannelById(settings.getVoiceChannelId());
                     if (OtherUtil.isUserInVoice(event.getGuild(), settings, event.getMember() )!= 1  ){
                         VoiceChannel finalCurrent = current;
                         event.getUser().openPrivateChannel().queue(success -> success.sendMessage("You must be listening in " + (finalCurrent == null ? "a voice channel" : finalCurrent.getAsMention()) + " to use that!").queue());
@@ -140,7 +150,7 @@ public class MusicListener extends ListenerAdapter {
         List<QueuedTrack> list = handler.getQueue().getList();
         if (list.isEmpty()) {
             MessageCreateData built = new MessageCreateBuilder()
-                    .setContent(bot.getConfig().getWarningEmoji() + " There is no music in the queue!")
+                    .setContent(warningEmoji + " There is no music in the queue!")
                     .build();
 
             event.getChannel().asTextChannel().sendMessage(built).queue(m ->
@@ -153,11 +163,11 @@ public class MusicListener extends ListenerAdapter {
             total += list.get(i).getTrack().getDuration();
             songs[i] = list.get(i).toString();
         }
-        Settings settingsTEST = bot.getSettingsManager().getSettings(event.getGuild());
+        Server settingsTEST = bot.getSettingsManager().getSettings(event.getGuild());
         long fintotal = total;
         builder.setText((i1, i2) -> {
                     assert settingsTEST != null;
-                    return getQueueTitle(handler, bot.getConfig().getSuccessEmoji(), songs.length, fintotal, settingsTEST.getRepeatMode());
+                    return getQueueTitle(handler, successEmoji, songs.length, fintotal, settingsTEST.getRepeatMode());
                 })
                 .setItems(songs)
         ;
@@ -179,8 +189,8 @@ public class MusicListener extends ListenerAdapter {
         AudioHandler handler = ((AudioHandler) event.getGuild().getAudioManager().getSendingHandler());
         assert handler != null;
         RequestMetadata rm = handler.getRequestMetadata();
-        event.getChannel().asTextChannel().sendMessage(bot.getConfig().getSuccessEmoji() + " Skipped **" + handler.getPlayer().getPlayingTrack().getInfo().title
-                + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + rm.user.username + "**)")).complete();
+        event.getChannel().asTextChannel().sendMessage(successEmoji + " Saltado: **" + handler.getPlayer().getPlayingTrack().getInfo().title
+                + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(agregado por **" + event.getJDA().getUserById(rm.user.id).getAsMention() + "**) (saltado por **"+user.getAsMention()+"**)")).complete();
         handler.getPlayer().stopTrack();
         event.getReaction().removeReaction(user).queue(s -> {}, t -> {});
     }

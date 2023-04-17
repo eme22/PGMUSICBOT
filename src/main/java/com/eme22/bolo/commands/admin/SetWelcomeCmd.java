@@ -17,7 +17,7 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -25,6 +25,8 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,14 +35,20 @@ import java.util.List;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class SetWelcomeCmd extends AdminCommand
 {
-    public SetWelcomeCmd(Bot bot)
+    @Value("${config.aliases.sethello:}")
+    String[] aliases = new String[0];
+
+    public SetWelcomeCmd(@Qualifier("adminCategory") Category category)
     {
+        super(category);
         this.name = "sethello";
         this.help = "especifica un canal para las bienvenidas";
         this.arguments = "<channel|NONE>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "canal", "canal a poner para mensaje de bienvenidas. Se utilizara el canal por defecto si esta activado.").setRequired(true));
 
     }
@@ -49,9 +57,10 @@ public class SetWelcomeCmd extends AdminCommand
     protected void execute(SlashCommandEvent event) {
         TextChannel channel = event.getOption("canal").getAsChannel().asTextChannel();
 
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
 
         s.setBienvenidasChannelId(channel.getIdLong());
+        s.save();
         event.reply(event.getClient().getSuccess()+" El canal de las bienvenidas es ahora <#"+channel.getId()+">").queue();
 
     }
@@ -64,10 +73,11 @@ public class SetWelcomeCmd extends AdminCommand
             event.replyError(" Ponga un canal de texto o NONE");
             return;
         }
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
             s.setBienvenidasChannelId(0);
+            s.save();
             event.replySuccess(" El canal de las bienvenidas ha sido quitado.");
         }
         else
@@ -80,6 +90,7 @@ public class SetWelcomeCmd extends AdminCommand
             else
             {
                 s.setBienvenidasChannelId(list.get(0).getIdLong());
+                s.save();
                 event.replySuccess(" El canal de las bienvenidas es ahora <#"+list.get(0).getId()+">");
             }
         }

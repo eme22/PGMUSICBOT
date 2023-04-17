@@ -23,25 +23,29 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class NowplayingCmd extends MusicCommand 
-{
-    public NowplayingCmd(Bot bot)
-    {
+import org.springframework.stereotype.Component;
+
+@Component
+public class NowplayingCmd extends MusicCommand {
+
+    @Value("${config.aliases.nowplaying:}")
+    String[] aliases = new String[0];
+
+    public NowplayingCmd(Bot bot) {
         super(bot);
         this.name = "nowplaying";
         this.help = "shows the song that is currently playing";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
     }
 
     @Override
-    public void doCommand(CommandEvent event) 
-    {
+    public void doCommand(CommandEvent event) {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         MessageCreateData m = handler.getNowPlaying(event.getJDA());
         if(m==null)

@@ -5,27 +5,40 @@ import com.eme22.bolo.commands.AdminCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ClearMessagesCmd extends AdminCommand {
 
-    public ClearMessagesCmd(Bot bot)
+    @Value("${config.aliases.clear:}")
+    String[] aliases = new String[0];
+
+    public ClearMessagesCmd(@Qualifier("adminCategory") Category category)
     {
+        super(category);
         this.name = "clear";
         this.help = "limpia los mensajes especificados";
         this.arguments = "<2 - 100>";
-        this.aliases = bot.getConfig().getAliases(this.name);
-        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "mensajes", "numero entre 2 al 100").setMinValue(2).setMaxValue(100).setRequired(true));
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.INTEGER, "mensajes", "numero entre 2 al 100")
+                        .setMinValue(2)
+                        .setMaxValue(100)
+                        .setRequired(true));
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        int values = Integer.parseInt(event.getOption("mensajes").getAsString());
+        Integer values = event.getOption("mensajes", OptionMapping::getAsInt);
         List<Message> messages = event.getChannel().getHistory().retrievePast(values).complete();
         event.getTextChannel().deleteMessages(messages).queue();
         event.reply(event.getClient().getSuccess() +" " + values + " mensajes borrados!").setEphemeral(true).queue();

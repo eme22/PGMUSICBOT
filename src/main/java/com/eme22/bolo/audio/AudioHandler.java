@@ -15,18 +15,24 @@
  */
 package com.eme22.bolo.audio;
 
-import com.eme22.bolo.Bolo;
+import com.eme22.bolo.image.ArtworkImageService;
+import com.eme22.bolo.model.MusicArtWork;
+import com.eme22.bolo.model.RepeatMode;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.playlist.PlaylistLoader.Playlist;
 import com.eme22.bolo.queue.FairQueue;
-import com.eme22.bolo.settings.RepeatMode;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.utils.Constants;
 import com.eme22.bolo.utils.FormatUtil;
+import com.eme22.bolo.utils.GifSearcher;
+import com.github.topisenpai.lavasrc.spotify.SpotifyAudioTrack;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
@@ -36,19 +42,18 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+@Log4j2
 public class AudioHandler extends AudioEventAdapter implements AudioSendHandler {
     private final FairQueue<QueuedTrack> queue = new FairQueue<>();
     private final List<AudioTrack> defaultQueue = new LinkedList<>();
@@ -56,14 +61,38 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
 
     private final PlayerManager manager;
     private final AudioPlayer audioPlayer;
+
     private final long guildId;
+
+    private LastAuthor lastAuthor;
+
+    private boolean stayInChannel;
+
+    private String successEmoji;
+
+    private boolean npImages;
+
+    private long owner;
 
     private AudioFrame lastFrame;
 
-    protected AudioHandler(PlayerManager manager, Guild guild, AudioPlayer player) {
+    private static Color transparent =new Color(1f,0f,0f,.5f );
+
+    private static int width = 480; // Ancho de la imagen
+    private static int height = 30; // Altura de la imagen
+
+    private static InputStream playImage = AudioHandler.class.getResourceAsStream("/images/play.png");
+
+    private static InputStream pauseImage = AudioHandler.class.getResourceAsStream("/images/pause.png");
+
+    public AudioHandler(PlayerManager manager, AudioPlayer audioPlayer, long guildId, boolean stayInChannel, String successEmoji, boolean npImages, long owner) {
         this.manager = manager;
-        this.audioPlayer = player;
-        this.guildId = guild.getIdLong();
+        this.audioPlayer = audioPlayer;
+        this.guildId = guildId;
+        this.stayInChannel = stayInChannel;
+        this.successEmoji = successEmoji;
+        this.npImages = npImages;
+        this.owner = owner;
     }
 
     public int addTrackToFront(QueuedTrack qtrack) {
@@ -120,7 +149,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
             audioPlayer.playTrack(defaultQueue.remove(0));
             return true;
         }
-        Settings settingsTEST = manager.getBot().getSettingsManager().getSettings(guildId);
+        Server settingsTEST = manager.getBot().getSettingsManager().getSettings(guildId);
         if (settingsTEST == null || settingsTEST.getDefaultPlaylist() == null)
             return false;
 
@@ -133,7 +162,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
             else
                 defaultQueue.add(at);
         }, () -> {
-            if (pl.getTracks().isEmpty() && !manager.getBot().getConfig().isStayInChannel())
+            if (pl.getTracks().isEmpty() && !stayInChannel)
                 manager.getBot().closeAudioConnection(guildId);
         });
         return true;
@@ -155,7 +184,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
         if (queue.isEmpty()) {
             if (!playFromDefault()) {
                 manager.getBot().getNowPlayingHandler().onTrackUpdate(guildId, null, this);
-                if (!manager.getBot().getConfig().isStayInChannel())
+                if (!stayInChannel)
                     manager.getBot().closeAudioConnection(guildId);
                 // unpause, in the case when the player was paused and the track has been
                 // skipped.
@@ -179,7 +208,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
             MessageCreateData m = getNowPlaying(manager.getBot().getJDA());
             Guild guild = manager.getBot().getJDA().getGuildById(guildId);
             if (m == null) {
-                TextChannel chn = manager.getBot().getSettingsManager().getSettings(guild).getTextChannel(guild);
+                TextChannel chn = guild.getTextChannelById(manager.getBot().getSettingsManager().getSettings(guild).getTextChannelId());
 
                 if (chn == null) {
                     chn = guild.getDefaultChannel().asTextChannel();
@@ -189,7 +218,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
                 manager.getBot().getNowPlayingHandler().clearLastNPMessage(guild);
             } else {
                 manager.getBot().getNowPlayingHandler().clearLastNPMessage(guild);
-                TextChannel chn = manager.getBot().getSettingsManager().getSettings(guild).getTextChannel(guild);
+                TextChannel chn = guild.getTextChannelById(manager.getBot().getSettingsManager().getSettings(guild).getTextChannelId());
 
                 if (chn == null)
                     chn = manager.getBot().getJDA().getGuildById(guildId).getDefaultChannel().asTextChannel();
@@ -215,7 +244,6 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
                 });
             }
         } catch (Exception exception) {
-            Logger log = LoggerFactory.getLogger("MusicBot");
             log.error("Error: " + exception.getMessage(), exception);
         }
     }
@@ -226,7 +254,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
             Guild guild = guild(jda);
             AudioTrack track = audioPlayer.getPlayingTrack();
             MessageCreateBuilder builder = new MessageCreateBuilder();
-            String mb = FormatUtil.filter(manager.getBot().getConfig().getSuccessEmoji() + " **Now Playing in "
+            String mb = FormatUtil.filter(successEmoji + " **Reproduciendo en: "
                     + guild.getSelfMember().getVoiceState().getChannel().getAsMention() + "...**");
             EmbedBuilder eb = new EmbedBuilder();
             eb.setColor(guild.getSelfMember().getColor());
@@ -245,23 +273,46 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
                 eb.setTitle(track.getInfo().title);
             }
 
-            if (track instanceof YoutubeAudioTrack && manager.getBot().getConfig().isNpImages()) {
+            if (track instanceof YoutubeAudioTrack /* && npImages **/) {
                 eb.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/mqdefault.jpg");
             }
 
-            if (track.getInfo().author != null && !track.getInfo().author.isEmpty())
+            if (track.getInfo().author != null && !track.getInfo().author.isEmpty()){
                 eb.setFooter("Source: " + track.getInfo().author, null);
+            }
+
+            //log.info("https://bf38-181-66-137-208.ngrok-free.app/"+guildId+"_progress.png");
+
 
             double progress = (double) audioPlayer.getPlayingTrack().getPosition() / track.getDuration();
-            eb.setDescription((audioPlayer.isPaused() ? Bolo.PAUSE_EMOJI : Bolo.PLAY_EMOJI)
+
+            //eb.setDescription(musicPlayer(audioPlayer.getPlayingTrack().getPosition(), track.getDuration(), !audioPlayer.isPaused()));
+
+
+            eb.setDescription((audioPlayer.isPaused() ? Constants.PAUSE_EMOJI : Constants.PLAY_EMOJI)
                     + " " + FormatUtil.progressBar(progress)
                     + " `[" + FormatUtil.formatTime(track.getPosition()) + "/"
                     + FormatUtil.formatTime(track.getDuration()) + "]` "
                     + FormatUtil.volumeIcon(audioPlayer.getVolume()));
 
-            eb.setImage("https://cdn.discordapp.com/attachments/911474101388976150/966022797040185454/disc2.gif");
+
+
+
+            String author = track.getInfo().author.toLowerCase();
+
+            Optional<MusicArtWork> artWork = manager.getBot().getArtworkImageService().getArtwork(author);
+
+            if (artWork.isPresent()) {
+                eb.setImage(artWork.get().getUrl());
+            } else if (track instanceof SpotifyAudioTrack) {
+                eb.setImage(((SpotifyAudioTrack) track).getArtworkURL());
+            } else {
+                eb.setImage("https://i.gifer.com/XNYN.gif");
+            }
 
             return builder.setContent(mb).setEmbeds(eb.build()).build();
+
+
         } else
             return null;
     }
@@ -269,10 +320,10 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
     public MessageCreateData getNoMusicPlaying(JDA jda) {
         Guild guild = guild(jda);
         return new MessageCreateBuilder()
-                .setContent(FormatUtil.filter(manager.getBot().getConfig().getSuccessEmoji() + " **Now Playing...**"))
+                .setContent(FormatUtil.filter(successEmoji + " **Now Playing...**"))
                 .setEmbeds(new EmbedBuilder()
-                        .setTitle("No music playing")
-                        .setDescription(Bolo.STOP_EMOJI + " " + FormatUtil.progressBar(-1) + " "
+                        .setTitle("No hay musica")
+                        .setDescription(Constants.STOP_EMOJI + " " + FormatUtil.progressBar(-1) + " "
                                 + FormatUtil.volumeIcon(audioPlayer.getVolume()))
                         .setColor(guild.getSelfMember().getColor())
                         .build())
@@ -284,14 +335,14 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
             long userid = getRequestMetadata().getOwner();
             AudioTrack track = audioPlayer.getPlayingTrack();
             String title = track.getInfo().title;
-            if (title == null || title.equals("Unknown Title"))
+            if (title == null || title.equals("Titulo desconocido"))
                 title = track.getInfo().uri;
             return "**" + title + "** [" + (userid == 0 ? "autoplay" : "<@" + userid + ">") + "]"
-                    + "\n" + (audioPlayer.isPaused() ? Bolo.PAUSE_EMOJI : Bolo.PLAY_EMOJI) + " "
+                    + "\n" + (audioPlayer.isPaused() ? Constants.PAUSE_EMOJI : Constants.PLAY_EMOJI) + " "
                     + "[" + FormatUtil.formatTime(track.getDuration()) + "] "
                     + FormatUtil.volumeIcon(audioPlayer.getVolume());
         } else
-            return "No music playing " + Bolo.STOP_EMOJI + " " + FormatUtil.volumeIcon(audioPlayer.getVolume());
+            return "No hay musica " + Constants.STOP_EMOJI + " " + FormatUtil.volumeIcon(audioPlayer.getVolume());
     }
 
     // Audio Send Handler methods
@@ -337,5 +388,18 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
     // Private methods
     private Guild guild(JDA jda) {
         return jda.getGuildById(guildId);
+    }
+
+    @Getter
+    public static class LastAuthor implements Serializable {
+        String author;
+        String link;
+
+        public LastAuthor(String author, String link) {
+            this.author = author;
+            this.link = link;
+        }
+
+
     }
 }

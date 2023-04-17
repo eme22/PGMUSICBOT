@@ -18,13 +18,15 @@ package com.eme22.bolo.commands.dj;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.DJCommand;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 
@@ -32,16 +34,24 @@ import java.util.Collections;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class VolumeCmd extends DJCommand
 {
-    public VolumeCmd(Bot bot)
+    @Value("${config.aliases.volume:}")
+    String[] aliases = new String[0];
+
+    public VolumeCmd(Bot bot, @Qualifier("djCategory") Category category)
     {
-        super(bot);
+        super(bot, category);
         this.name = "volume";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.help = "sets or shows volume";
-        this.arguments = "[0-99999]";
-        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "volumen", "Pone el volumen seleccionado.").setRequired(false));
+        this.arguments = "[0-999]";
+        this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "volumen", "Setea el volumen seleccionado.")
+                .setMinValue(0)
+                .setMaxValue(999)
+                .setRequired(false));
     }
 
     @Override
@@ -59,16 +69,18 @@ public class VolumeCmd extends DJCommand
             try{
                 nvolume = Integer.parseInt(event.getArgs());
             }catch(NumberFormatException e){
-                event.reply(event.getClient().getError()+" El volumen debe ser un numero!");
+                event.replyError(" El volumen debe ser un numero!");
                 return;
             }
             if(nvolume<0 || nvolume>999)
-                event.reply(event.getClient().getError()+" El volumen debe estar entre  0 y 999!");
+                event.replyError(" El volumen debe estar entre  0 y 999!");
             else
             {
                 handler.getPlayer().setVolume(nvolume);
-                Settings settings = event.getClient().getSettingsFor(event.getGuild());
+                Server settings = event.getClient().getSettingsFor(event.getGuild());
                 settings.setVolume(nvolume);
+                settings.save();
+
                 event.reply(FormatUtil.volumeIcon(nvolume)+" Volumen cambiado de `"+volume+"` a `"+nvolume+"`");
             }
         }
@@ -91,8 +103,9 @@ public class VolumeCmd extends DJCommand
             else
             {
                 handler.getPlayer().setVolume(nvolume);
-                Settings settings = event.getClient().getSettingsFor(event.getGuild());
+                Server settings = event.getClient().getSettingsFor(event.getGuild());
                 settings.setVolume(nvolume);
+                settings.save();
                 event.reply(FormatUtil.volumeIcon(nvolume)+" Volume cambiado de `"+volume+"` a `"+nvolume+"`").queue();
             }
         }

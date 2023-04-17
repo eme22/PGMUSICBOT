@@ -1,10 +1,12 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
+import com.eme22.bolo.commands.BaseCommand;
 import com.eme22.bolo.utils.MemeUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -12,6 +14,7 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -23,15 +26,20 @@ import java.util.regex.Pattern;
 
 import static com.eme22.bolo.utils.OtherUtil.imageFromUrl;
 
-public class CreateMemeCmd extends SlashCommand {
+import org.springframework.stereotype.Component;
 
-    private static final Logger log = LoggerFactory.getLogger("BoloBot - CreateMemeCmd");
+@Component
+@Log4j2
+public class CreateMemeCmd extends BaseCommand {
+
+    @Value("${config.aliases.creatememe:}")
+    String[] aliases = new String[0];
+
     private MemeUtil memeUtil;
-    public CreateMemeCmd(Bot bot) {
+    public CreateMemeCmd() {
         this.name = "creatememe";
         this.arguments = "<URL IMAGEN> [TEXTO SUPERIOR] [TEXTO INFERIOR]";
         this.help = "genera un meme desde una imagen";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.STRING, "url", "url de la imagen base.").setRequired(true),

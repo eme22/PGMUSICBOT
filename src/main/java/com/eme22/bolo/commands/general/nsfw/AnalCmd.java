@@ -2,100 +2,42 @@ package com.eme22.bolo.commands.general.nsfw;
 
 import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
-import com.eme22.bolo.Bot;
+import com.eme22.bolo.commands.general.ActionsCmd;
 import com.eme22.bolo.nsfw.NSFWStrings;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
-public class AnalCmd extends SlashCommand {
+@Component
+public class AnalCmd extends ActionsCmd {
 
-    public AnalCmd(Bot bot) {
+    @Value("${config.aliases.anal:}")
+    String[] aliases = new String[0];
+
+    public AnalCmd() {
+        super("anal");
         this.name = "anal";
-        this.help = "anal al usuario seleccionado";
-        this.arguments = "<user>";
-        this.aliases = bot.getConfig().getAliases(this.name);
-        this.nsfwOnly = true;
-        this.guildOnly = true;
-        this.options = Collections.singletonList(
-                new OptionData(OptionType.USER, "usuario", "busca el usuario a analear.").setRequired(true));
-
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
-        Member memberKisser = event.getMember();
-        Member memberKissed = event.getOption("usuario").getAsMember();
-
-        if (memberKissed.getUser().isBot()) {
-            event.reply(event.getClient().getError() + " Asegurese de que el usuario no sea un bot").setEphemeral(true)
-                    .queue();
-            return;
-        }
-        if (memberKisser.equals(memberKissed)) {
-            event.reply(event.getClient().getError() + "Asegurese de que el usuario no sea usted").setEphemeral(true).queue();
-            return;
-        }
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomAnal() + memberKissed.getAsMention());
-        try {
-            builder.setImage(new AnimeImageClient().getImage(Endpoints.KAWAII_NSFW.ANAL));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        event.replyEmbeds(builder.build()).queue();
+    protected String getActionDescription() {
+        return NSFWStrings.getRandomAnal();
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        if (event.getArgs().isEmpty()) {
-            event.replyError("Por favor incluya un nombre");
-            return;
-        }
-
-        List<Member> member = FinderUtil.findMembers(event.getArgs(), event.getGuild());
-
-        if (member.isEmpty()) {
-            event.replyError("Asegurese de que el usuario exista y no sea un bot");
-            return;
-        }
-
-        Member memberKisser = event.getMember();
-        Member memberKissed = member.get(0);
-
-        if (memberKisser.equals(memberKissed)) {
-            event.replyError("Asegurese de que el usuario no sea usted");
-            return;
-        }
-
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomAnal() + memberKissed.getAsMention());
-        try {
-            builder.setImage(new AnimeImageClient().getImage(Endpoints.KAWAII_NSFW.ANAL));
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        event.reply(builder.build());
+    protected String loadActionImageUrl1(AnimeImageClient animeImageClient) throws IOException, URISyntaxException, InterruptedException {
+        return animeImageClient.getImage(Endpoints.KAWAII_NSFW.ANAL);
     }
 
-    private String getRandomImage() {
-        AnimeImageClient animeImageClient = new AnimeImageClient();
-        try {
-            return animeImageClient.getImage(Endpoints.KAWAII_NSFW.ANAL);
+    @Override
+    protected String loadActionImageUrl2(AnimeImageClient animeImageClient) throws IOException, URISyntaxException, InterruptedException {
+        return animeImageClient.getImage(Endpoints.KAWAII_NSFW.ANAL);
+    }
 
-        }
-        catch (Exception e) {
-            return getRandomImage();
-        }
+    @Override
+    protected String loadActionImageUrl3(AnimeImageClient animeImageClient) throws IOException, URISyntaxException, InterruptedException {
+        return animeImageClient.getImage(Endpoints.KAWAII_NSFW.ANAL);
     }
 }

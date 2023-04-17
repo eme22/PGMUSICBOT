@@ -17,16 +17,30 @@ package com.eme22.bolo.commands.owner;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.OwnerCommand;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Collections;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class AutoplaylistCmd extends OwnerCommand
 {
     private final Bot bot;
+
+
+    @Value("${config.aliases.autoplaylist:}")
+    String[] aliases = new String[0];
     
     public AutoplaylistCmd(Bot bot)
     {
@@ -35,7 +49,42 @@ public class AutoplaylistCmd extends OwnerCommand
         this.name = "autoplaylist";
         this.arguments = "<name|NONE>";
         this.help = "sets the default playlist for the server";
-        this.aliases = bot.getConfig().getAliases(this.name);
+        this.options = Collections.singletonList(new OptionData(OptionType.STRING, "playlist", "Selecciona una playlist predefinida")
+                .setRequired(true));
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+
+        String playlist = event.getOption("playlist", OptionMapping::getAsString);
+
+        if (playlist == null) {
+            event.reply(event.getClient().getError() +" No hay playlist seleccionada!!").queue();
+            return;
+        }
+
+        if(playlist.equalsIgnoreCase("none"))
+        {
+            Server settings = event.getClient().getSettingsFor(event.getGuild());
+            settings.setDefaultPlaylist(null);
+
+            bot.getSettingsManager().saveSettings(settings);
+
+            event.reply(event.getClient().getSuccess()+" Cleared the default playlist for **"+event.getGuild().getName()+"**").queue();
+            return;
+        }
+        String pname = playlist.replaceAll("\\s+", "_");
+
+        if(bot.getPlaylistLoader().getPlaylist(pname)==null)
+        {
+            event.reply(event.getClient().getError()+" Could not find `"+pname+".txt`!").queue();
+        }
+        else
+        {
+            Server settings = event.getClient().getSettingsFor(event.getGuild());
+            settings.setDefaultPlaylist(pname);
+            event.reply(event.getClient().getSuccess()+" The default playlist for **"+event.getGuild().getName()+"** is now `"+pname+"`").queue();
+        }
     }
 
     @Override
@@ -48,8 +97,11 @@ public class AutoplaylistCmd extends OwnerCommand
         }
         if(event.getArgs().equalsIgnoreCase("none"))
         {
-            Settings settings = event.getClient().getSettingsFor(event.getGuild());
+            Server settings = event.getClient().getSettingsFor(event.getGuild());
             settings.setDefaultPlaylist(null);
+
+            bot.getSettingsManager().saveSettings(settings);
+
             event.reply(event.getClient().getSuccess()+" Cleared the default playlist for **"+event.getGuild().getName()+"**");
             return;
         }
@@ -60,7 +112,7 @@ public class AutoplaylistCmd extends OwnerCommand
         }
         else
         {
-            Settings settings = event.getClient().getSettingsFor(event.getGuild());
+            Server settings = event.getClient().getSettingsFor(event.getGuild());
             settings.setDefaultPlaylist(pname);
             event.reply(event.getClient().getSuccess()+" The default playlist for **"+event.getGuild().getName()+"** is now `"+pname+"`");
         }

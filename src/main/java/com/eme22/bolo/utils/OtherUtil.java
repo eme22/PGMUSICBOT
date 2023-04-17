@@ -15,16 +15,15 @@
  */
 package com.eme22.bolo.utils;
 
-import com.eme22.bolo.Bolo;
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.BotConfig;
-import com.eme22.bolo.entities.Answer;
+import com.eme22.bolo.EMBotApplication;
 import com.eme22.bolo.entities.Pair;
-import com.eme22.bolo.entities.Poll;
 import com.eme22.bolo.entities.Prompt;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Poll;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jlyrics.Lyrics;
 import com.jagrosh.jlyrics.LyricsClient;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
@@ -41,6 +40,7 @@ import org.json.JSONTokener;
 import org.kohsuke.github.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
@@ -60,19 +60,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
+
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
 @SuppressWarnings("unused")
+@Log4j2
 public class OtherUtil
 {
-    public final static String NEW_VERSION_AVAILABLE = "There is a new version of JMusicBot available!\n"
-                    + "Current version: %s\n"
-                    + "New Version: %s\n\n"
-                    + "Please visit https://github.com/jagrosh/MusicBot/releases/latest to get the latest release.";
+    public final static String NEW_VERSION_AVAILABLE = "Hay una nueva version del bot!\n"
+                    + "Actual: %s\n"
+                    + "Nueva: %s\n\n"
+                    + "Visite https://github.com/eme22/PGMUSICBOT/releases/latest para obtener la ultima version.";
     private final static String WINDOWS_INVALID_PATH = "c:\\windows\\system32\\";
 
     private static final List<String> SHA = new ArrayList<>();
@@ -81,6 +84,11 @@ public class OtherUtil
     private static final int HEIGHT = 500;
     private static final int PADDING = 50;
     private static final int AVATAR_SIZE = 250;
+
+    @Value("${config.welcome}")
+    private static String welcomeString;
+    @Value("${config.goodbye}")
+    private static String goodByeString;
 
     /**
      * gets a Path from a String
@@ -98,7 +106,7 @@ public class OtherUtil
         {
             try
             {
-                result = Paths.get(new File(Bolo.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath() + File.separator + path);
+                result = Paths.get(new File(EMBotApplication.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getPath() + File.separator + path);
             }
             catch(URISyntaxException ignored) {}
         }
@@ -155,26 +163,7 @@ public class OtherUtil
      */
     public static Activity parseGame(String game)
     {
-        if(game==null || game.trim().isEmpty() || game.trim().equalsIgnoreCase("default"))
-            return null;
-        String lower = game.toLowerCase();
-        if(lower.startsWith("playing"))
-            return Activity.playing(makeNonEmpty(game.substring(7).trim()));
-        if(lower.startsWith("listening to"))
-            return Activity.listening(makeNonEmpty(game.substring(12).trim()));
-        if(lower.startsWith("listening"))
-            return Activity.listening(makeNonEmpty(game.substring(9).trim()));
-        if(lower.startsWith("watching"))
-            return Activity.watching(makeNonEmpty(game.substring(8).trim()));
-        if(lower.startsWith("streaming"))
-        {
-            String[] parts = game.substring(9).trim().split("\\s+", 2);
-            if(parts.length == 2)
-            {
-                return Activity.streaming(makeNonEmpty(parts[1]), "https://twitch.tv/"+parts[0]);
-            }
-        }
-        return Activity.playing(game);
+        return getActivity(game);
     }
    
     public static String makeNonEmpty(String str)
@@ -209,8 +198,8 @@ public class OtherUtil
     
     public static String getCurrentVersion()
     {
-        if(Bolo.class.getPackage()!=null && Bolo.class.getPackage().getImplementationVersion()!=null)
-            return Bolo.class.getPackage().getImplementationVersion();
+        if(EMBotApplication.class.getPackage()!=null && EMBotApplication.class.getPackage().getImplementationVersion()!=null)
+            return EMBotApplication.class.getPackage().getImplementationVersion();
         else
             return "UNKNOWN";
     }
@@ -245,19 +234,42 @@ public class OtherUtil
         }
     }
 
+    public static Activity getActivity(String game) {
+        if(game ==null || game.trim().isEmpty() || game.trim().equalsIgnoreCase("default"))
+            return null;
+        String lower = game.toLowerCase();
+        if(lower.startsWith("playing"))
+            return Activity.playing(makeNonEmpty(game.substring(7).trim()));
+        if(lower.startsWith("listening to"))
+            return Activity.listening(makeNonEmpty(game.substring(12).trim()));
+        if(lower.startsWith("listening"))
+            return Activity.listening(makeNonEmpty(game.substring(9).trim()));
+        if(lower.startsWith("watching"))
+            return Activity.watching(makeNonEmpty(game.substring(8).trim()));
+        if(lower.startsWith("streaming"))
+        {
+            String[] parts = game.substring(9).trim().split("\\s+", 2);
+            if(parts.length == 2)
+            {
+                return Activity.streaming(makeNonEmpty(parts[1]), "https://twitch.tv/"+parts[0]);
+            }
+        }
+        return Activity.playing(game);
+    }
+
     public static String makePollString(Poll poll){
         StringBuilder sb = new StringBuilder();
         DecimalFormat df = new DecimalFormat("#.##");
 
         sb.append("*").append(poll.getQuestion()).append("*").append("\n").append("\n");
 
-        List<Answer> answers = poll.getAnswers();
+        List<com.eme22.bolo.model.Answer> answers = poll.getAnswers();
 
         AtomicReference<Integer> votes = new AtomicReference<>(poll.getAllVoteCount());
 
         IntStream.range(0, answers.size())
                 .forEach(index -> {
-                    Answer answers1 = answers.get(index);
+                    com.eme22.bolo.model.Answer answers1 = answers.get(index);
                     sb.append(OtherUtil.numtoString(index)).append(": ").append(answers1.getAnswer()).append("\n");
                     double perc;
                     float count = answers1.getVotes().size();
@@ -317,6 +329,35 @@ public class OtherUtil
             case 19: return "███████████████████⠀";
             case 20: return "████████████████████";
         }
+    }
+
+    public static String getFancyProgressBar(long elapsedTime, long totalTime, boolean isPlaying) {
+        int barWidth = 16;
+        double progress = (double) elapsedTime / totalTime;
+        int currentLength = (int) (progress * barWidth);
+
+        String playButton = isPlaying ? "⏸" : "▶"; // Unicode play/pause button
+        StringBuilder sb = new StringBuilder(playButton);
+
+        // Parte completada de la barra
+        sb.append("\uD83D\uDD18".repeat(Math.max(0, currentLength))); // Unicode block element
+
+        // Parte restante de la barra
+        sb.append("·".repeat(Math.max(0, barWidth - currentLength))); // Unicode middle dot
+
+        // Indicador de tiempo transcurrido
+        long minutes = elapsedTime / 1000 / 60;
+        long seconds = (elapsedTime / 1000) % 60;
+        String formattedTime = String.format("%d:%02d", minutes, seconds);
+        sb.append(" ").append(formattedTime).append("/");
+
+        // Tiempo total
+        minutes = totalTime / 1000 / 60;
+        seconds = (totalTime / 1000) % 60;
+        formattedTime = String.format("%d:%02d", minutes, seconds);
+        sb.append(formattedTime);
+
+        return sb.toString();
     }
 
     public static void crateImage2(String username, String message, BufferedImage background, BufferedImage avatar, String outputFilePath) throws IOException, FontFormatException {
@@ -404,7 +445,6 @@ public class OtherUtil
                 userPic = ImageIO.read(userPicStream);
                 userPicStream.close();
             } catch (IIOException e) {
-                Logger log = LoggerFactory.getLogger("MusicBot");
                 log.error("Exception", e);
             }
 
@@ -662,6 +702,25 @@ public class OtherUtil
         }
     }
 
+    public static int compare(String v1, String v2) {
+        String s1 = normalisedVersion(v1);
+        String s2 = normalisedVersion(v2);
+        return s1.compareTo(s2);
+    }
+
+    public static String normalisedVersion(String version) {
+        return normalisedVersion(version, ".", 4);
+    }
+
+    public static String normalisedVersion(String version, String sep, int maxWidth) {
+        String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
+        StringBuilder sb = new StringBuilder();
+        for (String s : split) {
+            sb.append(String.format("%" + maxWidth + 's', s));
+        }
+        return sb.toString();
+    }
+
     public static boolean isValidUrl(String imageAddress) {
 
         try {
@@ -690,7 +749,7 @@ public class OtherUtil
         return false;
     }
 
-    public static InputStream getBackground(Settings settingsTEST, boolean b) {
+    public static InputStream getBackground(Server settingsTEST, boolean b) {
         if (b){
             String image = settingsTEST.getBienvenidasChannelImage();
             if ( image == null){
@@ -714,23 +773,22 @@ public class OtherUtil
 
     public static String getMessage(Bot bot, Guild guild, boolean b) {
 
-        Settings settings = bot.getSettingsManager().getSettings(guild.getIdLong());
-        BotConfig config = bot.getConfig();
+        Server settings = bot.getSettingsManager().getSettings(guild.getIdLong());
 
         String message = b ? settings.getBienvenidasChannelMessage() : settings.getDespedidasChannelMessage();
 
         if (message == null)
-            return b ? config.getWelcomeString() : config.getGoodByeString();
+            return b ? welcomeString : goodByeString;
         else
             return message;
     }
 
-    public static boolean isAudioChannelAllowed(Guild guild, Settings settings, Member member){
+    public static boolean isAudioChannelAllowed(Guild guild, Server settings, Member member){
         VoiceChannel current = guild.getSelfMember().getVoiceState().getChannel().asVoiceChannel();
         GuildVoiceState userState = member.getVoiceState();
 
         if(current==null) {
-            current = settings.getVoiceChannel(guild);
+            current = guild.getVoiceChannelById(settings.getVoiceChannelId());
             if (current == null) {
                 return true;
             }
@@ -743,7 +801,7 @@ public class OtherUtil
 
     }
 
-    public static int isUserInVoice(Guild guild, Settings settings, Member member){
+    public static int isUserInVoice(Guild guild, Server settings, Member member){
         GuildVoiceState userState = member.getVoiceState();
         if (userState.inAudioChannel()) {
             VoiceChannel afkChannel = guild.getAfkChannel();

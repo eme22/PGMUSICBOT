@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:~/testUpdate;AUTO_SERVER=TRUE
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    database: h2
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+  h2:
+    console:
+      enabled: false
+  sql:
+    init:
+      platform: postgres
+      mode: embedded
+      continue-on-error: true

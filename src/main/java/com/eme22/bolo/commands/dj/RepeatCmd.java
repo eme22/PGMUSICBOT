@@ -17,13 +17,15 @@ package com.eme22.bolo.commands.dj;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.DJCommand;
-import com.eme22.bolo.settings.RepeatMode;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.RepeatMode;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 
@@ -31,15 +33,21 @@ import java.util.Collections;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class RepeatCmd extends DJCommand
 {
-    public RepeatCmd(Bot bot)
+
+    @Value("${config.aliases.repeat:}")
+    String[] aliases = new String[0];
+
+    public RepeatCmd(Bot bot, @Qualifier("djCategory") Category category)
     {
-        super(bot);
+        super(bot, category);
         this.name = "repeat";
         this.help = "re-adds music to the queue when finished";
         this.arguments = "[off|all|single]";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
         this.options = Collections.singletonList(new OptionData(OptionType.STRING, "modo", "[off-all-single]").setRequired(false));
 
@@ -50,7 +58,7 @@ public class RepeatCmd extends DJCommand
     protected void execute(CommandEvent event) {
         String args = event.getArgs();
         RepeatMode value;
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
+        Server settings = event.getClient().getSettingsFor(event.getGuild());
         if(args.isEmpty())
         {
             if(settings.getRepeatMode() == RepeatMode.OFF)
@@ -83,7 +91,7 @@ public class RepeatCmd extends DJCommand
     protected void execute(SlashCommandEvent event) {
         OptionMapping option = event.getOption("modo");
         RepeatMode value;
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
+        Server settings = event.getClient().getSettingsFor(event.getGuild());
         String args = null;
         if (option != null) {
             args = option.getAsString();

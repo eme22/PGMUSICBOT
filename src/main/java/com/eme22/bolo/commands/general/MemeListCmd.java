@@ -1,25 +1,31 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.entities.MemeImage;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.MemeImage;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
+import com.eme22.bolo.commands.BaseCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.menu.Paginator;
 import net.dv8tion.jda.api.exceptions.PermissionException;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class MemeListCmd extends SlashCommand {
+import org.springframework.stereotype.Component;
+
+@Component
+public class MemeListCmd extends BaseCommand {
 
     private final Paginator.Builder builder;
+
+    @Value("${config.aliases.memelist:}")
+    String[] aliases = new String[0];
 
     public MemeListCmd(Bot bot) {
         this.name = "memelist";
         this.help = "muestra la lista de memes del servidor";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
         this.builder = new Paginator.Builder()
                 .setColumns(1)
@@ -41,7 +47,7 @@ public class MemeListCmd extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
 
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
 
         List<MemeImage> data = s.getMemeImages();
 
@@ -63,7 +69,7 @@ public class MemeListCmd extends SlashCommand {
     @Override
     protected void execute(CommandEvent event) {
 
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
 
         List<MemeImage> data = s.getMemeImages();
 

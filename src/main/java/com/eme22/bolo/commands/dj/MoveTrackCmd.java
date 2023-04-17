@@ -7,18 +7,25 @@ import com.eme22.bolo.commands.DJCommand;
 import com.eme22.bolo.queue.FairQueue;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Command that provides users the ability to move a track in the playlist.
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class MoveTrackCmd extends DJCommand {
 
-    public MoveTrackCmd(Bot bot) {
-        super(bot);
+    @Value("${config.aliases.movetrack:}")
+    String[] aliases = new String[0];
+
+    public MoveTrackCmd(Bot bot, @Qualifier("djCategory") Category category) {
+        super(bot, category);
         this.name = "movetrack";
         this.help = "move a track in the current queue to a different position";
         this.arguments = "<from> <to>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.bePlaying = true;
     }
 

@@ -21,18 +21,26 @@ import com.eme22.bolo.audio.RequestMetadata;
 import com.eme22.bolo.commands.DJCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class ForceskipCmd extends DJCommand 
 {
-    public ForceskipCmd(Bot bot)
+
+    @Value("${config.aliases.forceskip:}")
+    String[] aliases = new String[0];
+
+    public ForceskipCmd(Bot bot, @Qualifier("djCategory") Category category)
     {
-        super(bot);
+        super(bot, category);
         this.name = "forceskip";
         this.help = "skips the current song";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.bePlaying = true;
     }
 
@@ -41,8 +49,8 @@ public class ForceskipCmd extends DJCommand
     {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         RequestMetadata rm = handler.getRequestMetadata();
-        event.reply(event.getClient().getSuccess()+" Skipped **"+handler.getPlayer().getPlayingTrack().getInfo().title
-                +"** "+(rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + rm.user.username + "**)"));
+        event.reply(event.getClient().getSuccess()+" Saltado: **" + handler.getPlayer().getPlayingTrack().getInfo().title
+                + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(agregado por **" + event.getJDA().getUserById(rm.user.id).getAsMention() + "**) (saltado por **"+event.getAuthor().getAsMention()+"**)"));
         handler.getPlayer().stopTrack();
     }
 
@@ -50,8 +58,8 @@ public class ForceskipCmd extends DJCommand
     public void doCommand(SlashCommandEvent event) {
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         RequestMetadata rm = handler.getRequestMetadata();
-        event.reply(event.getClient().getSuccess()+" Skipped **"+handler.getPlayer().getPlayingTrack().getInfo().title
-                +"** "+(rm.getOwner() == 0L ? "(autoplay)" : "(requested by **" + rm.user.username + "**)")).queue();
+        event.reply(event.getClient().getSuccess()+" Saltado: **" + handler.getPlayer().getPlayingTrack().getInfo().title
+                + "** " + (rm.getOwner() == 0L ? "(autoplay)" : "(agregado por **" + event.getJDA().getUserById(rm.user.id).getAsMention() + "**) (saltado por **"+event.getUser().getAsMention()+"**)")).queue();
         handler.getPlayer().stopTrack();
     }
 }

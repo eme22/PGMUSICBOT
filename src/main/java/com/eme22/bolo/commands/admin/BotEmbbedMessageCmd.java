@@ -7,17 +7,25 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.Objects;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class BotEmbbedMessageCmd extends AdminCommand {
 
-    public BotEmbbedMessageCmd(Bot bot) {
+    @Value("${config.aliases.message2:}")
+    String[] aliases = new String[0];
+
+    public BotEmbbedMessageCmd(@Qualifier("adminCategory") Category category) {
+        super(category);
         this.name = "message2";
         this.help = "hace hablar al bot con mensajes embedidos";
         this.arguments = "<mensaje>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Collections.singletonList(new OptionData(OptionType.STRING, "mensaje", "mensaje a decir").setRequired(true));
     }
 

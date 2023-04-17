@@ -21,19 +21,25 @@ import com.eme22.bolo.audio.RequestMetadata;
 import com.eme22.bolo.commands.MusicCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class SkipCmd extends MusicCommand 
 {
+    @Value("${config.aliases.voteskip:}")
+    String[] aliases = new String[0];
+
     public SkipCmd(Bot bot)
     {
         super(bot);
         this.name = "voteskip";
         this.help = "votes to skip the current song";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.beListening = true;
         this.bePlaying = true;
     }

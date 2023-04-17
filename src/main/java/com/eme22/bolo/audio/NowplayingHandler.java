@@ -17,8 +17,10 @@ package com.eme22.bolo.audio;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.entities.Pair;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
@@ -30,7 +32,11 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,13 +46,21 @@ import java.util.concurrent.TimeUnit;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
+
+@Component
+@Log4j2
 public class NowplayingHandler
 {
     private final Bot bot;
     private final HashMap<Long,Pair<Long,Long>> lastNP; // guild -> channel,message
 
-    private final Logger log = LoggerFactory.getLogger(getClass().getName());
-    
+    @Value("${config.nowplayingimages}")
+    private boolean npImages;
+
+    @Value("${config.songinstatus}")
+    private boolean songInStatus;
+
+
     public NowplayingHandler(Bot bot)
     {
         this.bot = bot;
@@ -55,10 +69,12 @@ public class NowplayingHandler
     
     public void init()
     {
-        if(!bot.getConfig().isNpImages())
+        if(!npImages) {
             bot.getThreadpool().scheduleWithFixedDelay(this::updateAll, 0, 5, TimeUnit.SECONDS);
+        }
+
     }
-    
+
     public void setLastNPMessage(Message m)
     {
         clearLastNPMessage((m.getGuild()));
@@ -139,8 +155,8 @@ public class NowplayingHandler
         Guild guild = bot.getJDA().getGuildById(guildId);
         if(guild==null)
             return;
-        Settings settings = bot.getSettingsManager().getSettings(guildId);
-        TextChannel tchan = settings.getTextChannel(guild);
+        Server settings = bot.getSettingsManager().getSettings(guildId);
+        TextChannel tchan = guild.getTextChannelById(settings.getTextChannelId());
         if(tchan!=null && guild.getSelfMember().hasPermission(tchan, Permission.MANAGE_CHANNEL))
         {
             String otherText;
@@ -175,7 +191,7 @@ public class NowplayingHandler
     public void onTrackUpdate(long guildId, AudioTrack track, AudioHandler handler)
     {
         // update bot status if applicable
-        if(bot.getConfig().isSongInStatus())
+        if(songInStatus)
         {
             if(track!=null && bot.getJDA().getGuilds().stream().filter(g -> g.getSelfMember().getVoiceState().inAudioChannel()).count()<=1)
                 bot.getJDA().getPresence().setActivity(Activity.listening(track.getInfo().title));
@@ -199,4 +215,5 @@ public class NowplayingHandler
         if(pair.getValue() == messageId)
             lastNP.remove(guild.getIdLong());
     }
+
 }

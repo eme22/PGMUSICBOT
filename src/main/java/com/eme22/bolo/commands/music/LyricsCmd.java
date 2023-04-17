@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.awt.*;
 import java.util.Collections;
@@ -37,8 +38,14 @@ import java.util.Collections;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class LyricsCmd extends MusicCommand
 {
+
+    @Value("${config.aliases.lyrics:}")
+    String[] aliases = new String[0];
     
     public LyricsCmd(Bot bot)
     {
@@ -46,7 +53,6 @@ public class LyricsCmd extends MusicCommand
         this.name = "lyrics";
         this.arguments = "[cancion]";
         this.help = "shows the lyrics of a song";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
         this.options = Collections.singletonList(new OptionData(OptionType.STRING, "cancion", "Busca la letra de la cancion").setRequired(false));
 

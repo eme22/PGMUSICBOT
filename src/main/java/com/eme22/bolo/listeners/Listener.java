@@ -15,12 +15,15 @@
  */
 package com.eme22.bolo.listeners;
 
-import com.eme22.bolo.Bolo;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
-import com.eme22.bolo.entities.RoleManager;
+import com.eme22.bolo.configuration.BotConfiguration;
+import com.eme22.bolo.model.MusicArtWork;
+import com.eme22.bolo.model.RoleManager;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -30,6 +33,7 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageEmbedEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -43,8 +47,10 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.api.utils.messages.MessageData;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.InputStream;
@@ -57,12 +63,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author John Grosh (john.a.grosh@gmail.com)
  */
 @SuppressWarnings("ConstantConditions")
+@Component
+@Log4j2
 public class Listener extends ListenerAdapter {
     private final Bot bot;
-    private static final Logger log = LoggerFactory.getLogger("BoloBot - Listener");
 
-    public Listener(Bot bot) {
+    @Value("${config.update}")
+    private boolean updatealerts;
+
+    @Value("${config.owner}")
+    private long owner;
+
+    private final String version;
+
+    @Autowired
+    public Listener(Bot bot,  BuildProperties buildProperties) {
         this.bot = bot;
+        this.version = buildProperties.getVersion();
     }
 
     private String setupMessage = null;
@@ -74,13 +91,13 @@ public class Listener extends ListenerAdapter {
         if (event.getJDA().getGuildCache().isEmpty()) {
 
             log.warn("This bot is not on any guilds! Use the following link to add the bot to your guilds!");
-            log.warn(event.getJDA().getInviteUrl(Bolo.RECOMMENDED_PERMS));
+            log.warn(event.getJDA().getInviteUrl(BotConfiguration.RECOMMENDED_PERMS));
         }
         // credit(event.getJDA());
         event.getJDA().getGuilds().forEach((guild) -> {
             try {
                 String defpl = bot.getSettingsManager().getSettings(guild).getDefaultPlaylist();
-                VoiceChannel vc = bot.getSettingsManager().getSettings(guild).getVoiceChannel(guild);
+                VoiceChannel vc = guild.getVoiceChannelById(bot.getSettingsManager().getSettings(guild).getVoiceChannelId());
                 if (defpl != null && vc != null && bot.getPlayerManager().setUpHandler(guild).playFromDefault()) {
                     guild.getAudioManager().openAudioConnection(vc);
                 }
@@ -88,15 +105,14 @@ public class Listener extends ListenerAdapter {
             } catch (Exception ignore) {
             }
         });
-        if (bot.getConfig().isUpdatealerts()) {
+        if (updatealerts) {
             bot.getThreadpool().scheduleWithFixedDelay(() -> {
                 try {
-                    User owner = bot.getJDA().retrieveUserById(bot.getConfig().getOwner()).complete();
-                    String currentVersion = OtherUtil.getCurrentVersion();
+                    User owner2 = bot.getJDA().retrieveUserById(owner).complete();
                     String latestVersion = OtherUtil.getLatestVersion();
-                    if (latestVersion != null && !currentVersion.equalsIgnoreCase(latestVersion)) {
-                        String msg = String.format(OtherUtil.NEW_VERSION_AVAILABLE, currentVersion, latestVersion);
-                        owner.openPrivateChannel().queue(pc -> pc.sendMessage(msg).queue());
+                    if (OtherUtil.compare(version, latestVersion) < 0) {
+                        String msg = String.format(OtherUtil.NEW_VERSION_AVAILABLE, version, latestVersion);
+                        owner2.openPrivateChannel().queue(pc -> pc.sendMessage(msg).queue());
                     }
                 } catch (Exception ignored) {
                 } // ignored
@@ -106,10 +122,14 @@ public class Listener extends ListenerAdapter {
 
     @Override
     public void onMessageEmbed(@NotNull MessageEmbedEvent event) {
-        ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild())
-                .getOnlyImageChannels(event.getGuild());
 
-        if (bannedTextChannels.contains(event.getChannel())) {
+        if (!event.isFromGuild())
+            return;
+
+        List<Long> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild())
+                .getImageOnlyChannelsIds();
+
+        if (bannedTextChannels.contains(event.getChannel().getIdLong())) {
             List<MessageEmbed> message = event.getMessageEmbeds();
 
             AtomicBoolean deletable = new AtomicBoolean(true);
@@ -129,10 +149,14 @@ public class Listener extends ListenerAdapter {
         if (event.getAuthor().isBot())
             return;
 
-        ArrayList<TextChannel> bannedTextChannels = bot.getSettingsManager().getSettings(event.getGuild())
-                .getOnlyImageChannels(event.getGuild());
+        if (!event.isFromGuild())
+            return;
 
-        if (bannedTextChannels.contains(event.getChannel())) {
+        Server s = bot.getSettingsManager().getSettings(event.getGuild());
+
+        List<Long> bannedTextChannels = s.getImageOnlyChannelsIds();
+
+        if (bannedTextChannels.contains(event.getChannel().getIdLong())) {
             Message message = event.getMessage();
 
             if (message.getContentRaw().contains("delimagechannel"))
@@ -149,6 +173,10 @@ public class Listener extends ListenerAdapter {
 
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
+
+        if (!event.isFromGuild())
+            return;
+
         bot.getNowPlayingHandler().onMessageDelete(event.getGuild(), event.getMessageIdLong());
 
     }
@@ -184,9 +212,10 @@ public class Listener extends ListenerAdapter {
 
     private void setupDefaultChannels(Guild guild) {
         try {
-            TextChannel commandsChannel = bot.getSettingsManager().getSettings(guild).getTextChannel(guild);
-            TextChannel bienvenidasChannel = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
-            TextChannel despedidasChannel = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
+            Server s = bot.getSettingsManager().getSettings(guild);
+            Long commandsChannel = s.getTextChannelId();
+            Long bienvenidasChannel = s.getBienvenidasChannelId();
+            Long despedidasChannel = s.getDespedidasChannelId();
             TextChannel defaultChannel = guild.getDefaultChannel().asTextChannel();
             List<TextChannel> channels = guild.getTextChannels();
 
@@ -208,7 +237,6 @@ public class Listener extends ListenerAdapter {
     private void setupChannel(String title, TextChannel defaultChannel, List<TextChannel> channels, int channel) {
         ArrayList<MessageCreateData> pages = new ArrayList<>();
         int calculatedPages = (int) Math.ceil((double) channels.size() / 10);
-        StringBuilder mb = new StringBuilder();
         for (int i = 1; i <= calculatedPages; i++) {
             StringBuilder sb = new StringBuilder();
             sb.append("Seleccione el canal para ").append(title).append(": \n");
@@ -239,6 +267,9 @@ public class Listener extends ListenerAdapter {
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
         if (event.getUser().isBot())
+            return;
+
+        if (!event.isFromGuild())
             return;
 
         if (setupMessage != null && setupMessage.equals(event.getMessageId())) {
@@ -314,7 +345,7 @@ public class Listener extends ListenerAdapter {
 
             }
 
-            HashMap<String, String> data = manager.getEmoji();
+            Map<String, String> data = manager.getEmoji();
 
             if (data.containsKey(event.getReaction().getEmoji().getAsReactionCode())) {
                 String roleT = data.get(reaction);
@@ -330,12 +361,15 @@ public class Listener extends ListenerAdapter {
         if (event.getUser().isBot())
             return;
 
+        if (!event.isFromGuild())
+            return;
+
         RoleManager manager = bot.getSettingsManager().getSettings(event.getGuild().getIdLong())
                 .getRoleManager(event.getMessageIdLong());
 
         if (manager != null) {
             String reaction = event.getReaction().getEmoji().getAsReactionCode();
-            HashMap<String, String> datas = manager.getEmoji();
+            Map<String, String> datas = manager.getEmoji();
 
             if (datas.containsKey(reaction)) {
                 List<Role> list = FinderUtil.findRoles(datas.get(reaction), event.getGuild());
@@ -371,6 +405,38 @@ public class Listener extends ListenerAdapter {
     }
 
     @Override
+    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        String id = event.getComponentId();
+
+        switch (id) {
+            case "acceptArtWork": {
+
+                List<MessageEmbed> embeds = event.getMessage().getEmbeds();
+
+                MusicArtWork artWork = new MusicArtWork();
+
+                artWork.setArtist(embeds.get(0).getDescription());
+
+                artWork.setUrl(embeds.get(1).getDescription());
+
+                artWork.setSubmitedBy(event.getUser().getIdLong());
+
+                bot.getArtworkImageService().addArtWork(artWork);
+
+                event.reply("Se ha agregado correctamente la imagen al bot.").queue( event2 -> event.editButton(event.getButton().asDisabled()).queue());
+
+                break;
+            }
+            case "rejectArtWork": {
+
+                event.reply("Realizado.").queue( message -> event.getMessage().delete().queue( event2 -> event.editButton(event.getButton().asDisabled()).queue()));
+
+                break;
+            }
+        }
+    }
+
+    @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         Guild guild = event.getGuild();
         User member = event.getMember().getUser();
@@ -381,7 +447,7 @@ public class Listener extends ListenerAdapter {
             if (!bot.getSettingsManager().getSettings(guild).getBienvenidasChannelEnabled())
                 return;
 
-            TextChannel bienvenidas = bot.getSettingsManager().getSettings(guild).getHelloChannel(guild);
+            TextChannel bienvenidas = guild.getTextChannelById(bot.getSettingsManager().getSettings(guild).getBienvenidasChannelId());
 
             if (bienvenidas != null) {
                 InputStream bienvenida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), true);
@@ -439,7 +505,7 @@ public class Listener extends ListenerAdapter {
                 return;
 
 
-            TextChannel despedidas = bot.getSettingsManager().getSettings(guild).getGoodbyeChannel(guild);
+            TextChannel despedidas = guild.getTextChannelById(bot.getSettingsManager().getSettings(guild).getDespedidasChannelId());
             if (despedidas != null) {
                 InputStream despedida = OtherUtil.getBackground(bot.getSettingsManager().getSettings(guild), false);
 

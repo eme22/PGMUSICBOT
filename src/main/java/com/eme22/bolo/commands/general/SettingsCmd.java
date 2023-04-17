@@ -16,47 +16,50 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.settings.RepeatMode;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.commands.BaseCommand;
+import com.eme22.bolo.model.RepeatMode;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
 
-/**
- *
- * @author John Grosh <john.a.grosh@gmail.com>
- */
-public class SettingsCmd extends SlashCommand {
+@Component
+public class SettingsCmd extends BaseCommand {
         private final static String EMOJI = "\uD83C\uDFA7"; // 🎧
+
+        @Value("${config.aliases.settings:}")
+        String[] aliases = new String[0];
 
         public SettingsCmd(Bot bot) {
                 this.name = "settings";
                 this.help = "muestra las opciones del bot";
-                this.aliases = bot.getConfig().getAliases(this.name);
                 this.guildOnly = true;
         }
 
         @Override
+        @Transactional
         protected void execute(SlashCommandEvent event) {
-                Settings s = event.getClient().getSettingsFor(event.getGuild());
+                Server s = event.getClient().getSettingsFor(event.getGuild());
                 String builder = EMOJI + " **" +
                         FormatUtil.filter(event.getGuild().getSelfMember().getUser().getName()) +
                         "** settings:";
-                TextChannel wchan = s.getHelloChannel(event.getGuild());
-                TextChannel dchan = s.getGoodbyeChannel(event.getGuild());
-                TextChannel tchan = s.getTextChannel(event.getGuild());
-                VoiceChannel vchan = s.getVoiceChannel(event.getGuild());
-                Role djRole = s.getDJRoleId(event.getGuild());
-                Role adminrole = s.getAdminRoleId(event.getGuild());
-                ArrayList<TextChannel> onlyimages = s.getOnlyImageChannels(event.getGuild());
+                TextChannel wchan = event.getGuild().getTextChannelById(s.getBienvenidasChannelId());
+                TextChannel dchan = event.getGuild().getTextChannelById(s.getDespedidasChannelId());
+                TextChannel tchan = event.getGuild().getTextChannelById(s.getTextChannelId());
+                VoiceChannel vchan = event.getGuild().getVoiceChannelById(s.getVoiceChannelId());
+                Role djRole = event.getGuild().getRoleById(s.getDjRoleId());
+                Role adminrole = event.getGuild().getRoleById(s.getAdminRoleId());
+                List<Long> onlyimages = s.getImageOnlyChannelsIds();
 
                 EmbedBuilder ebuilder = new EmbedBuilder()
                                 .setColor(event.getGuild().getSelfMember().getColor())
@@ -98,19 +101,20 @@ public class SettingsCmd extends SlashCommand {
         }
 
         @Override
+        @Transactional
         protected void execute(CommandEvent event) {
-                Settings s = event.getClient().getSettingsFor(event.getGuild());
+                Server s = event.getClient().getSettingsFor(event.getGuild());
 
                 String builder = EMOJI + " **" +
                         FormatUtil.filter(event.getSelfUser().getName()) +
                         "** settings:";
-                TextChannel wchan = s.getHelloChannel(event.getGuild());
-                TextChannel dchan = s.getGoodbyeChannel(event.getGuild());
-                TextChannel tchan = s.getTextChannel(event.getGuild());
-                VoiceChannel vchan = s.getVoiceChannel(event.getGuild());
-                Role djRole = s.getDJRoleId(event.getGuild());
-                Role adminrole = s.getAdminRoleId(event.getGuild());
-                ArrayList<TextChannel> onlyimages = s.getOnlyImageChannels(event.getGuild());
+                TextChannel wchan = event.getGuild().getTextChannelById(s.getBienvenidasChannelId());
+                TextChannel dchan = event.getGuild().getTextChannelById(s.getDespedidasChannelId());
+                TextChannel tchan = event.getGuild().getTextChannelById(s.getTextChannelId());
+                VoiceChannel vchan = event.getGuild().getVoiceChannelById(s.getVoiceChannelId());
+                Role djRole = event.getGuild().getRoleById(s.getDjRoleId());
+                Role adminrole = event.getGuild().getRoleById(s.getAdminRoleId());
+                List<Long> onlyimages = s.getImageOnlyChannelsIds();
 
                 EmbedBuilder ebuilder = new EmbedBuilder()
                                 .setColor(event.getSelfMember().getColor())

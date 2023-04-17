@@ -15,47 +15,28 @@
  */
 package com.eme22.bolo.settings;
 
-import com.eme22.bolo.BotConfig;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.eme22.bolo.model.Server;
+import com.eme22.bolo.repository.ServerRepository;
+import com.eme22.bolo.utils.Constants;
 import com.jagrosh.jdautilities.command.GuildSettingsManager;
 import net.dv8tion.jda.api.entities.Guild;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class SettingsManager implements GuildSettingsManager<Settings> {
-    private final static double SKIP_RATIO = .55;
-    private final HashMap<Long, Settings> settings;
+@Component
+public class SettingsManager implements GuildSettingsManager<Server> {
+    private final ServerRepository serverRepository;
 
-    public SettingsManager() {
-        this.settings = new HashMap<>();
-        loadSettings();
-
-    }
-
-    public void loadSettings() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            File file = new File("serversettings.json");
-            if (!file.exists())
-                throw new IOException();
-            HashMap<Long, Settings> temp_Settings = mapper.readValue(file, new TypeReference<HashMap<Long, Settings>>() {
-            });
-            temp_Settings.forEach((aLong, settingsTEST) -> this.settings.put(aLong, settingsTEST.withManager(this)));
-
-        } catch (IOException e) {
-            LoggerFactory.getLogger("Settings")
-                    .warn("Failed to load server settings (this is normal if no settings have been set yet): " + e);
-        }
+    @Autowired
+    public SettingsManager(ServerRepository serverRepository) {
+        this.serverRepository = serverRepository;
     }
 
     /**
@@ -65,40 +46,62 @@ public class SettingsManager implements GuildSettingsManager<Settings> {
      * @return the existing settings, or new settings for that guild
      */
     @Override
-    public Settings getSettings(Guild guild) {
+    public Server getSettings(Guild guild) {
         return getSettings(guild.getIdLong());
     }
 
-    public Settings getSettings(long guildId) {
-        Settings data = null;
-        try {
-            data = settings.computeIfAbsent(guildId, id -> createDefaultSettings());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return data;
-    }
+    public Server getSettings(long guildId) {
 
-    protected Settings createDefaultSettings() {
-        return new Settings(this, 0, 0, 0, 0, BotConfig.DEFAULT_VOLUME, null, RepeatMode.OFF, null, SKIP_RATIO, false,0, null,
-                null,false,0, null, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
-                new ArrayList<>(),new ArrayList<>(), 0,false);
-    }
-
-    public void writeSettings() {
-
-        // convert book object to JSON file
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.writerWithDefaultPrettyPrinter().writeValue(Paths.get("serversettings.json").toFile(), settings);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return serverRepository.findById(guildId).map(server -> {
+            if (server.getManager() == null)
+                server.setManager(this);
+            return server;
+        }).orElse(createDefaultSettings(guildId));
 
     }
 
-    protected void deleteSettings(String guild) {
-        settings.remove(Long.parseLong(guild));
+    public void saveSettings(Server server) {
+        serverRepository.save(server);
+    }
+
+    protected Server createDefaultSettings(long guildId) {
+
+        return Server.builder()
+                .manager(this)
+                .id(guildId)
+                .textChannelId(0)
+                .voiceChannelId(0)
+                .djRoleId(0)
+                .adminRoleId(0)
+                .volume(Constants.DEFAULT_VOLUME)
+                .defaultPlaylist(null)
+                .repeatMode(com.eme22.bolo.model.RepeatMode.OFF)
+                .prefix(null)
+                .skipRatio(Constants.SKIP_RATIO)
+                .bienvenidasChannelEnabled(false)
+                .bienvenidasChannelId(0)
+                .bienvenidasChannelMessage(null)
+                .bienvenidasChannelImage(null)
+                .despedidasChannelImage(null)
+                .despedidasChannelMessage(null)
+                .despedidasChannelEnabled(false)
+                .despedidasChannelId(0)
+                .birthdayChannelId(0)
+                .birthdays(new ArrayList<>())
+                .memeImages(new ArrayList<>())
+                .imageOnlyChannelsIds(new ArrayList<>())
+                .roleManagerList(new ArrayList<>())
+                .eightBallAnswers(new ArrayList<>())
+                .antiRaidMode(false)
+                .build();
+    }
+
+
+    protected void deleteSettings(Guild guild) {
+        serverRepository.deleteById(guild.getIdLong());
+    }
+
+    public void updateOldSettings(File oldSettings) {
+
     }
 }

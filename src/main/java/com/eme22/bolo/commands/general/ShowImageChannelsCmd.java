@@ -16,39 +16,39 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.commands.BaseCommand;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.List;
 
-/**
- *
- * @author John Grosh <john.a.grosh@gmail.com>
- */
-public class ShowImageChannelsCmd extends SlashCommand
+@Component
+public class ShowImageChannelsCmd extends BaseCommand
 {
+
+    @Value("${config.aliases.showimgch:}")
+    String[] aliases = new String[0];
 
     public ShowImageChannelsCmd(Bot bot)
     {
         this.name = "showimgch";
         this.help = "muestra los canales de solo imagen listados en el servidor";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
-        ArrayList<TextChannel> onlyimages = s.getOnlyImageChannels(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
+        List<Long> onlyimages = s.getImageOnlyChannelsIds();
 
         StringBuilder builder1 = new StringBuilder();
 
-        onlyimages.forEach( image -> builder1.append(image.getName()).append(" \n"));
+        onlyimages.forEach( image -> builder1.append(event.getGuild().getTextChannelById(image).getName()).append(" \n"));
 
         EmbedBuilder ebuilder = new EmbedBuilder()
                 .setColor(event.getGuild().getSelfMember().getColor())
@@ -63,12 +63,12 @@ public class ShowImageChannelsCmd extends SlashCommand
     @Override
     protected void execute(CommandEvent event) 
     {
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
-        ArrayList<TextChannel> onlyimages = s.getOnlyImageChannels(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
+        List<Long> onlyimages = s.getImageOnlyChannelsIds();
 
         StringBuilder builder1 = new StringBuilder();
 
-        onlyimages.forEach( image -> builder1.append(image.getName()).append(" \n"));
+        onlyimages.forEach( image -> builder1.append(event.getGuild().getTextChannelById(image).getName()).append(" \n"));
 
         EmbedBuilder ebuilder = new EmbedBuilder()
                 .setColor(event.getSelfMember().getColor())

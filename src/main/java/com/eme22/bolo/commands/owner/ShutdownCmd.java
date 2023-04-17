@@ -18,28 +18,39 @@ package com.eme22.bolo.commands.owner;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.OwnerCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class ShutdownCmd extends OwnerCommand
-{
+import org.springframework.stereotype.Component;
+
+@Component
+public class ShutdownCmd extends OwnerCommand {
+
+    @Value("${config.aliases.shutdown:}")
+    String[] aliases = new String[0];
     private final Bot bot;
     
-    public ShutdownCmd(Bot bot)
-    {
+    public ShutdownCmd(Bot bot) {
         this.bot = bot;
         this.name = "shutdown";
         this.help = "safely shuts down";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = false;
     }
-    
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        event.reply(event.getClient().getWarning()+ " Apagando...").queue();
+        bot.shutdown();
+    }
+
     @Override
     protected void execute(CommandEvent event)
     {
-        event.replyWarning("Shutting down...");
+        event.replyWarning(" Apagando...");
         bot.shutdown();
     }
 }

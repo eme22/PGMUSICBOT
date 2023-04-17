@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: ${MYSQL_URL:'jdbc:mariadb:failover://localhost:3306/discordDB?autoReconnect=true'}
+    username: ${MYSQLUSER:root}
+    password: ${MYSQLPASSWORD:root}
+    driverClassName: org.mariadb.jdbc.Driver
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+  sql:
+    init:
+      platform: postgres
+      mode: embedded
+      continue-on-error: true

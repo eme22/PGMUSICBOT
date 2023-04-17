@@ -20,19 +20,27 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.DJCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class PauseCmd extends DJCommand 
 {
-    public PauseCmd(Bot bot)
+
+    @Value("${config.aliases.pause:}")
+    String[] aliases = new String[0];
+
+    public PauseCmd(Bot bot, @Qualifier("djCategory") Category category)
     {
-        super(bot);
+        super(bot, category);
         this.name = "pause";
         this.help = "pauses the current song";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.bePlaying = true;
     }
 
@@ -54,11 +62,11 @@ public class PauseCmd extends DJCommand
         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         if(handler.getPlayer().isPaused())
         {
-            event.reply( event.getClient().getWarning()+ "The player is already paused! Use `"+event.getClient().getPrefix()+"play` to unpause!");
+            event.reply( event.getClient().getWarning()+ "The player is already paused! Use `"+event.getClient().getPrefix()+"play` to unpause!").queue();
             return;
         }
         handler.getPlayer().setPaused(true);
-        event.reply( event.getClient().getSuccess()+ "Paused **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**. Type `"+event.getClient().getPrefix()+"play` to unpause!");
+        event.reply( event.getClient().getSuccess()+ "Paused **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**. Type `"+event.getClient().getPrefix()+"play` to unpause!").queue();
 
     }
 }

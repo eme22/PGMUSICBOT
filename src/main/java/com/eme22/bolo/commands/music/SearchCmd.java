@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -41,18 +42,23 @@ import java.util.concurrent.TimeUnit;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class SearchCmd extends MusicCommand 
-{
+import org.springframework.stereotype.Component;
+
+@Component
+public class SearchCmd extends MusicCommand {
+
+    @Value("${config.aliases.search:}")
+    String[] aliases = new String[0];
+
+    @Value("${config.searching}")
+    private String searchingEmoji;
     protected String searchPrefix = "ytsearch:";
     private final OrderedMenu.Builder builder;
-    private final String searchingEmoji;
-    
+
     public SearchCmd(Bot bot)
     {
         super(bot);
-        this.searchingEmoji = bot.getConfig().getSearchingEmoji();
         this.name = "search";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.arguments = "<query>";
         this.help = "searches Youtube for a provided query";
         this.beListening = true;
@@ -98,28 +104,28 @@ public class SearchCmd extends MusicCommand
         private final Message m;
         private final CommandEvent event;
         private final SlashCommandEvent slashEvent;
-        private final OptionMapping args;
+        private final String args;
         
         private ResultHandler(Message m, CommandEvent event, SlashCommandEvent slashEvent)
         {
             this.m = m;
             this.event = event;
             this.slashEvent = slashEvent;
-            this.args = slashEvent.getOption("busqueda");
+            this.args = slashEvent != null ? slashEvent.getOption("busqueda", OptionMapping::getAsString) : event.getArgs();
         }
         
         @Override
         public void trackLoaded(AudioTrack track)
         {
-            if(bot.getConfig().isTooLong(track))
+            if(bot.getPlayerManager().isTooLong(track))
             {
-                m.editMessage(FormatUtil.filter((slashEvent == null ? event.getClient() : getClient()).getWarning()+" This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
-                        +FormatUtil.formatTime(track.getDuration())+"` > `"+bot.getConfig().getMaxTime()+"`")).queue();
+                m.editMessage(FormatUtil.filter((slashEvent == null ? event.getClient() : slashEvent.getClient()).getWarning()+" This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
+                        +FormatUtil.formatTime(track.getDuration())+"` > `"+bot.getPlayerManager().getMaxTime()+"`")).queue();
                 return;
             }
             AudioHandler handler = (AudioHandler)(slashEvent == null ? event.getGuild() : slashEvent.getGuild()).getAudioManager().getSendingHandler();
             int pos = handler.addTrack(new QueuedTrack(track, (slashEvent == null ? event.getAuthor() : slashEvent.getUser())))+1;
-            m.editMessage(FormatUtil.filter((slashEvent == null ? event.getClient() : getClient()).getSuccess()+" Added **"+track.getInfo().title
+            m.editMessage(FormatUtil.filter((slashEvent == null ? event.getClient() : slashEvent.getClient()).getSuccess()+" Added **"+track.getInfo().title
                     +"** (`"+FormatUtil.formatTime(track.getDuration())+"`) "+(pos==0 ? "to begin playing" 
                         : " to the queue at position "+pos))).queue();
         }
@@ -128,19 +134,19 @@ public class SearchCmd extends MusicCommand
         public void playlistLoaded(AudioPlaylist playlist)
         {
             builder.setColor((slashEvent == null ? event.getGuild().getSelfMember() : slashEvent.getGuild().getSelfMember()).getColor())
-                    .setText(FormatUtil.filter((slashEvent == null ? event.getClient() : getClient()).getSuccess()+" Search results for `"+ (slashEvent == null ? event.getArgs() : args.getAsString())+"`:"))
+                    .setText(FormatUtil.filter((slashEvent == null ? event.getClient() : slashEvent.getClient()).getSuccess()+" Search results for `"+ (slashEvent == null ? event.getArgs() : args)+"`:"))
                     .setChoices()
                     .setSelection((msg,i) -> 
                     {
                         AudioTrack track = playlist.getTracks().get(i-1);
-                        if(bot.getConfig().isTooLong(track))
+                        if(bot.getPlayerManager().isTooLong(track))
                         {
                             if (slashEvent == null)
                                 event.replyWarning("This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
-                                    +FormatUtil.formatTime(track.getDuration())+"` > `"+bot.getConfig().getMaxTime()+"`");
+                                    +FormatUtil.formatTime(track.getDuration())+"` > `"+bot.getPlayerManager().getMaxTime()+"`");
                             else
                                 slashEvent.reply(event.getClient().getWarning()+ "This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
-                                        +FormatUtil.formatTime(track.getDuration())+"` > `"+bot.getConfig().getMaxTime()+"`").queue();
+                                        +FormatUtil.formatTime(track.getDuration())+"` > `"+bot.getPlayerManager().getMaxTime()+"`").queue();
                             return;
                         }
                         AudioHandler handler = (AudioHandler)(slashEvent == null ? event.getGuild() : slashEvent.getGuild()).getAudioManager().getSendingHandler();
@@ -163,16 +169,16 @@ public class SearchCmd extends MusicCommand
         @Override
         public void noMatches() 
         {
-            m.editMessage(FormatUtil.filter((slashEvent == null ? event.getClient() : getClient()).getWarning()+" No results found for `"+(slashEvent == null ? event.getArgs() : args.getAsString())+"`.")).queue();
+            m.editMessage(FormatUtil.filter((slashEvent == null ? event.getClient() : slashEvent.getClient()).getWarning()+" No results found for `"+(slashEvent == null ? event.getArgs() : args)+"`.")).queue();
         }
 
         @Override
         public void loadFailed(FriendlyException throwable) 
         {
             if(throwable.severity==Severity.COMMON)
-                m.editMessage((slashEvent == null ? event.getClient() : getClient()).getError()+" Error loading: "+throwable.getMessage()).queue();
+                m.editMessage((slashEvent == null ? event.getClient() : slashEvent.getClient()).getError()+" Error loading: "+throwable.getMessage()).queue();
             else
-                m.editMessage((slashEvent == null ? event.getClient() : getClient()).getError()+" Error loading track.").queue();
+                m.editMessage((slashEvent == null ? event.getClient() : slashEvent.getClient()).getError()+" Error loading track.").queue();
         }
     }
 }

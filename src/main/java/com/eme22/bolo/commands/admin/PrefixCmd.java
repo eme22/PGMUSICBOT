@@ -17,11 +17,13 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 
@@ -29,24 +31,31 @@ import java.util.Collections;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class PrefixCmd extends AdminCommand
 {
-    public PrefixCmd(Bot bot)
+
+    @Value("${config.aliases.prefix:}")
+    String[] aliases = new String[0];
+
+    public PrefixCmd(Bot bot, @Qualifier("adminCategory") Category category)
     {
+        super(category);
         this.name = "prefix";
         this.help = "pone un prefijo por servidor";
         this.arguments = "<prefix|NONE>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Collections.singletonList(new OptionData(OptionType.STRING, "prefix", "Selecciona el prefijo de los comandos (none = limpiar prefijo).").setRequired(true));
 
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String prefix = event.getOption("prefix").getAsString();
+        String prefix = event.optString("prefix");
 
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
-        if(prefix.equalsIgnoreCase("none"))
+        Server s = event.getClient().getSettingsFor(event.getGuild());
+        if(prefix == null || prefix.equalsIgnoreCase("none"))
         {
             s.setPrefix(null);
             event.reply(event.getClient().getSuccess()+ " Prefijo del servidor limpiado.").queue();
@@ -56,6 +65,8 @@ public class PrefixCmd extends AdminCommand
             s.setPrefix(prefix);
             event.reply(event.getClient().getSuccess()+" Prefijo personalizado fijado en `" + prefix + "` en *" + event.getGuild().getName() + "*").queue();
         }
+
+        s.save();
 
     }
 
@@ -68,7 +79,7 @@ public class PrefixCmd extends AdminCommand
             return;
         }
         
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
             s.setPrefix(null);
@@ -79,5 +90,7 @@ public class PrefixCmd extends AdminCommand
             s.setPrefix(event.getArgs());
             event.replySuccess("Prefijo personalizado fijado en `" + event.getArgs() + "` en *" + event.getGuild().getName() + "*");
         }
+
+        s.save();
     }
 }

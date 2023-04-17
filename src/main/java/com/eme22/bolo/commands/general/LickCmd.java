@@ -12,86 +12,44 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class LickCmd extends SlashCommand {
+import org.springframework.stereotype.Component;
 
-    public LickCmd(Bot bot) {
+@Component
+public class LickCmd extends ActionsCmd {
+
+    @Value("${config.aliases.lick:}")
+    String[] aliases = new String[0];
+
+    public LickCmd() {
+        super("lamer");
         this.name = "lick";
-        this.help = "lame al usuario seleccionado";
-        this.arguments = "<user>";
-        this.aliases = bot.getConfig().getAliases(this.name);
-        this.guildOnly = true;
-        this.options = Collections.singletonList(
-                new OptionData(OptionType.USER, "usuario", "busca el usuario a lamer.").setRequired(true));
-
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
-        Member memberKisser = event.getMember();
-        Member memberKissed = event.getOption("usuario").getAsMember();
-
-        if (memberKissed.getUser().isBot()) {
-            event.reply(event.getClient().getError() + " Asegurese de que el usuario no sea un bot").setEphemeral(true)
-                    .queue();
-            return;
-        }
-        if (memberKisser.equals(memberKissed)) {
-            event.reply(event.getClient().getError() + "Asegurese de que el usuario no sea usted").setEphemeral(true).queue();
-            return;
-        }
-
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomLick() + memberKissed.getAsMention());
-        builder.setImage(getRandomImage());
-        event.replyEmbeds(builder.build()).queue();
+    protected String getActionDescription() {
+        return NSFWStrings.getRandomLick();
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        if (event.getArgs().isEmpty()) {
-            event.replyError("Por favor incluya un nombre");
-            return;
-        }
-
-        List<Member> member = FinderUtil.findMembers(event.getArgs(), event.getGuild());
-
-        if (member.isEmpty()) {
-            event.replyError("Asegurese de que el usuario exista y no sea un bot");
-            return;
-        }
-
-        Member memberKisser = event.getMember();
-        Member memberKissed = member.get(0);
-
-        if (memberKisser.equals(memberKissed)) {
-            event.replyError("Asegurese de que el usuario no sea usted");
-            return;
-        }
-
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(memberKisser.getAsMention() + NSFWStrings.getRandomLick() + memberKissed.getAsMention());
-        builder.setImage(getRandomImage());
-        event.reply(builder.build());
+    protected String loadActionImageUrl1(AnimeImageClient animeImageClient) throws IOException, URISyntaxException, InterruptedException {
+        return animeImageClient.getImage(Endpoints.WAIFU_SFW.LICK);
     }
 
-    private String getRandomImage() {
-        AnimeImageClient animeImageClient = new AnimeImageClient();
-        try {
-            if (new Random().nextBoolean())
-                if (new Random().nextBoolean())
-                    return animeImageClient.getImage(Endpoints.KAWAII_SFW.LICK);
-                else
-                    return animeImageClient.getImage(Endpoints.WAIFU_SFW.LICK);
-            else
-                return animeImageClient.getImage(Endpoints.HM_SFW.LICK);
-        }
-        catch (Exception e) {
-            return getRandomImage();
-        }
+    @Override
+    protected String loadActionImageUrl2(AnimeImageClient animeImageClient) throws IOException, URISyntaxException, InterruptedException {
+        return animeImageClient.getImage(Endpoints.KAWAII_SFW.LICK);
+    }
+
+    @Override
+    protected String loadActionImageUrl3(AnimeImageClient animeImageClient) throws IOException, URISyntaxException, InterruptedException {
+        return animeImageClient.getImage(Endpoints.HM_SFW.LICK);
     }
 }

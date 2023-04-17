@@ -41,13 +41,13 @@ public class FormatUtil {
         
     public static String progressBar(double percent)
     {
-        String str = "";
-        for(int i=0; i<12; i++)
-            if(i == (int)(percent*12))
-                str+="\uD83D\uDD18"; // 🔘
-            else
-                str+="▬";
-        return str;
+        StringBuilder str = new StringBuilder();
+            for(int i=0; i<16; i++)
+                if(i == (int)(percent*16))
+                    str.append("\uD83D\uDD18"); // 🔘
+                else
+                    str.append("▬");
+        return str.toString();
     }
     
     public static String volumeIcon(int volume)

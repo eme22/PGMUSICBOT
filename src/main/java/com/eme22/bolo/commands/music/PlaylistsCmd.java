@@ -19,6 +19,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.MusicCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -26,21 +27,24 @@ import java.util.List;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class PlaylistsCmd extends MusicCommand 
-{
-    public PlaylistsCmd(Bot bot)
-    {
+import org.springframework.stereotype.Component;
+
+@Component
+public class PlaylistsCmd extends MusicCommand {
+
+    @Value("${config.aliases.playlists:}")
+    String[] aliases = new String[0];
+
+    public PlaylistsCmd(Bot bot) {
         super(bot);
         this.name = "playlists";
         this.help = "shows the available playlists";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
         this.beListening = false;
     }
     
     @Override
-    public void doCommand(CommandEvent event) 
-    {
+    public void doCommand(CommandEvent event) {
         if(!bot.getPlaylistLoader().folderExists())
             bot.getPlaylistLoader().createFolder();
         if(!bot.getPlaylistLoader().folderExists())

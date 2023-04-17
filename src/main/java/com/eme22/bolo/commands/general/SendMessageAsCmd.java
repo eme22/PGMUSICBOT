@@ -3,7 +3,7 @@ package com.eme22.bolo.commands.general;
 import club.minnced.discord.webhook.external.JDAWebhookClient;
 import com.eme22.bolo.Bot;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
+import com.eme22.bolo.commands.BaseCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.Icon;
@@ -13,23 +13,23 @@ import net.dv8tion.jda.api.entities.Webhook;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 
-public class SendMessageAsCmd extends SlashCommand {
+@Component
+public class SendMessageAsCmd extends BaseCommand {
 
-    private static final Logger log = LoggerFactory.getLogger("BoloBot - SendMessageAsCmd");
+    @Value("${config.aliases.sendmessageas:}")
+    String[] aliases = new String[0];
 
     public SendMessageAsCmd(Bot bot) {
         this.name = "sendmessageas";
         this.help = "envia un mensaje como el usuario seleccionado";
         this.arguments = "[usuario] mensaje";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "usuario", "busca el usuario a hacerce pasar.").setRequired(true),
                 new OptionData(OptionType.STRING, "mensaje", "mensaje a decir").setRequired(true));

@@ -20,19 +20,27 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.DJCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class StopCmd extends DJCommand 
 {
-    public StopCmd(Bot bot)
+
+    @Value("${config.aliases.stop:}")
+    String[] aliases = new String[0];
+
+    public StopCmd(Bot bot, @Qualifier("djCategory") Category category)
     {
-        super(bot);
+        super(bot, category);
         this.name = "stop";
         this.help = "stops the current song and clears the queue";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.bePlaying = false;
     }
 

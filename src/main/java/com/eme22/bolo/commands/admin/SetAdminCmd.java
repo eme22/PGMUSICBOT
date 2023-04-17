@@ -17,7 +17,7 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -25,6 +25,8 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,14 +35,21 @@ import java.util.List;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class SetAdminCmd extends AdminCommand
 {
-    public SetAdminCmd(Bot bot)
+
+    @Value("${config.aliases.setadmin:}")
+    String[] aliases = new String[0];
+
+    public SetAdminCmd(@Qualifier("adminCategory") Category category)
     {
+        super(category);
         this.name = "setadmin";
         this.help = "actualiza el rol de Admin";
         this.arguments = "<rolename|NONE>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Collections.singletonList(new OptionData(OptionType.ROLE, "rol", "rol a poner de admib. Ponga @Everyone para limpiar").setRequired(true));
 
     }
@@ -48,7 +57,7 @@ public class SetAdminCmd extends AdminCommand
     @Override
     protected void execute(SlashCommandEvent event) {
         Role role = event.getOption("rol").getAsRole();
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
         if(role.getIdLong() == event.getGuild().getIdLong()) {
             s.setAdminRoleId(0);
             event.reply(event.getClient().getSuccess()+"Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.").queue();
@@ -57,6 +66,7 @@ public class SetAdminCmd extends AdminCommand
             s.setAdminRoleId(role.getIdLong());
             event.reply(event.getClient().getSuccess()+" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+role.getAsMention()+"**.").queue();
         }
+        s.save();
     }
 
     @Override
@@ -68,14 +78,13 @@ public class SetAdminCmd extends AdminCommand
             event.replyError(" Ponga un rol o NONE para ninguno");
             return;
         }
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
         if(event.getArgs().equalsIgnoreCase("none"))
         {
             s.setAdminRoleId(0);
             event.replySuccess(" Rol de admin limpiado. Solo el creador del servidor puede usar los comandos de admin.");
         }
-        else
-        {
+        else {
             List<Role> list = FinderUtil.findRoles(event.getArgs(), event.getGuild());
             if(list.isEmpty())
                 event.replyWarning(" No Roles found matching \""+event.getArgs()+"\"");
@@ -87,6 +96,8 @@ public class SetAdminCmd extends AdminCommand
                 event.replySuccess(" Los comandos de admin ahora pueden ser usados por usuarios con el rol **"+list.get(0).getName()+"** role.");
             }
         }
+
+            s.save();
         }
         catch (Exception e) {
             e.printStackTrace();

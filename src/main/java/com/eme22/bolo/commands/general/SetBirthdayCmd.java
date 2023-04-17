@@ -1,26 +1,30 @@
 package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.entities.Birthday;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.commands.BaseCommand;
+import com.eme22.bolo.model.Birthday;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Calendar;
 
-public class SetBirthdayCmd extends SlashCommand {
+@Component
+public class SetBirthdayCmd extends BaseCommand {
 
     Bot bot;
 
+    @Value("${config.aliases.setbirthday:}")
+    String[] aliases = new String[0];
     public SetBirthdayCmd(Bot bot) {
         this.bot = bot;
         this.name = "setbirthday";
         this.help = "agrega tu cumpleaños al servidor: <dia> <mes>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.INTEGER, "dia", "dia de tu cumpleaños").setRequired(true),
@@ -56,6 +60,9 @@ public class SetBirthdayCmd extends SlashCommand {
 
             bot.getSettingsManager().getSettings(event.getGuild()).addBirthDay(cumple);
 
+            bot.getSettingsManager().getSettings(event.getGuild()).save();
+
+
             event.reply(event.getClient().getSuccess()+ "Se recordará tu cumpleaños el "+ dia+ "/"+mes).setEphemeral(true).queue();
 
     } catch (NumberFormatException e) {
@@ -74,7 +81,7 @@ public class SetBirthdayCmd extends SlashCommand {
         try {
             String[] args = event.getArgs().split(" ");
 
-            Settings settings = bot.getSettingsManager().getSettings(event.getGuild());
+            Server settings = bot.getSettingsManager().getSettings(event.getGuild());
 
             int dia = Integer.parseInt(args[0]);
             int mes = Integer.parseInt(args[1]);
@@ -105,6 +112,7 @@ public class SetBirthdayCmd extends SlashCommand {
             }
 
             settings.addBirthDay(cumple);
+            settings.save();
 
             event.replySuccess(event.getClient().getSuccess()+ "Se recordará tu cumpleaños el "+ dia+ "/"+mes);
         } catch (NumberFormatException e) {

@@ -17,7 +17,7 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
@@ -25,6 +25,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,14 +35,19 @@ import java.util.List;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class AddImageChannel extends AdminCommand
 {
-    public AddImageChannel(Bot bot)
+    @Value("${config.aliases.addimgch:}")
+    String[] aliases = new String[0];
+    public AddImageChannel(@Qualifier("adminCategory") Category category)
     {
+        super(category);
         this.name = "addimgch";
         this.help = "agrega un canal a la lista de no texto";
         this.arguments = "<channel>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Collections.singletonList(new OptionData(OptionType.CHANNEL, "canal", "selecciona el canal a agregar.").setRequired(true));
     }
 
@@ -53,10 +60,11 @@ public class AddImageChannel extends AdminCommand
             textChannel = canal.getAsChannel().asTextChannel();
         }
 
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
 
         if (textChannel != null) {
-            s.addOnlyImageChannels(textChannel);
+            s.addOnlyImageChannels(textChannel.getIdLong());
+            s.save();
             event.reply(event.getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> Agregado a la lista de canales sin texto").setEphemeral(true).queue();
         }
         else {
@@ -73,7 +81,7 @@ public class AddImageChannel extends AdminCommand
             event.replyError(" Incluya un canal de Texto");
             return;
         }
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
 
         List<TextChannel> list = FinderUtil.findTextChannels(event.getArgs(), event.getGuild());
         if(list.isEmpty())
@@ -81,7 +89,8 @@ public class AddImageChannel extends AdminCommand
         else
         {
             list.forEach( textChannel -> {
-                s.addOnlyImageChannels(textChannel);
+                s.addOnlyImageChannels(textChannel.getIdLong());
+                s.save();
                 event.reply(event.getClient().getSuccess()+" Canal <#"+textChannel.getId()+"> Agregado a la lista de canales sin texto");
             });
 

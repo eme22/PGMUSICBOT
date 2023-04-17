@@ -17,11 +17,13 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -30,14 +32,21 @@ import java.util.Objects;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class SkipratioCmd extends AdminCommand
-{
-    public SkipratioCmd(Bot bot)
+import org.springframework.stereotype.Component;
+
+@Component
+public class SkipratioCmd extends AdminCommand {
+
+    @Value("${config.aliases.setskip:}")
+    String[] aliases = new String[0];
+
+
+    public SkipratioCmd(@Qualifier("adminCategory") Category category)
     {
+        super(category);
         this.name = "setskip";
         this.help = "pone un radio para el comando skip";
         this.arguments = "<0 - 100>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "radio", "porcentaje de aprobacion para comando voteskip").setMinValue(0).setMaxValue(100).setRequired(true));
 
     }
@@ -45,8 +54,9 @@ public class SkipratioCmd extends AdminCommand
     @Override
     protected void execute(SlashCommandEvent event) {
         int val = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(event.getOption("radio")).getAsString()));
-        Settings s = event.getClient().getSettingsFor(event.getGuild());
+        Server s = event.getClient().getSettingsFor(event.getGuild());
         s.setSkipRatio(val / 100.0);
+        s.save();
         event.reply(event.getClient().getSuccess()+ " Skip percentage has been set to `" + val + "%` of listeners on *" + event.getGuild().getName() + "*").queue();
 
     }
@@ -62,8 +72,9 @@ public class SkipratioCmd extends AdminCommand
                 event.replyError("The provided value must be between 0 and 100!");
                 return;
             }
-            Settings s = event.getClient().getSettingsFor(event.getGuild());
+            Server s = event.getClient().getSettingsFor(event.getGuild());
             s.setSkipRatio(val / 100.0);
+            s.save();
             event.replySuccess("Skip percentage has been set to `" + val + "%` of listeners on *" + event.getGuild().getName() + "*");
         }
         catch(NumberFormatException ex)

@@ -2,7 +2,8 @@ package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.AdminCommand;
-import com.eme22.bolo.entities.RoleManager;
+import com.eme22.bolo.model.RoleManager;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
@@ -12,23 +13,31 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class SetRoleManagerCmd extends AdminCommand {
 
     protected final Bot bot;
 
-    public SetRoleManagerCmd(Bot bot)
+    @Value("${config.aliases.rolemsgbuild:}")
+    String[] aliases = new String[0];
+
+    public SetRoleManagerCmd(Bot bot, @Qualifier("adminCategory") Category category)
     {
+        super(category);
         this.bot = bot;
         this.name = "rolemsgbuild";
         this.help = "crea un mensaje en el cual los usuarios pueden reaccionar para obtener un rol determinado";
         this.arguments = "[Mensaje] emoji rol emoji rol... emoji rol";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.options = Arrays.asList(
                 new OptionData(OptionType.STRING, "mensaje", "mensaje a enviar como selector de roles").setRequired(true),
                 new OptionData(OptionType.STRING, "emoji1", "emoji del rol 1").setRequired(true),
@@ -58,7 +67,7 @@ public class SetRoleManagerCmd extends AdminCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
 
-        String message = event.getOption("mensaje").getAsString();
+        String message = event.optString("mensaje");
 
         List<String> emojis = new ArrayList<>();
         List<Role> roles = new ArrayList<>();
@@ -81,7 +90,7 @@ public class SetRoleManagerCmd extends AdminCommand {
             return;
         }
 
-        RoleManager manager = new RoleManager().withMessage(message);
+        RoleManager manager = new RoleManager();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setDescription(message);
@@ -109,7 +118,12 @@ public class SetRoleManagerCmd extends AdminCommand {
             manager.setId(success.getIdLong());
             manager.setEmoji(map);
             manager.setToggled(false);
-            bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addToRoleManagers(manager);
+
+            Server server = bot.getSettingsManager().getSettings(event.getGuild().getIdLong());
+
+            server.addToRoleManagers(manager);
+            server.save();
+
             event.reply(event.getClient().getSuccess()+ " Administrador de roles creado!").setEphemeral(true).queue();
         });
     }
@@ -138,7 +152,7 @@ public class SetRoleManagerCmd extends AdminCommand {
         }
 
         message = data[0].substring(1);
-        RoleManager manager = new RoleManager().withMessage(message);
+        RoleManager manager = new RoleManager();
 
         EmbedBuilder eb = new EmbedBuilder();
         eb.setDescription(message);
@@ -167,7 +181,12 @@ public class SetRoleManagerCmd extends AdminCommand {
             manager.setId(success.getIdLong());
             manager.setEmoji(map);
             manager.setToggled(false);
-            bot.getSettingsManager().getSettings(event.getGuild().getIdLong()).addToRoleManagers(manager);
+
+            Server server = bot.getSettingsManager().getSettings(event.getGuild().getIdLong());
+
+            server.addToRoleManagers(manager);
+            server.save();
+
             event.getMessage().delete().queue();
         });
 

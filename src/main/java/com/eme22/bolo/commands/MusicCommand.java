@@ -17,7 +17,7 @@ package com.eme22.bolo.commands;
 
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
@@ -26,17 +26,21 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.PermissionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public abstract class MusicCommand extends SlashCommand
+
+public abstract class MusicCommand extends BaseCommand
 {
     protected final Bot bot;
     protected boolean bePlaying;
     protected boolean beListening;
-    
+
+    @Autowired
     public MusicCommand(Bot bot)
     {
         this.bot = bot;
@@ -47,8 +51,8 @@ public abstract class MusicCommand extends SlashCommand
     @Override
     protected void execute(CommandEvent event) 
     {
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
-        TextChannel tchannel = settings.getTextChannel(event.getGuild());
+        Server settings = event.getClient().getSettingsFor(event.getGuild());
+        TextChannel tchannel = event.getGuild().getTextChannelById(settings.getTextChannelId());
 
         if (!isTextChannelAllowed(event, tchannel)) return;
 
@@ -63,6 +67,7 @@ public abstract class MusicCommand extends SlashCommand
             }
         }
 
+
         bot.getPlayerManager().setUpHandler(event.getGuild());
 
         if (bePlaying && !isMusicPlaying(event)) return;
@@ -74,8 +79,9 @@ public abstract class MusicCommand extends SlashCommand
     @Override
     protected void execute(SlashCommandEvent event) {
 
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
-        TextChannel tchannel = settings.getTextChannel(event.getGuild());
+        Server settings = event.getClient().getSettingsFor(event.getGuild());
+
+        TextChannel tchannel = event.getGuild().getTextChannelById(settings.getTextChannelId());
 
         if (!isTextChannelAllowed(event, tchannel)) return;
 

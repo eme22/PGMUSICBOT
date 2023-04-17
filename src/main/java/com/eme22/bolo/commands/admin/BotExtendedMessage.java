@@ -1,7 +1,8 @@
 package com.eme22.bolo.commands.admin;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.commands.AdminCommand;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -10,6 +11,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,26 +29,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BotFixedMessageCmd extends SlashCommand {
+import org.springframework.stereotype.Component;
 
+@Component
+public class BotExtendedMessage extends AdminCommand {
 
-    public BotFixedMessageCmd(Bot bot) {
+    @Value("${config.aliases.messagext:}")
+    String[] aliases = new String[0];
+
+    public BotExtendedMessage(@Qualifier("adminCategory") Category category) {
+        super(category);
         this.name = "messagext";
         this.help = "hace hablar al bot con opciones extendidas";
         this.arguments = "[intervalo: 30S = 30 segundos, 1H = 1 hora, 2D = 2 dias ] [fecha de inicio dd/mm hh:mm:ss] [fecha de fin dd/mm hh:mm:ss] [mensaje (Comandos especiales %day% %month% %date% %time% %who%)]";
-        this.aliases = bot.getConfig().getAliases(this.name);
-        this.category = new Category("Admin", event ->
-        {
-            if(event.getAuthor().getId().equals(event.getClient().getOwnerId()))
-                return true;
-            if (event.getAuthor().getId().equals(event.getGuild().getOwnerId()))
-                return true;
-            if(event.getGuild()==null)
-                return true;
-            Settings settings = event.getClient().getSettingsFor(event.getGuild());
-            Role admin = settings.getAdminRoleId(event.getGuild());
-            return admin!=null && (event.getMember().getRoles().contains(admin) || admin.getIdLong()==event.getGuild().getIdLong());
-        });
         this.guildOnly = true;
 
         this.options = Arrays.asList(
@@ -73,7 +69,7 @@ public class BotFixedMessageCmd extends SlashCommand {
             interval = getInterval(matcher.group(1), matcher.group(2));
         }
         else {
-                event.reply(client.getError() + " Inserte un intervalo valido").setEphemeral(true).queue();
+                event.reply(event.getClient().getError() + " Inserte un intervalo valido").setEphemeral(true).queue();
         }
 
         LocalDateTime inicio2;
@@ -83,7 +79,7 @@ public class BotFixedMessageCmd extends SlashCommand {
             inicio2 = parseWithDefaultYear( inicio.getAsString());
         }
         catch (DateTimeParseException e){
-            event.reply(client.getError() + " Inserte una fecha de inicio validamente formateada, ejemplo: 15/06 20:00:00").setEphemeral(true).queue();
+            event.reply(event.getClient().getError() + " Inserte una fecha de inicio validamente formateada, ejemplo: 15/06 20:00:00").setEphemeral(true).queue();
             return;
         }
 
@@ -91,17 +87,17 @@ public class BotFixedMessageCmd extends SlashCommand {
             fin2 = parseWithDefaultYear( fin.getAsString());
         }
         catch (DateTimeParseException e){
-            event.reply(client.getError() + " Inserte una fecha de finalizacion validamente formateada, ejemplo: 15/06 20:00:00").setEphemeral(true).queue();
+            event.reply(event.getClient().getError() + " Inserte una fecha de finalizacion validamente formateada, ejemplo: 15/06 20:00:00").setEphemeral(true).queue();
             return;
         }
 
         if (inicio2.isBefore(LocalDateTime.now())) {
-            event.reply(client.getError() + " La fecha de inicio no puede ser en el pasado").setEphemeral(true).queue();
+            event.reply(event.getClient().getError() + " La fecha de inicio no puede ser en el pasado").setEphemeral(true).queue();
             return;
         }
 
         if (inicio2.isAfter(fin2)) {
-            event.reply(client.getError() + " La fecha de inicio no puede ser despues de la fecha de fin").setEphemeral(true).queue();
+            event.reply(event.getClient().getError() + " La fecha de inicio no puede ser despues de la fecha de fin").setEphemeral(true).queue();
             return;
         }
 

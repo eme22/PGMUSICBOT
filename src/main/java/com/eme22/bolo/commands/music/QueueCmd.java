@@ -15,13 +15,13 @@
  */
 package com.eme22.bolo.commands.music;
 
-import com.eme22.bolo.Bolo;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.commands.MusicCommand;
-import com.eme22.bolo.settings.RepeatMode;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.RepeatMode;
+import com.eme22.bolo.model.Server;
+import com.eme22.bolo.utils.Constants;
 import com.eme22.bolo.utils.FormatUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,15 +43,20 @@ import java.util.concurrent.TimeUnit;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class QueueCmd extends MusicCommand {
     private final Paginator.Builder builder;
+
+    @Value("${config.aliases.queue:}")
+    String[] aliases = new String[0];
 
     public QueueCmd(Bot bot) {
         super(bot);
         this.name = "queue";
         this.help = "shows the current queue";
         this.arguments = "[pagenum]";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.bePlaying = true;
         this.botPermissions = new Permission[] { Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_EMBED_LINKS };
         builder = new Paginator.Builder()
@@ -100,7 +106,7 @@ public class QueueCmd extends MusicCommand {
             total += list.get(i).getTrack().getDuration();
             songs[i] = list.get(i).toString();
         }
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
+        Server settings = event.getClient().getSettingsFor(event.getGuild());
         long fintotal = total;
         builder.setText((i1, i2) -> getQueueTitle(ah, event.getClient().getSuccess(), songs.length, fintotal,
                 settings.getRepeatMode()))
@@ -137,7 +143,7 @@ public class QueueCmd extends MusicCommand {
             total += list.get(i).getTrack().getDuration();
             songs[i] = list.get(i).toString();
         }
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
+        Server settings = event.getClient().getSettingsFor(event.getGuild());
         long fintotal = total;
         builder.setText((i1, i2) -> getQueueTitle(ah, event.getClient().getSuccess(), songs.length, fintotal,
                 settings.getRepeatMode()))
@@ -151,7 +157,7 @@ public class QueueCmd extends MusicCommand {
             RepeatMode repeatmode) {
         StringBuilder sb = new StringBuilder();
         if (ah.getPlayer().getPlayingTrack() != null) {
-            sb.append(ah.getPlayer().isPaused() ? Bolo.PAUSE_EMOJI : Bolo.PLAY_EMOJI).append(" **")
+            sb.append(ah.getPlayer().isPaused() ? Constants.PAUSE_EMOJI : Constants.PLAY_EMOJI).append(" **")
                     .append(ah.getPlayer().getPlayingTrack().getInfo().title).append("**\n");
         }
         return FormatUtil.filter(sb.append(success).append(" Current Queue | ").append(songslength)

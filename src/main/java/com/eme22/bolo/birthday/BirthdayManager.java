@@ -1,7 +1,7 @@
 package com.eme22.bolo.birthday;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -20,7 +20,7 @@ public class BirthdayManager {
     }
 
     public void setupBirthdays(Guild guild) {
-        Settings settings = bot.getSettingsManager().getSettings(guild);
+        Server settings = bot.getSettingsManager().getSettings(guild);
 
         settings.getBirthdays().forEach(
                 birthday -> {

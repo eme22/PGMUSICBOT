@@ -16,50 +16,25 @@
 package com.eme22.bolo.commands;
 
 import com.eme22.bolo.Bot;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.Role;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
+
 public abstract class DJCommand extends MusicCommand
 {
-    public DJCommand(Bot bot)
+    @Autowired
+    public DJCommand(Bot bot,@Qualifier("djCategory") Category dj)
     {
         super(bot);
-        this.category = new Category("DJ", this::checkDJPermission);
-    }
-    
-    public boolean checkDJPermission(CommandEvent event)
-    {
-        if(event.getAuthor().getId().equals(event.getClient().getOwnerId()))
-            return true;
-        if (event.getAuthor().equals(event.getGuild().getOwner().getUser()))
-            return true;
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
-        Role admin = settings.getAdminRoleId(event.getGuild());
-        if(event.getMember().getRoles().contains(admin))
-            return true;
-
-        Role dj = settings.getDJRoleId(event.getGuild());
-        return dj!=null && (event.getMember().getRoles().contains(dj) || dj.getIdLong()==event.getMember().getIdLong());
+        this.category = dj;
     }
 
-    public boolean checkDJPermission(SlashCommandEvent event)
-    {
-        if(event.getMember().getId().equals(event.getClient().getOwnerId()))
-            return true;
-        if(event.getGuild()==null)
-            return true;
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
-        Role admin = settings.getAdminRoleId(event.getGuild());
-        if(event.getMember().getRoles().contains(admin))
-            return true;
-
-        Role dj = settings.getDJRoleId(event.getGuild());
-        return dj!=null && (event.getMember().getRoles().contains(dj) || dj.getIdLong()==event.getUser().getIdLong());
-    }
 }

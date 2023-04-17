@@ -20,19 +20,26 @@ import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.commands.MusicCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
+import org.springframework.stereotype.Component;
+
+@Component
 public class ShuffleCmd extends MusicCommand 
 {
+
+    @Value("${config.aliases.shuffle:}")
+    String[] aliases = new String[0];
+
     public ShuffleCmd(Bot bot)
     {
         super(bot);
         this.name = "shuffle";
         this.help = "shuffles songs you have added";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.beListening = true;
         this.bePlaying = true;
     }

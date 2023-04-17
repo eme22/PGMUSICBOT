@@ -19,7 +19,7 @@ import com.eme22.bolo.Bot;
 import com.eme22.bolo.audio.AudioHandler;
 import com.eme22.bolo.audio.QueuedTrack;
 import com.eme22.bolo.commands.MusicCommand;
-import com.eme22.bolo.settings.Settings;
+import com.eme22.bolo.model.Server;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.Permission;
@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 
@@ -34,15 +35,19 @@ import java.util.Collections;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class RemoveCmd extends MusicCommand 
-{
-    public RemoveCmd(Bot bot)
-    {
+import org.springframework.stereotype.Component;
+
+@Component
+public class RemoveCmd extends MusicCommand {
+
+    @Value("${config.aliases.remove:}")
+    String[] aliases = new String[0];
+
+    public RemoveCmd(Bot bot) {
         super(bot);
         this.name = "remove";
         this.help = "removes a song from the queue";
         this.arguments = "<position|ALL>";
-        this.aliases = bot.getConfig().getAliases(this.name);
         this.beListening = true;
         this.bePlaying = true;
         this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "posicion", "Posicion para eliminar de la cola").setRequired(true));
@@ -78,10 +83,10 @@ public class RemoveCmd extends MusicCommand
             event.replyError("Position must be a valid integer between 1 and "+handler.getQueue().size()+"!");
             return;
         }
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
+        Server settings = event.getClient().getSettingsFor(event.getGuild());
         boolean isDJ = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if(!isDJ)
-            isDJ = event.getMember().getRoles().contains(settings.getDJRoleId(event.getGuild()));
+            isDJ = event.getMember().getRoles().contains(event.getGuild().getRoleById(settings.getDjRoleId()));
         QueuedTrack qt = handler.getQueue().get(pos-1);
         if(qt.getIdentifier()==event.getAuthor().getIdLong())
         {
@@ -130,10 +135,10 @@ public class RemoveCmd extends MusicCommand
             event.reply(event.getClient().getError()+"Position must be a valid integer between 1 and "+handler.getQueue().size()+"!").setEphemeral(true).queue();
             return;
         }
-        Settings settings = event.getClient().getSettingsFor(event.getGuild());
+        Server settings = event.getClient().getSettingsFor(event.getGuild());
         boolean isDJ = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if(!isDJ)
-            isDJ = event.getMember().getRoles().contains(settings.getDJRoleId(event.getGuild()));
+            isDJ = event.getMember().getRoles().contains(event.getGuild().getRoleById(settings.getDjRoleId()));
         QueuedTrack qt = handler.getQueue().get(pos-1);
         if(qt.getIdentifier()==event.getUser().getIdLong())
         {

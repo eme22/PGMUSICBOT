@@ -16,19 +16,25 @@
 package com.eme22.bolo.commands.music;
 
 import com.eme22.bolo.Bot;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class SCSearchCmd extends SearchCmd 
-{
+import org.springframework.stereotype.Component;
+
+@Component
+public class SCSearchCmd extends SearchCmd {
+
+    @Value("${config.aliases.scsearch:}")
+    String[] aliases = new String[0];
+
     public SCSearchCmd(Bot bot)
     {
         super(bot);
         this.searchPrefix = "scsearch:";
         this.name = "scsearch";
         this.help = "searches Soundcloud for a provided query";
-        this.aliases = bot.getConfig().getAliases(this.name);
     }
 }
