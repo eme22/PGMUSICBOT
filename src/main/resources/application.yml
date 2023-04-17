@@ -29,15 +29,15 @@ spring:
             userInfoUri: https://discordapp.com/api/users/@me
             usernameAttribute: username
 jda:
-  token: ${TOKEN:OTU2NDE0NTMxNzU0NjU1ODc1.G8KIUZ.GyIp8BllgF0ASILXK7eeXlodNTYW8jzlVXdw6A}
+  token: ${DISCORD_TOKEN:OTU2NDE0NTMxNzU0NjU1ODc1.G8KIUZ.GyIp8BllgF0ASILXK7eeXlodNTYW8jzlVXdw6A}
 spotify:
-  userid: ${SPOTIFYUSERID:733ea23966e1482a99ef775a50f505d0}
-  secret: ${SPOTIFYSECRET:9a1b5a868bd140f99eb173c8d458162a}
+  userid: ${SPOTIFY_USER:733ea23966e1482a99ef775a50f505d0}
+  secret: ${SPOTIFY_SECRET:9a1b5a868bd140f99eb173c8d458162a}
 github:
-  token: ${GITHUBTOKEN:0}
+  token: ${GITHUB_OAUTH:0}
 youtube:
-  user: ${YTUSER:embot7573@gmail.com}
-  password: ${YTPASSWORD:G^dzbyR*8a46cmsT$%5sFdtu}
+  user: ${YT_USER:embot7573@gmail.com}
+  password: ${YT_PASSWORD:G^dzbyR*8a46cmsT$%5sFdtu}
 tenor:
   key: AIzaSyA4hmCdzXbIhZK3Q0Nlbc0UrjgxT9FmWPo
   user: EMBot
