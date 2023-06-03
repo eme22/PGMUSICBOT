@@ -17,6 +17,7 @@ package com.eme22.bolo.audio;
 
 import com.dunctebot.sourcemanagers.DuncteBotSources;
 import com.eme22.bolo.Bot;
+import com.eme22.bolo.stats.StatsService;
 import com.eme22.bolo.utils.FormatUtil;
 import com.eme22.bolo.utils.GifSearcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -80,8 +81,10 @@ public class PlayerManager extends DefaultAudioPlayerManager
 
     private final String spotifySecret;
 
+    private final StatsService statsService;
+
     @Autowired
-    public PlayerManager(@Value("${youtube.user}") String user, @Value("${youtube.password}") String password, @Value("${config.maxseconds}") long maxSeconds, @Value("${config.stayinchannel}") boolean stayInChannel, @Value("${config.success}") String successEmoji, @Value("${config.nowplayingimages}") boolean npImages, @Value("${spotify.userid}")  String spotifyUserId, @Value("${config.owner}") long owner, @Value("${spotify.secret}") String spotifySecret) {
+    public PlayerManager(@Value("${youtube.user}") String user, @Value("${youtube.password}") String password, @Value("${config.maxseconds}") long maxSeconds, @Value("${config.stayinchannel}") boolean stayInChannel, @Value("${config.success}") String successEmoji, @Value("${config.nowplayingimages}") boolean npImages, @Value("${spotify.userid}")  String spotifyUserId, @Value("${config.owner}") long owner, @Value("${spotify.secret}") String spotifySecret, StatsService statsService) {
         this.user = user;
         this.password = password;
         this.maxSeconds = maxSeconds;
@@ -91,6 +94,7 @@ public class PlayerManager extends DefaultAudioPlayerManager
         this.spotifySecret = spotifySecret;
         this.npImages = npImages;
         this.owner = owner;
+        this.statsService = statsService;
     }
     
     public void init()
@@ -120,7 +124,7 @@ public class PlayerManager extends DefaultAudioPlayerManager
             int volume = bot.getSettingsManager().getSettings(guild).getVolume();
             log.info("Starting Volume:" + volume);
             player.setVolume(volume);
-            handler = new AudioHandler(this, player, guild.getIdLong(), stayInChannel, successEmoji, npImages, owner);
+            handler = new AudioHandler(this, player, guild.getIdLong(), stayInChannel, successEmoji, npImages, owner, statsService);
             //handler = new AudioHandler(this, guild, player);
             player.addListener(handler);
             guild.getAudioManager().setSendingHandler(handler);

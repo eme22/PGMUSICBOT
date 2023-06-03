@@ -21,6 +21,7 @@ import com.eme22.bolo.model.RepeatMode;
 import com.eme22.bolo.model.Server;
 import com.eme22.bolo.playlist.PlaylistLoader.Playlist;
 import com.eme22.bolo.queue.FairQueue;
+import com.eme22.bolo.stats.StatsService;
 import com.eme22.bolo.utils.Constants;
 import com.eme22.bolo.utils.FormatUtil;
 import com.eme22.bolo.utils.GifSearcher;
@@ -76,16 +77,9 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
 
     private AudioFrame lastFrame;
 
-    private static Color transparent =new Color(1f,0f,0f,.5f );
+    private final StatsService statsService;
 
-    private static int width = 480; // Ancho de la imagen
-    private static int height = 30; // Altura de la imagen
-
-    private static InputStream playImage = AudioHandler.class.getResourceAsStream("/images/play.png");
-
-    private static InputStream pauseImage = AudioHandler.class.getResourceAsStream("/images/pause.png");
-
-    public AudioHandler(PlayerManager manager, AudioPlayer audioPlayer, long guildId, boolean stayInChannel, String successEmoji, boolean npImages, long owner) {
+    public AudioHandler(PlayerManager manager, AudioPlayer audioPlayer, long guildId, boolean stayInChannel, String successEmoji, boolean npImages, long owner, StatsService statsService) {
         this.manager = manager;
         this.audioPlayer = audioPlayer;
         this.guildId = guildId;
@@ -93,6 +87,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
         this.successEmoji = successEmoji;
         this.npImages = npImages;
         this.owner = owner;
+        this.statsService = statsService;
     }
 
     public int addTrackToFront(QueuedTrack qtrack) {
@@ -207,6 +202,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
 
             MessageCreateData m = getNowPlaying(manager.getBot().getJDA());
             Guild guild = manager.getBot().getJDA().getGuildById(guildId);
+            statsService.updateSongsPlayed(guild.getIdLong());
             if (m == null) {
                 TextChannel chn = guild.getTextChannelById(manager.getBot().getSettingsManager().getSettings(guild).getTextChannelId());
 
@@ -273,7 +269,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
                 eb.setTitle(track.getInfo().title);
             }
 
-            if (track instanceof YoutubeAudioTrack /* && npImages **/) {
+            if (track instanceof YoutubeAudioTrack && npImages ) {
                 eb.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/mqdefault.jpg");
             }
 

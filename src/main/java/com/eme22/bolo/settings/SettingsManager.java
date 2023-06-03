@@ -93,6 +93,7 @@ public class SettingsManager implements GuildSettingsManager<Server> {
                 .roleManagerList(new ArrayList<>())
                 .eightBallAnswers(new ArrayList<>())
                 .antiRaidMode(false)
+                .polls(new ArrayList<>())
                 .build();
     }
 

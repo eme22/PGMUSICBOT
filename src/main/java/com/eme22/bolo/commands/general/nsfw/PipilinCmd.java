@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class PipilinCmd extends Command {
 
     public PipilinCmd() {

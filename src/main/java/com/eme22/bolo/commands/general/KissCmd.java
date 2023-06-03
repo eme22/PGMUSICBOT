@@ -3,6 +3,8 @@ package com.eme22.bolo.commands.general;
 import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
 import com.eme22.bolo.nsfw.NSFWStrings;
+import com.eme22.bolo.stats.StatsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +14,9 @@ import java.net.URISyntaxException;
 @Component
 public class KissCmd extends ActionsCmd {
 
-    @Value("${config.aliases.kiss:}")
-    String[] aliases = new String[0];
-
-    public KissCmd() {
-        super("besar");
+    @Autowired
+    public KissCmd(@Value("${config.aliases.kiss:}") String[] aliases, StatsService statsService) {
+        super("besar", aliases, statsService);
         this.name = "kiss";
     }
 

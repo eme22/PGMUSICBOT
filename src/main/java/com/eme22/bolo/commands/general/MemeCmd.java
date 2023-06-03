@@ -2,6 +2,7 @@ package com.eme22.bolo.commands.general;
 
 import com.eme22.bolo.model.MemeImage;
 import com.eme22.bolo.model.Server;
+import com.eme22.bolo.stats.StatsService;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.eme22.bolo.commands.BaseCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
@@ -19,13 +21,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class MemeCmd extends BaseCommand {
 
-    @Value("${config.aliases.meme:}")
-    String[] aliases = new String[0];
+    private final StatsService statsService;
 
-    public MemeCmd() {
+    @Autowired
+    public MemeCmd(@Value("${config.aliases.meme:}") String[] aliases, StatsService statsService) {
         this.name = "meme";
         this.arguments = "NONE o <posicion>";
         this.help = "muestra un meme al azar del servidor";
+        this.aliases = aliases;
+        this.statsService = statsService;
         this.guildOnly = true;
         this.options = Collections
                 .singletonList(new OptionData(OptionType.INTEGER, "posicion", "posicion del meme").setRequired(false));
@@ -57,7 +61,10 @@ public class MemeCmd extends BaseCommand {
         EmbedBuilder eb = new EmbedBuilder().setImage(data.getMeme());
         messageCreateBuilder.addContent(data.getMessage());
         messageCreateBuilder.setEmbeds(eb.build());
-        event.reply(messageCreateBuilder.build()).queue();
+        event.reply(messageCreateBuilder.build()).queue(success -> {
+            statsService.updateImagesSend(event.getGuild().getIdLong());
+            statsService.updateMemesSend(event.getGuild().getIdLong());
+        });
     }
 
     @Override
@@ -86,7 +93,10 @@ public class MemeCmd extends BaseCommand {
         MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
         messageCreateBuilder.addContent(data.getMessage());
         messageCreateBuilder.setEmbeds(eb.build());
-        event.reply(messageCreateBuilder.build());
+        event.reply(messageCreateBuilder.build(), success -> {
+            statsService.updateImagesSend(event.getGuild().getIdLong());
+            statsService.updateMemesSend(event.getGuild().getIdLong());
+        });
         event.getMessage().delete().queue();
     }
 }

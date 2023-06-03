@@ -2,35 +2,36 @@ package com.eme22.bolo.commands.general;
 
 import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
-import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import com.eme22.bolo.stats.StatsService;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-
-import org.springframework.stereotype.Component;
 
 @Component
 public class SlapCmd extends ActionsCmd {
 
-    @Value("${config.aliases.slap:}")
-    String[] aliases = new String[0];
-
-    public SlapCmd() {
-        super("lamer");
+    public SlapCmd(@Value("${config.aliases.slap:}") String[] aliases, StatsService statsService) {
+        super("cachetear",aliases, statsService);
         this.name = "slap";
+        this.success = new Consumer<>(){
+            @Override
+            public void accept(InteractionHook success) {
+                super.accept(success);
+                statsService.updateSlaps(success.getInteraction().getGuild().getIdLong());
+            }
+        };
+        this.success1 = new Consumer<>() {
+            @Override
+            public void accept(Message success) {
+                super.accept(success);
+                statsService.updateSlaps(success.getGuild().getIdLong());
+            }
+        };
     }
 
     @Override

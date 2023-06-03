@@ -140,10 +140,11 @@ public class BotConfiguration {
         this.settingsManager = settingsManager;
         this.environment = env;
     }
-
-    @PostConstruct
+/**
+    @ PostConstruct
     public void init() {
         if (Objects.equals(environment.getProperty("updateGit"), "true")) {
+
             try {
                 File oldSettings = new File("serversettings.json");
                 OtherUtil.loadFileFromGit(oldSettings);
@@ -153,9 +154,10 @@ public class BotConfiguration {
                 log.warn("Se ha fallado en cargar las opciones del servidor", e);
             }
 
+
         }
     }
-
+ **/
     @Bean
     JDA getJDA(CommandClientBuilder cb, Activity game, EventWaiter waiter,Bot bot, ListenerAdapter... listeners) {
         boolean nogame = false;
@@ -219,7 +221,10 @@ public class BotConfiguration {
                 .setLinkedCacheSize(200)
                 .setGuildSettingsManager(setting)
                 .addSlashCommands(slashCommands)
-                .addCommands(commands);
+                .addCommands(commands)
+                .setListener(new CommandListener() {
+                })
+                ;
 
         if (status != OnlineStatus.UNKNOWN)
             cb.setStatus(status);

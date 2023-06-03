@@ -105,49 +105,55 @@ public class NowplayingHandler
 
     private void updateAll()
     {
-        Set<Long> toRemove = new HashSet<>();
-        for(long guildId: lastNP.keySet())
-        {
-            Guild guild = bot.getJDA().getGuildById(guildId);
-            if(guild==null)
+        try {
+            Set<Long> toRemove = new HashSet<>();
+            for(long guildId: lastNP.keySet())
             {
-                toRemove.add(guildId);
-                continue;
-            }
-            Pair<Long,Long> pair = lastNP.get(guildId);
-            TextChannel tc = guild.getTextChannelById(pair.getKey());
-            if(tc==null)
-            {
-                toRemove.add(guildId);
-                continue;
-            }
-            AudioHandler handler = (AudioHandler)guild.getAudioManager().getSendingHandler();
-            MessageCreateData msg = handler.getNowPlaying(bot.getJDA());
+                Guild guild = bot.getJDA().getGuildById(guildId);
+                if(guild==null)
+                {
+                    toRemove.add(guildId);
+                    continue;
+                }
+                Pair<Long,Long> pair = lastNP.get(guildId);
+                TextChannel tc = guild.getTextChannelById(pair.getKey());
+                if(tc==null)
+                {
+                    toRemove.add(guildId);
+                    continue;
+                }
+                AudioHandler handler = (AudioHandler)guild.getAudioManager().getSendingHandler();
+                MessageCreateData msg = handler.getNowPlaying(bot.getJDA());
 
-            MessageEditBuilder builder = new MessageEditBuilder();
-
-            builder.setContent(msg.getContent());
-            builder.setEmbeds(msg.getEmbeds());
-
-            if(msg==null)
-            {
-                msg = handler.getNoMusicPlaying(bot.getJDA());
+                MessageEditBuilder builder = new MessageEditBuilder();
 
                 builder.setContent(msg.getContent());
                 builder.setEmbeds(msg.getEmbeds());
 
-                toRemove.add(guildId);
+                if(msg==null)
+                {
+                    msg = handler.getNoMusicPlaying(bot.getJDA());
+
+                    builder.setContent(msg.getContent());
+                    builder.setEmbeds(msg.getEmbeds());
+
+                    toRemove.add(guildId);
+                }
+                try
+                {
+                    tc.editMessageById(pair.getValue(), builder.build()).queue(m->{}, t -> lastNP.remove(guildId));
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                    toRemove.add(guildId);
+                }
             }
-            try 
-            {
-                tc.editMessageById(pair.getValue(), builder.build()).queue(m->{}, t -> lastNP.remove(guildId));
-            } 
-            catch(Exception e) 
-            {
-                toRemove.add(guildId);
-            }
+            toRemove.forEach(lastNP::remove);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        toRemove.forEach(lastNP::remove);
+
     }
     
     public void updateTopic(long guildId, AudioHandler handler, boolean wait)

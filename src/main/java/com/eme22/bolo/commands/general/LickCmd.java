@@ -4,6 +4,7 @@ import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
+import com.eme22.bolo.stats.StatsService;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -25,11 +26,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class LickCmd extends ActionsCmd {
 
-    @Value("${config.aliases.lick:}")
-    String[] aliases = new String[0];
-
-    public LickCmd() {
-        super("lamer");
+    public LickCmd(@Value("${config.aliases.lick:}") String[] aliases, StatsService statsService) {
+        super("lamer",aliases, statsService);
         this.name = "lick";
     }
 

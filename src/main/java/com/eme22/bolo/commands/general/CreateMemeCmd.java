@@ -28,7 +28,7 @@ import static com.eme22.bolo.utils.OtherUtil.imageFromUrl;
 
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Log4j2
 public class CreateMemeCmd extends BaseCommand {
 

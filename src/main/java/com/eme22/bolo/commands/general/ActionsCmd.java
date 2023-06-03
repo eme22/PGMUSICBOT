@@ -5,6 +5,7 @@ import com.eme22.anime.Endpoints;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.commands.BaseCommand;
 import com.eme22.bolo.nsfw.NSFWStrings;
+import com.eme22.bolo.stats.StatsService;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -12,6 +13,8 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import lombok.extern.log4j.Log4j2;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,16 +25,35 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
+
 @Log4j2
 public abstract class ActionsCmd extends BaseCommand {
 
     private static int maxRetries = 3;
     private int retries = 0;
 
-    public ActionsCmd(String name2) {
+    protected final StatsService statsService;
+    protected Consumer<InteractionHook> success = new Consumer<>();
+    protected Consumer<Message> success1 = new Consumer<>();
+
+    public ActionsCmd(String name2, StatsService statsService) {
+        this.name = name2;
         this.help = name2+" al usuario seleccionado";
         this.arguments = "<user>";
         this.guildOnly = true;
+        this.statsService = statsService;
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.USER, "usuario", "busca el usuario a "+name2+".").setRequired(true));
+    }
+
+    public ActionsCmd(String name2, String[] aliases,StatsService statsService) {
+        this.name = name2;
+        this.help = name2+" al usuario seleccionado";
+        this.aliases = aliases;
+        this.arguments = "<user>";
+        this.guildOnly = true;
+        this.statsService = statsService;
         this.options = Collections.singletonList(
                 new OptionData(OptionType.USER, "usuario", "busca el usuario a "+name2+".").setRequired(true));
     }
@@ -61,7 +83,7 @@ public abstract class ActionsCmd extends BaseCommand {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + getActionDescription() + memberKissed.getAsMention());
         builder.setImage(getRandomImage());
-        event.replyEmbeds(builder.build()).queue();
+        event.replyEmbeds(builder.build()).queue(success);
     }
 
     @Override
@@ -89,7 +111,7 @@ public abstract class ActionsCmd extends BaseCommand {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setDescription(memberKisser.getAsMention() + getActionDescription() + memberKissed.getAsMention());
         builder.setImage(getRandomImage());
-        event.reply(builder.build());
+        event.reply(builder.build(), success1);
     }
 
     private String getRandomImage() {
@@ -115,6 +137,17 @@ public abstract class ActionsCmd extends BaseCommand {
 
             retries = 0;
             return null;
+        }
+    }
+
+    public class Consumer<T> implements java.util.function.Consumer<T> {
+        @Override
+        public void accept(T success) {
+
+            if (success instanceof Message)
+                statsService.updateImagesSend(((Message) success).getGuild().getIdLong());
+            else if (success instanceof InteractionHook)
+                statsService.updateImagesSend(((InteractionHook) success).getInteraction().getGuild().getIdLong());
         }
     }
 

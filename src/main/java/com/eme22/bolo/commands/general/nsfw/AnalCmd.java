@@ -4,6 +4,9 @@ import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
 import com.eme22.bolo.commands.general.ActionsCmd;
 import com.eme22.bolo.nsfw.NSFWStrings;
+import com.eme22.bolo.stats.StatsService;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +19,22 @@ public class AnalCmd extends ActionsCmd {
     @Value("${config.aliases.anal:}")
     String[] aliases = new String[0];
 
-    public AnalCmd() {
-        super("anal");
-        this.name = "anal";
+    public AnalCmd(@Value("${config.aliases.anal:}") String[] aliases, StatsService statsService) {
+        super("anal",aliases, statsService);
+        this.success = new Consumer<>(){
+            @Override
+            public void accept(InteractionHook success) {
+                super.accept(success);
+                statsService.updateAnals(success.getInteraction().getGuild().getIdLong());
+            }
+        };
+        this.success1 = new Consumer<>() {
+            @Override
+            public void accept(Message success) {
+                super.accept(success);
+                statsService.updateAnals(success.getGuild().getIdLong());
+            }
+        };
     }
 
     @Override

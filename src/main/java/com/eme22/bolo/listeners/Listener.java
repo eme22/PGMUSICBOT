@@ -21,6 +21,7 @@ import com.eme22.bolo.configuration.BotConfiguration;
 import com.eme22.bolo.model.MusicArtWork;
 import com.eme22.bolo.model.RoleManager;
 import com.eme22.bolo.model.Server;
+import com.eme22.bolo.stats.StatsService;
 import com.eme22.bolo.utils.OtherUtil;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import lombok.extern.log4j.Log4j2;
@@ -76,10 +77,13 @@ public class Listener extends ListenerAdapter {
 
     private final String version;
 
+    private final StatsService statsService;
+
     @Autowired
-    public Listener(Bot bot,  BuildProperties buildProperties) {
+    public Listener(Bot bot,  BuildProperties buildProperties, StatsService statsService) {
         this.bot = bot;
         this.version = buildProperties.getVersion();
+        this.statsService = statsService;
     }
 
     private String setupMessage = null;
@@ -465,16 +469,7 @@ public class Listener extends ListenerAdapter {
                 if (member.isBot())
                     message = "Un bot ha llegado";
 
-                message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername",
-                        guild.getName());
-
-                // builder.setThumbnail("attachment://bienvenida.png");
-                bienvenidas.sendMessage(message).addFiles(FileUpload.fromData(converted)).queue(sucess -> {
-                    if (converted.delete()) {
-
-                        log.error("Image deleted from memory after succes sended");
-                    }
-                });
+                sendMessage(guild, member, bienvenidas, converted, message);
 
             }
         } catch (Exception exception) {
@@ -520,18 +515,25 @@ public class Listener extends ListenerAdapter {
                 }
 
                 String message = OtherUtil.getMessage(bot, guild, false);
-                message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername",
-                        guild.getName());
-                despedidas.sendMessage(message).addFiles(FileUpload.fromData(converted)).queue(sucess -> {
-                    if (converted.delete()) {
-                        log.error("Image deleted from memory after succes sended");
-                    }
-                });
+                sendMessage(guild, member, despedidas, converted, message);
 
             }
         } catch (Exception exception) {
             log.error("Error: " + exception.getMessage(), exception);
         }
+    }
+
+    private void sendMessage(Guild guild, User member, TextChannel despedidas, File converted, String message) {
+        message = message.replaceAll("@username", member.getAsMention()).replaceAll("@servername",
+                guild.getName());
+        despedidas.sendMessage(message).addFiles(FileUpload.fromData(converted)).queue(sucess -> {
+
+            statsService.updateImagesSend(sucess.getGuild().getIdLong());
+
+            if (converted.delete()) {
+                log.error("Image deleted from memory after succes sended");
+            }
+        });
     }
 
     @NotNull

@@ -4,6 +4,7 @@ import com.eme22.anime.AnimeImageClient;
 import com.eme22.anime.Endpoints;
 import com.eme22.bolo.Bot;
 import com.eme22.bolo.nsfw.NSFWStrings;
+import com.eme22.bolo.stats.StatsService;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -25,11 +26,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PokeCmd extends ActionsCmd {
 
-    @Value("${config.aliases.poke:}")
-    String[] aliases = new String[0];
-
-    public PokeCmd() {
-        super("toca");
+    public PokeCmd(@Value("${config.aliases.poke:}") String[] aliases, StatsService statsService) {
+        super("toca", aliases, statsService);
         this.name = "poke";
     }
 

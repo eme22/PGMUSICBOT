@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${DATABASE_URL:'jdbc:postgresql://localhost:5432/discordBot'}
-    username: ${PGUSER:root}
-    password: ${PGPASSWORD:root}
+    url: "${DATABASE_URL:jdbc:postgresql://localhost:5432/discordDB}"
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD:postgres}
     driverClassName: org.postgresql.Driver
   jpa:
     show-sql: true

@@ -37,9 +37,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.kohsuke.github.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.imageio.IIOException;
@@ -542,7 +539,7 @@ public class OtherUtil
 
         return output;
     }
-
+    /**
     public static void loadFileFromGit(File file) throws IOException, NoSuchAlgorithmException {
 
         GitHub github = new GitHubBuilder().withOAuthToken(System.getenv("GITHUB_OAUTH")).build();
@@ -581,7 +578,7 @@ public class OtherUtil
 
 
     }
-
+     **/
 
 
     private static String getFileChecksum(MessageDigest digest, File file) throws IOException
