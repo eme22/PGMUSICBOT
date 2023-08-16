@@ -362,6 +362,11 @@ public class OtherUtil
         // Crear fuentes
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("trans.ttf");
 
+        if (is == null) {
+            log.error("No hay una fuente ttf configurada!!!");
+            return;
+        }
+
         // Crear la imagen de bienvenida
         BufferedImage welcomeImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = welcomeImage.createGraphics();
@@ -460,7 +465,13 @@ public class OtherUtil
 
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("trans.ttf");
 
-            @SuppressWarnings("ConstantConditions")
+            if (is == null) {
+                log.error("No hay una fuente ttf configurada!!!");
+                return;
+            }
+
+
+            //@SuppressWarnings("ConstantConditions")
             Font font2 = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(90f);
             Font font1 = font2.deriveFont(70f);
             ig2.setFont(font1);
